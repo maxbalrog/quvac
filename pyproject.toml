@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quvac"
+version = "0.1.0"
+dependencies = [
+
+]
+requires-python = ">=3.12"
+authors = [
+  {name = "Maksim Valialshchikov", email = "maksim.valialshchikov@uni-jena.de"},
+]
+maintainers = [
+]
+description = "Calculate quantum vacuum signal from laser collisions"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["quantum", "vacuum", "qed", "maxwell", "electrodynamics"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python"
+]
+
+[project.optional-dependencies]
+
+
+[project.urls]
+Repository = "https://github.com/maxbalrog/quvac"
