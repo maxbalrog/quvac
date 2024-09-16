@@ -116,6 +116,7 @@ class VacuumEmission(object):
 
     def calculate_one_time_step(self, t, weight=1):
         # Calculate fields
+        self.allocate_fields()
         self.field.calculate_field(t, E_out=self.E_out, B_out=self.B_out)
         # Evaluate U1 and U2 expressions
         ax = 'xyz'
