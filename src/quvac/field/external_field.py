@@ -3,13 +3,11 @@ This script provides uniform ExternalField class to unite all
 participating fields in one interface
 '''
 
-import numpy as np
-import numexpr as ne
-
-from quvac.paraxial_gaussian import ParaxialGaussianAnalytic
+from quvac.field.abc import Field
+from quvac.field.paraxial_gaussian import ParaxialGaussianAnalytic
 
 
-class ExternalField(object):
+class ExternalField(Field):
     '''
     Class to unite several participating fields under
     one interface

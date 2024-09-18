@@ -1,12 +1,8 @@
 '''This script implements analytic expression for paraxial gaussian'''
 '''
 TODO:
-    - Add units to variables description
-    - Test how transformed coordinates look like?
-    - Check 0-order paraxial with plotting
     - Add next order paraxial Gaussians (???)
     - Rewrite the main computation with numexpr
-    - Add energy fix
 '''
 
 import numpy as np
@@ -14,8 +10,10 @@ import numexpr as ne
 from scipy.constants import pi, c, epsilon_0, mu_0
 from scipy.spatial.transform import Rotation
 
+from quvac.field.abc import AnalyticField
 
-class ParaxialGaussianAnalytic(object):
+
+class ParaxialGaussianAnalytic(AnalyticField):
     '''
     Analytic expression for paraxial Gaussian
     All field parameters are in SI units
