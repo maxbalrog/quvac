@@ -7,10 +7,11 @@ TODO:
 
 import numpy as np
 import numexpr as ne
-from scipy.constants import pi, c, epsilon_0, mu_0
+from scipy.constants import pi, c
 from scipy.spatial.transform import Rotation
 
 from quvac.field.abc import AnalyticField
+from quvac.field.utils import get_field_energy
 
 
 class ParaxialGaussianAnalytic(AnalyticField):
@@ -37,10 +38,17 @@ class ParaxialGaussianAnalytic(AnalyticField):
         Waist size
     tau: float
         Duration
-    E0: float
-        Amplitude
     phase0: float
-        Phase delay at focus 
+        Phase delay at focus
+    E0: float (optional, either E0 or W is required)
+        Amplitude
+    W: float (optional)
+        Energy
+
+    Other arguments
+    ---------------
+    grid: (1d-np.array, 1d-np.array, 1d-np.array)
+        xyz spatial grid to calculate fields on 
     '''
 
     def __init__(self, field_params, grid):
@@ -49,19 +57,19 @@ class ParaxialGaussianAnalytic(AnalyticField):
         angles = 'theta phi beta phase0'.split()
         for key,val in field_params.items():
             if key in angles:
-                self.__dict__[key] = val * pi / 180
-            else:
-                self.__dict__[key] = val
+                val *= pi / 180
+            self.__dict__[key] = val
+
         if 'E0' not in field_params:
             assert 'W' in field_params, """Field params need to have either 
                                            W (energy) or E0 (amplitude) as key"""
             self.E0 = 1.
 
         # Define grid variables
-        self.grid = [ax.flatten() for ax in grid]
+        self.grid = tuple(ax for ax in grid)
+        self.grid_shape = tuple(ax.size for ax in grid)
         self.x_, self.y_, self.z_ = np.meshgrid(*grid, indexing='ij', sparse=True)
-        self.grid_shape = [dim.size for dim in grid]
-        self.dV = np.prod([ax[1]-ax[0] for ax in self.grid])
+        self.dV = np.prod([ax[1]-ax[0] for ax in grid])
 
         # Define additional field variables
         self.x0, self.y0, self.z0 = self.focus_x
@@ -71,80 +79,68 @@ class ParaxialGaussianAnalytic(AnalyticField):
         self.omega = c * self.k
         self.zR = pi * self.w0**2 / self.lam
 
-        # Define rotation matrices and transform coordinate grid
-        self.get_rotation()
-        self.transform_coordinates()
+        # Rotate coordinate grid
+        self.rotate_coordinates()
 
         # Define variables not depending on time step
-        # self.w = self.w0 * np.sqrt(1 + (self.z/self.zR)**2)
-        # self.r2 = self.x**2 + self.y**2
-        # self.R = self.z + self.zR**2/self.z
-        # self.phase_no_t = self.phase0 - self.k*self.r2/(2*self.R) + np.arctan(self.z/self.zR)
-        # self.E = self.E0 * self.w0/self.w * np.exp(-self.r2/self.w**2)
-        self.w = ne.evaluate("w0 * sqrt(1 + (z/zR)**2)", global_dict=self.__dict__)
-        self.r2 = ne.evaluate("x**2 + y**2", global_dict=self.__dict__)
-        self.R = ne.evaluate("z + zR**2/z", global_dict=self.__dict__)
-        self.phase_no_t = ne.evaluate("phase0 - k*r2/(2*R) + arctan(z/zR)", global_dict=self.__dict__)
-        # self.E = ne.evaluate("E0 * w0/w * exp(-r2/w**2)", global_dict=self.__dict__)
-        self.E = ne.evaluate("B0 * w0/w * exp(-r2/w**2)", global_dict=self.__dict__)
+        self.w = "(w0 * sqrt(1 + (z/zR)**2))"
+        self.r2 = "(x**2 + y**2)"
+        self.R = "(z + zR**2/z)"
+        self.E_expr = f"B0 * w0/{self.w} * exp(-{self.r2}/{self.w}**2)"
+        self.phase_no_t = ne.evaluate(f"phase0 - k*{self.r2}/(2*{self.R}) + arctan(z/zR)",
+                                      global_dict=self.__dict__)
+        self.E = ne.evaluate(self.E_expr, global_dict=self.__dict__)
 
+        # Set up correct field amplitude
         if 'W' in field_params:
             self.check_energy()
-        self.check_energy()
 
     def get_rotation(self):
         # Define rotation transforming (0,0,1) -> (kx,ky,kz) for vectors
+        # and (1,0,0) -> e(beta) = e1*cos(beta) + e2*sin(beta)
         self.rotation = Rotation.from_euler('ZYZ', (self.phi,self.theta,self.beta))
         self.rotation_m = self.rotation.as_matrix()
         # Inverse rotation: (kx,ky,kz) -> (0,0,1)
         self.rotation_bwd = self.rotation.inv()
         self.rotation_bwd_m = self.rotation_bwd.as_matrix()
 
-    def transform_coordinates(self):
+    def rotate_coordinates(self):
+        self.get_rotation()
         axes = 'xyz'
         for i,ax in enumerate(axes):
-            self.mx, self.my, self.mz = self.rotation_bwd_m[i]
+            mx, my, mz = self.rotation_bwd_m[i]
             self.__dict__[ax] = ne.evaluate("mx*(x_-x0) + my*(y_-y0) + mz*(z_-z0)",
-                                            local_dict=self.__dict__)
+                                            global_dict=self.__dict__)
             
     def check_energy(self):
         E, B = self.calculate_field(t=0)
-        Ex, Ey, Ez = E
-        Bx, By, Bz = B
-        W = 0.5 * epsilon_0 * c**2 * self.dV * ne.evaluate('sum(Ex**2 + Ey**2 + Ez**2)')
-        W += 0.5/mu_0 * self.dV * ne.evaluate('sum(Bx**2 + By**2 + Bz**2)')
+        W = get_field_energy(E, B, self.dV)
 
         if 'W' in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
-            E_new = self.E0 * np.sqrt(self.W/W)
-            self.E0 = E_new
+            self.E0 *= np.sqrt(self.W/W)
             self.B0 = self.E0 / c
-            self.E = ne.evaluate("B0 * w0/w * exp(-r2/w**2)", global_dict=self.__dict__)
-        else:
-            self.W_num = W
+            self.E = ne.evaluate(self.E_expr, global_dict=self.__dict__)
+            self.W_num = W*self.E0**2
 
     
     def calculate_field(self, t, E_out=None, B_out=None):
         self.psi_plane = ne.evaluate("omega*(t-t0) - k*z", global_dict=self.__dict__)
-        self.phase = ne.evaluate("phase_no_t + psi_plane", global_dict=self.__dict__)
-        Ex = ne.evaluate("E * exp(-(psi_plane/omega)**2/(tau/2)**2) * cos(phase)",
+        self.phase = "(phase_no_t + psi_plane)"
+        Ex = ne.evaluate(f"E * exp(-(psi_plane/omega)**2/(tau/2)**2) * cos({self.phase})",
                          global_dict=self.__dict__)
         Ey, Ez = 0., 0.
         By = Ex
         Bx, Bz = 0., 0.
-
-        # Transform to the original coordinate frame
         if E_out is None:
             E_out = [np.zeros(self.grid_shape) for _ in range(3)]
-        if B_out is None:
             B_out = [np.zeros(self.grid_shape) for _ in range(3)]
         
-        for i,Ei in enumerate(E_out):
+        # Transform to the original coordinate frame
+        for i,(Ei,Bi) in enumerate(zip(E_out,B_out)):
             mx, my, mz = self.rotation_m[i]
             ne.evaluate('Ei + mx*Ex + my*Ey + mz*Ez', out=Ei)
-
-        for i,Bi in enumerate(B_out):
-            mx, my, mz = self.rotation_m[i]
             ne.evaluate('Bi + mx*Bx + my*By + mz*Bz', out=Bi)
+
         return E_out, B_out
         
 
