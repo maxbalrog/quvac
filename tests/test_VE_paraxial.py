@@ -70,10 +70,11 @@ def test_two_paraxial_gaussians():
     # Calculate analytic scalings
     N_signal_th, N_perp_th = get_two_paraxial_scaling(fields_params)
 
+    save_path = 'data/test/2_paraxials.npz'
     # Calculate signal numerically
     field = ExternalField(fields_params, grid)
     vacem = VacuumEmission(field, grid)
-    vacem.calculate_amplitudes(t_grid)
+    vacem.calculate_amplitudes(t_grid, save_path=save_path)
     N_signal_num = vacem.calculate_total_signal()
 
     print(f"Total signal (theory): {N_signal_th:.3f}")

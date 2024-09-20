@@ -9,6 +9,8 @@ TODO:
     - Need a test for two colliding paraxial gaussians
     - Add calculation of total and polarization signal
 '''
+import os
+from pathlib import Path
 
 import numpy as np
 import numexpr as ne
@@ -97,10 +99,12 @@ class VacuumEmission(object):
                 weight = 0.5 if i in end_pts else 1.
                 self.calculate_one_time_step(t, weight=weight)
         else:
-            raise NotImplementedError(f"""integration_method should be one of ['trapezoid'] but 
-                                      you passed {integration_method}""")
+            err_msg  = ("integration_method should be one of ['trapezoid'] but you " 
+                        f"passed {integration_method}")
+            raise NotImplementedError(err_msg)
 
-    def calculate_amplitudes(self, t_grid, integration_method="trapezoid"):
+    def calculate_amplitudes(self, t_grid, integration_method="trapezoid",
+                             save_path=None):
         # Allocate resources
         self.allocate_result_arrays()
         self.allocate_fft()
@@ -115,6 +119,17 @@ class VacuumEmission(object):
         self.S2 = ne.evaluate(f"prefactor * ({self.I_12_expr} + {self.I_21_expr})",
                                global_dict=self.__dict__)
         # Save amplitudes
+        if save_path:
+            self.save_amplitudes(save_path)
+
+    def save_amplitudes(self, save_path):
+        Path(os.path.dirname(save_path)).mkdir(parents=True, exist_ok=True)
+        data = {'x': self.x,
+                'y': self.y,
+                'z': self.z,
+                'S1': self.S1,
+                'S2': self.S2}
+        np.savez(save_path, **data)
 
     def calculate_total_signal(self):
         # Calculate total signal
