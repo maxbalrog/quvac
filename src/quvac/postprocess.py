@@ -8,7 +8,7 @@ Here we provide analyzer classes that calculate from amplitudes:
 import numpy as np
 import numexpr as ne
 from scipy.constants import pi
-from scipy.interpolate import LinearNDInterpolator
+from scipy.interpolate import RegularGridInterpolator
 from astropy.coordinates import cartesian_to_spherical
 
 from quvac.grid import GridXYZ
@@ -57,13 +57,9 @@ def cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None,
     # Find corresponding spherical coordinates of cartesian grid
     sph_ax = cartesian_to_spherical_ax(*xyz_grid.grid)
 
-    # Transform the array and grid to a list of points, they should
-    # have shape (number_of_pts, 3)
-    sph_pts = np.vstack([ax.flatten() for ax in sph_ax]).T
-    arr_pts = arr.flatten()
-
     # Build interpolator
-    arr_interp = LinearNDInterpolator(sph_pts, arr_pts, **interp_kwargs)
+    arr_interp = RegularGridInterpolator(sph_ax, arr, fill_value=0.,
+                                         **interp_kwargs)
 
     # Interpolate data on a desired grid
     arr_sph = arr_interp(*spherical_mesh)

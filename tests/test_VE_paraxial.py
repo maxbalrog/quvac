@@ -76,7 +76,6 @@ def test_two_paraxial_gaussians():
     field = ExternalField(fields_params, grid)
     vacem = VacuumEmission(field, grid)
     vacem.calculate_amplitudes(t_grid, save_path=amplitude_path)
-    # N_signal_num = vacem.calculate_total_signal()
 
     save_path = 'data/test/2_paraxials.npz'
     analyzer = VacuumEmissionAnalyzer(amplitude_path, save_path)
