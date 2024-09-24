@@ -11,12 +11,14 @@ import time
 import resource
 
 import numpy as np
+import pyfftw
 
 from quvac.field.external_field import ExternalField
 from quvac.integrator.vacuum_emission import VacuumEmission
 from quvac.grid_utils import setup_grids
 from quvac.postprocess import VacuumEmissionAnalyzer
-from quvac.utils import read_yaml, write_yaml, format_memory, format_time
+from quvac.utils import (read_yaml, write_yaml, format_memory, format_time,
+                         load_wisdom, save_wisdom)
 
 
 # ini yaml structure
@@ -91,10 +93,12 @@ def parse_args():
                            help="Input yaml file with field and grid params")
     argparser.add_argument("--output", "-o", default=None,
                            help="Path to save simulation data to")
+    argparser.add_argument("--wisdom", default='wisdom/fftw-wisdom',
+                           help="File to save pyfftw-wisdom")
     return argparser.parse_args()
 
 
-def quvac_simulation(ini_file, save_path=None):
+def quvac_simulation(ini_file, save_path=None, wisdom_file=None):
     '''
     Launch a single quvac simulation for given <ini>.yaml file
 
@@ -120,6 +124,10 @@ def quvac_simulation(ini_file, save_path=None):
     grid_params = ini_config["grid"]
     perf_params = ini_config["performance"]
 
+    # Load fftw-wisdom if possible
+    if os.path.exists(wisdom_file):
+        pyfftw.import_wisdom(load_wisdom(wisdom_file))
+
     # Get grids
     grid_xyz, grid_t = setup_grids(fields_params, grid_params)
 
@@ -139,6 +147,9 @@ def quvac_simulation(ini_file, save_path=None):
     analyzer = VacuumEmissionAnalyzer(amplitudes_file, spectra_file)
     analyzer.get_spectra()
     time_postprocess = time.perf_counter()
+
+    # Save gained wisdom (for fftw)
+    save_wisdom(ini_file, wisdom_file)
 
     # Performance estimation
     timings = {
@@ -167,6 +178,4 @@ def quvac_simulation(ini_file, save_path=None):
 
 if __name__ == '__main__':
     args = parse_args()
-    print(args.input)
-    print(args.output)
-    quvac_simulation(args.input, args.output)
+    quvac_simulation(args.input, args.output, args.wisdom)

@@ -2,7 +2,12 @@
 Useful generic utilities
 '''
 
+import os
+from pathlib import Path
+import platform
 import yaml
+
+import pyfftw
 
 
 def read_yaml(yaml_file):
@@ -42,3 +47,27 @@ def format_memory(mem):
         mem /= 1024
         idx += 1
     return f'{mem:.2f} {units[idx]}'
+
+
+def save_wisdom(ini_file, wisdom_file=None, add_host_name=False):
+    if wisdom_file is None:
+        wisdom_path = os.path.dirname(ini_file)
+        if not os.path.exists(wisdom_path):
+            Path(wisdom_path).mkdir(parents=True, exist_ok=True)
+        wisdom_name = 'fftw-wisdom' 
+        if add_host_name:
+            wisdom_name += platform.node() 
+        wisdom_file = os.path.join(wisdom_path, wisdom_name)
+    else:
+        wisdom_path = os.path.dirname(wisdom_file)
+        if not os.path.exists(wisdom_path):
+            Path(wisdom_path).mkdir(parents=True, exist_ok=True)
+    wisdom = pyfftw.export_wisdom()
+    with open(wisdom_file, 'wb') as f:
+        f.write(b'\n'.join(wisdom))
+
+
+def load_wisdom(wisdom_file):
+    with open(wisdom_file, 'rb') as f:
+        wisdom = f.read()
+    return tuple(wisdom.split(b'\n'))
