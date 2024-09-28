@@ -42,13 +42,25 @@ class ExternalField(Field):
             case _:
                 raise NotImplementedError(f"We do not support '{field_type}' field type")
         self.fields.append(field)
+
+    def allocate_buf(self):
+        try:
+            for i in range(3):
+                self.E_out_[i] *= 0.
+                self.B_out_[i] *= 0.
+        except:
+            self.E_out_= [np.zeros(self.grid.grid_shape, dtype=np.complex128) for _ in range(3)]
+            self.B_out_= [np.zeros(self.grid.grid_shape, dtype=np.complex128) for _ in range(3)]
             
     def calculate_field(self, t, E_out=None, B_out=None):
-        E_out_= [np.zeros(E_out[0].shape, dtype=np.complex128) for _ in range(3)]
-        B_out_= [np.zeros(E_out[0].shape, dtype=np.complex128) for _ in range(3)]
+        self.allocate_buf()
         for field in self.fields:
-            field.calculate_field(t, E_out=E_out_, B_out=B_out_)
+            field.calculate_field(t, E_out=self.E_out_, B_out=self.B_out_)
+        if E_out is None:
+            E_out = [np.zeros(self.grid.grid_shape) for _ in range(3)]
+            B_out = [np.zeros(self.grid.grid_shape) for _ in range(3)]
         for i in range(3):
-            E_out[i] += np.real(E_out_[i])
-            B_out[i] += np.real(B_out_[i])
+            E_out[i] += np.real(self.E_out_[i])
+            B_out[i] += np.real(self.B_out_[i])
+        return E_out, B_out
 

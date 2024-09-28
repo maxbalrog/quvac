@@ -71,9 +71,8 @@ class MaxwellField(Field):
         self.allocate_fft()
         for idx in range(3):
             self.Ef[idx] += E[idx]
-
-        for i in range(len(self.Ef)):
-            self.Ef_fftw[i].execute()
+        #for i in range(len(self.Ef)):
+            self.Ef_fftw[idx].execute()
 
         # Calculate a1, a2 coefficients
         self.kx, self.ky, self.kz = self.kmeshgrid
@@ -98,15 +97,20 @@ class MaxwellField(Field):
         for name in to_shift:
             self.__dict__[name] = np.fft.fftshift(self.__dict__[name])
 
-    def get_fourier_fields(self):
-        for i,field in enumerate('EB'):
-            for j,ax in enumerate('xyz'):
-                idx = 3*i + j
-                ne.evaluate(self.__dict__[f'{field}f{ax}_expr'], global_dict=self.__dict__,
-                            out=self.EB_[idx])
+    # def get_fourier_fields(self):
+    #     for i,field in enumerate('EB'):
+    #         for j,ax in enumerate('xyz'):
+    #             idx = 3*i + j
+    #             ne.evaluate(self.__dict__[f'{field}f{ax}_expr'], global_dict=self.__dict__,
+    #                         out=self.EB_[idx])
 
     
     def calculate_field(self, t, E_out=None, B_out=None):
+        if E_out is None:
+            E_out = [np.zeros(self.grid_shape, dtype=np.complex128) for _ in range(3)]
+            B_out = [np.zeros(self.grid_shape, dtype=np.complex128) for _ in range(3)]
+        
+        self.allocate_ifft()
         # Calculate fourier of fields at time t and transform back to 
         # spatial domain
         prefactor = ne.evaluate("exp(-1j*omega*t) * 1j*kabs", global_dict=self.__dict__)
@@ -119,9 +123,6 @@ class MaxwellField(Field):
                              out=self.EB[idx])
                 self.EB_fftw[idx].execute()
         
-        if E_out is None:
-            E_out = [np.zeros(self.grid_shape) for _ in range(3)]
-            B_out = [np.zeros(self.grid_shape) for _ in range(3)]
         norm = self.dVk / (2*pi)**3
         # problem that one should add fields in complex domain?
         for idx,(Ei,Bi) in enumerate(zip(E_out, B_out)):
