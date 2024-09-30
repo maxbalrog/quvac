@@ -52,7 +52,7 @@ class MaxwellField(Field):
         self.Ef_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
                                     direction='FFTW_FORWARD',
                                     flags=('FFTW_MEASURE', ),
-                                    threads=self.nthreads)
+                                    threads=1)
                         for a in self.Ef]
     
     def allocate_ifft(self):
@@ -65,20 +65,24 @@ class MaxwellField(Field):
         self.EB_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
                                     direction='FFTW_BACKWARD',
                                     flags=('FFTW_MEASURE', ),
-                                    threads=self.nthreads)
+                                    threads=1)
                         for a in self.EB]
 
     def get_a12(self, E):
         # Calculate Fourier of initial field profile
-        self.allocate_fft()
+        # self.allocate_fft()
         for idx in range(3):
-            self.Ef[idx] += E[idx]
+            # self.Ef[idx] = pyfftw.builders.fftn(self.Ef[idx], axes=(0,1,2))
+            # self.Ef[idx] += E[idx]
         #for i in range(len(self.Ef)):
+            # self.Ef[idx] = np.fft.fftn(self.Ef[idx], axes=(0,1,2))
             self.Ef_fftw[idx].execute()
 
         # Calculate a1, a2 coefficients
         self.kx, self.ky, self.kz = self.kmeshgrid
-        prefactor = ne.evaluate("where((kx==0)&(ky==0)&(kz==0), 0., dV * exp(1j*omega*t0) / (1j*kabs))",
+        # prefactor = ne.evaluate("where((kx==0)&(ky==0)&(kz==0), 0., dV * exp(1j*omega*t0) / (1j*kabs))",
+        #                         global_dict=self.__dict__)
+        prefactor = ne.evaluate("where((kx==0)&(ky==0)&(kz==0), 0., -1j*dV / kabs)",
                                 global_dict=self.__dict__)
         self.a1 = ne.evaluate(f"prefactor * (e1x*Efx + e1y*Efy + e1z*Efz)",
                               global_dict=self.__dict__)
@@ -87,6 +91,7 @@ class MaxwellField(Field):
 
         # Fix energy
         W_upd = get_field_energy_kspace(self.a1, self.a2, self.kabs, self.dVk)
+        print(W_upd)
         self.a1 *= np.sqrt(self.W/W_upd)
         self.a2 *= np.sqrt(self.W/W_upd)
 
@@ -119,18 +124,24 @@ class MaxwellField(Field):
         # Calculate fourier of fields at time t and transform back to 
         # spatial domain
         # prefactor = ne.evaluate("exp(-1j*omega*t) * 1j*kabs", global_dict=self.__dict__)
-        ne.evaluate("exp(-1j*omega*t)", global_dict=self.__dict__,
+        ne.evaluate("exp(-1j*omega*(t-t0)) * norm_ifft", global_dict=self.__dict__,
                     out=self.prefactor)
         # ne.evaluate("exp(-1j*omega*t) * 1j*kabs", global_dict=self.__dict__,
         #             out=self.prefactor)
-        for i,field in enumerate('EB'):
-            for j,ax in enumerate('xyz'):
-                idx = 3*i + j
-                field_comp = self.EB_[idx]
-                # field_comp = self.__dict__[f'{field}f{ax}_expr']
-                ne.evaluate(f"prefactor * field_comp * norm_ifft", global_dict=self.__dict__,
-                            out=self.EB[idx])
-                self.EB_fftw[idx].execute()
+        for idx in range(6):
+            # field_comp = self.EB_[idx]
+            # field_comp = self.__dict__[f'{field}f{ax}_expr']
+            ne.evaluate(f"prefactor * field_comp", global_dict=self.__dict__ | {'field_comp': self.EB_[idx]},
+                        out=self.EB[idx])
+            self.EB_fftw[idx].execute()
+        # for i,field in enumerate('EB'):
+        #     for j,ax in enumerate('xyz'):
+        #         idx = 3*i + j
+        #         field_comp = self.EB_[idx]
+        #         # field_comp = self.__dict__[f'{field}f{ax}_expr']
+        #         ne.evaluate(f"prefactor * field_comp", global_dict=self.__dict__,
+        #                     out=self.EB[idx])
+        #         self.EB_fftw[idx].execute()
         
         # problem that one should add fields in complex domain?
         for idx,(Ei,Bi) in enumerate(zip(E_out, B_out)):

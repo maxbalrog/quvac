@@ -8,7 +8,7 @@ import numpy as np
 
 from quvac.field.abc import Field
 from quvac.field.paraxial_gaussian import ParaxialGaussianAnalytic
-from quvac.field.maxwell import ParaxialGaussianMaxwell
+from quvac.field.maxwell import ParaxialGaussianMaxwell, ParaxialGaussianMaxwellMultiple
 
 
 class ExternalField(Field):
@@ -36,8 +36,6 @@ class ExternalField(Field):
         if maxwell_params:
             new_params.append(maxwell_params)
 
-        print(new_params)
-
         for field_params in new_params:
             self.setup_field(field_params)
 
@@ -55,8 +53,7 @@ class ExternalField(Field):
             case "paraxial_gaussian_maxwell":
                 field = ParaxialGaussianMaxwell(field_params, self.grid, nthreads=self.nthreads)
             case "maxwell":
-                print('I am here')
-                field = ParaxialGaussianMaxwell(field_params, self.grid, nthreads=self.nthreads)
+                field = ParaxialGaussianMaxwellMultiple(field_params, self.grid, nthreads=self.nthreads)
             case _:
                 raise NotImplementedError(f"We do not support '{field_type}' field type")
         self.fields.append(field)

@@ -40,7 +40,7 @@ class ParaxialGaussianMaxwell(MaxwellField):
             ini_field = ParaxialGaussianAnalytic(param, grid)
             self.t0 = ini_field.t0
             self.W += ini_field.W
-            ini_field.calculate_field(self.t0, E_out=E_ini, mode='complex')
+            ini_field.calculate_field(self.t0, E_out=self.Ef, mode='complex')
 
         # Get a1,a2 coefficients
         self.get_a12(E_ini)
@@ -51,6 +51,35 @@ class ParaxialGaussianMaxwell(MaxwellField):
     def calculate_field(self, t, E_out=None, B_out=None):
         return super().calculate_field(t, E_out, B_out)
 
+
+class ParaxialGaussianMaxwellMultiple(MaxwellField):
+
+    def __init__(self, field_params, grid, nthreads=None):
+        self.grid = grid
+        self.grid.get_k_grid()
+        self.__dict__.update(self.grid.__dict__)
+
+        self.nthreads = nthreads if nthreads else os.cpu_count()
+        print('We enter multiple gaussian')
+
+        # Initialize base class
+        super().__init__()
+        self.allocate_fft()
+
+        self.a1, self.a2 = [pyfftw.zeros_aligned(self.grid_shape,  dtype='complex128')
+                            for _ in range(2)]
+
+        for param in field_params:
+            field = ParaxialGaussianMaxwell(param, grid, nthreads)
+            self.t0 = field.t0
+            self.a1 += field.a1
+            self.a2 += field.a2
+        
+        self.allocate_ifft()
+        self.get_fourier_fields()
+
+    def calculate_field(self, t, E_out=None, B_out=None):
+        return super().calculate_field(t, E_out, B_out)
 
 
         
