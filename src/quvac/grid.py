@@ -23,7 +23,7 @@ class GridXYZ(object):
 
     def get_k_grid(self):
         for i,ax in enumerate('xyz'):
-            self.__dict__[f'k{ax}'] = k = 2.*pi*np.fft.fftfreq(self.grid_shape[i],
+            self.__dict__[f'k{ax}'] = 2.*pi*np.fft.fftfreq(self.grid_shape[i],
                                                                self.dxyz[i])
         self.kgrid = tuple((self.kx, self.ky, self.kz))
         self.dkxkykz = [ax[1]-ax[0] for ax in self.kgrid]

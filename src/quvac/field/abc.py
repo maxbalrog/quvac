@@ -147,8 +147,8 @@ class MaxwellField(Field):
         # problem that one should add fields in complex domain?
         # for idx,(Ei,Bi) in enumerate(zip(E_out, B_out)):
         for idx in range(3):
-            E_out[idx] += self.EB[idx]
-            B_out[idx] += self.EB[3+idx]
+            E_out[idx] += np.fft.fftshift(self.EB[idx])
+            B_out[idx] += np.fft.fftshift(self.EB[3+idx])
             # Ei += np.real(self.EB[idx])*self.norm_ifft
             # Bi += np.real(self.EB[3+idx])*self.norm_ifft
             # Ei += np.real(self.EB[idx])

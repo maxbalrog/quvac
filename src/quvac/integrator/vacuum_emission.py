@@ -13,7 +13,7 @@ import numexpr as ne
 from scipy.constants import pi, c, alpha, m_e, hbar, e
 import pyfftw
 
-from scalene import scalene_profiler
+# from scalene import scalene_profiler
 
 
 BS = m_e**2 * c**2 / (hbar * e) # Schwinger magnetic field
