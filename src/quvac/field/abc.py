@@ -75,7 +75,7 @@ class MaxwellField(Field):
         # self.allocate_fft()
         # self.Ef = [0,0,0]
         for idx in range(3):
-            # self.Ef[idx] = E[idx]
+            # self.Ef[idx] *= self.exp_shift_before_fft
             # self.Ef[idx] = pyfftw.interfaces.numpy_fft.fftn(self.Ef[idx], axes=(0,1,2), norm='backward')
             self.Ef_fftw[idx].execute()
             self.Ef[idx] *= self.exp_shift_fft
@@ -128,13 +128,13 @@ class MaxwellField(Field):
         # ne.evaluate("exp(-1j*omega*t) * 1j*kabs", global_dict=self.__dict__,
         #             out=self.prefactor)
         for idx in range(6):
-            # field_comp = self.EB_[idx]
+            field_comp = self.EB_[idx] #* self.exp_shift_before_ifft
             # field_comp = self.__dict__[f'{field}f{ax}_expr']
-            ne.evaluate(f"prefactor * field_comp", global_dict=self.__dict__ | {'field_comp': self.EB_[idx]},
+            ne.evaluate(f"prefactor * field_comp", global_dict=self.__dict__,
                         out=self.EB[idx])
             self.EB_fftw[idx].execute()
-            self.EB[idx] *= self.norm_ifft
-            # self.EB[idx] *= self.exp_shift_ifft * self.norm_ifft
+            # self.EB[idx] *= self.norm_ifft
+            self.EB[idx] = self.EB[idx] * self.norm_ifft * self.exp_shift_ifft
         # for i,field in enumerate('EB'):
         #     for j,ax in enumerate('xyz'):
         #         idx = 3*i + j

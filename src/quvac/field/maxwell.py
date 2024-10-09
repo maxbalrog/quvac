@@ -29,12 +29,18 @@ class ParaxialGaussianMaxwell(MaxwellField):
         # self.exp_shift = sum([kx[0]*x for kx,x in zip(k_grid, self.xyz)])
         # self.exp_shift = ne.evaluate('exp(-1j*exp_shift)', global_dict=self.__dict__)
 
-        self.exp_shift_fft = sum([kx*x.flatten()[0] for kx,x in zip(self.kmeshgrid, self.xyz)])
+        self.exp_shift_fft = sum([np.fft.fftshift(kx)*x.flatten()[0] for kx,x in zip(self.kmeshgrid, self.xyz)])
         self.exp_shift_fft = ne.evaluate('exp(-1j*exp_shift_fft)', 
                                            global_dict=self.__dict__)
         
-        self.exp_shift_ifft = sum([kx[0]*x for kx,x in zip(k_grid, self.xyz)])
+        self.exp_shift_ifft = sum([kx[0]*np.fft.fftshift(x) for kx,x in zip(k_grid, self.xyz)])
         self.exp_shift_ifft = ne.evaluate('exp(1j*exp_shift_ifft)', 
+                                           global_dict=self.__dict__)
+        
+        self.exp_shift_before_fft = ne.evaluate('exp(-1j*exp_shift_ifft)', 
+                                           global_dict=self.__dict__)
+        
+        self.exp_shift_before_ifft = ne.evaluate('exp(1j*exp_shift_fft)', 
                                            global_dict=self.__dict__)
 
         self.nthreads = nthreads if nthreads else os.cpu_count()
@@ -97,6 +103,9 @@ class ParaxialGaussianMaxwellMultiple(MaxwellField):
             for i in range(3):
                 self.E_ini[i] += field.E_ini[i]
         
+        keys = 'exp_shift_before_ifft exp_shift_ifft'.split()
+        self.__dict__.update({k:v for k,v in field.__dict__.items() 
+                              if k in keys})
         # self.__dict__.update(field.__dict__)
         
         self.allocate_ifft()

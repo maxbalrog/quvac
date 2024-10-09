@@ -123,8 +123,8 @@ def setup_grids(fields_params, grid_params):
     x0, y0, z0 = grid_params['box_xyz']
     Nx, Ny, Nz = grid_params['Nxyz']
     x = np.linspace(-0.5*x0, 0.5*x0, Nx, endpoint=Nx%2)
-    y = np.linspace(-0.5*y0, 0.5*y0, Ny, endpoint=Nx%2)
-    z = np.linspace(-0.5*z0, 0.5*z0, Nz, endpoint=Nx%2)
+    y = np.linspace(-0.5*y0, 0.5*y0, Ny, endpoint=Ny%2)
+    z = np.linspace(-0.5*z0, 0.5*z0, Nz, endpoint=Nz%2)
     grid_xyz = GridXYZ((x, y, z))
 
     t0 = grid_params["box_t"]
