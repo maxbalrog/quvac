@@ -122,7 +122,7 @@ class VacuumEmission(object):
         self.free_resources()
 
         # Results should be in U1_acc and U2_acc
-        prefactor = 1j*np.sqrt(alpha*self.kabs) / (2*pi)**1.5 / 45 / BS**3 * m_e**2 * c**3 / hbar**2
+        prefactor = -1j*np.sqrt(alpha*self.kabs) / (2*pi)**1.5 / 45 / BS**3 * m_e**2 * c**3 / hbar**2
         # Next time need to be careful with f-strings and brackets
         self.S1 = ne.evaluate(f"prefactor * ({self.I_11_expr} - {self.I_22_expr})",
                                global_dict=self.__dict__)
