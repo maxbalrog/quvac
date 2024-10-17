@@ -8,13 +8,9 @@ We specify formulas in natural units ($\hbar = c = 1$) but our code uses SI unit
 
 ## Formalism
 The zero-to-single signal photon transition amplitude to a state with wave vector $k^{\mu}=(\omega,\vec{k})$, with $\omega=|\vec{k}|$, and transverse polarization vector $\epsilon^{\mu}_{(p)}$ is given by
-$$
-S_{p}(\vec{k}) = \frac{\epsilon^{*\mu}_{p}(k)}{\sqrt{2 k^0}} \int d^4 x e^{-ikx} j_{\mu}(x) |_{k^0=|\vec{k}|}
-$$
+$$S_{p}(\vec{k}) = \frac{\epsilon^{*\mu}_{p}(k)}{\sqrt{2 k^0}} \int d^4 x e^{-ikx} j_{\mu}(x) |_{k^0=|\vec{k}|}$$
 where
-$$
-j_{\mu}(x) = 2 \partial^{\nu} \frac{\partial L_{HE}}{\partial F^{\nu\mu}}
-$$
+$$j_{\mu}(x) = 2 \partial^{\nu} \frac{\partial L_{HE}}{\partial F^{\nu\mu}}$$
 is the signal-photon current induced by the macroscopic electromagnetic fields $F^{\mu\nu}$.
 
 The differential number of signal photons is given by
