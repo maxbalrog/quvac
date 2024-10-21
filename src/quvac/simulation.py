@@ -174,7 +174,8 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file=None):
     del field, vacem
 
     # Calculate spectra
-    analyzer = VacuumEmissionAnalyzer(amplitudes_file, spectra_file)
+    analyzer = VacuumEmissionAnalyzer(fields_params, data_path=amplitudes_file,
+                                      save_path=spectra_file)
     analyzer.get_spectra(calculate_spherical=calculate_spherical,
                          calculate_discernible=calculate_discernible)
     time_postprocess = time.perf_counter()
