@@ -4,8 +4,8 @@ Here we provide a comparison between quvac and vacem results
 
 import os
 from pathlib import Path
-import pytest
 
+import pytest
 import numpy as np
 from scipy.constants import c
 

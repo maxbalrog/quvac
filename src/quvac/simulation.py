@@ -139,6 +139,11 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file=None):
     grid_params = ini_config["grid"]
     perf_params = ini_config["performance"]
     
+    # Determine postprocess steps
+    postprocess_params = ini_config.get('postprocess', {})
+    calculate_spherical = postprocess_params.get('calculate_spherical', False)
+    calculate_discernible = postprocess_params.get('calculate_discernible', False)
+    
     # Set up number of threads
     nthreads = perf_params.get('nthreads', os.cpu_count())
     ne.set_num_threads(nthreads)
@@ -169,8 +174,10 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file=None):
     del field, vacem
 
     # Calculate spectra
-    analyzer = VacuumEmissionAnalyzer(amplitudes_file, spectra_file)
-    analyzer.get_spectra()
+    analyzer = VacuumEmissionAnalyzer(fields_params, data_path=amplitudes_file,
+                                      save_path=spectra_file)
+    analyzer.get_spectra(calculate_spherical=calculate_spherical,
+                         calculate_discernible=calculate_discernible)
     time_postprocess = time.perf_counter()
     logger.info("Spectra calculated from amplitudes")
 
