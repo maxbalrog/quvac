@@ -150,9 +150,9 @@ def cluster_gridscan(ini_file, variables_file, save_path=None, wisdom_file=None)
     log_folder = os.path.join(save_path, 'submitit_logs')
     sbatch_params = cluster_params.get('sbatch_params', DEFAULT_SUBMITIT_PARAMS)
     max_jobs = cluster_params.get('max_jobs', 5)
-    executor = submitit.AutoExecutor(folder=log_folder, cluster=cluster,
-                                     slurm_array_parallelism=max_jobs)
+    executor = submitit.AutoExecutor(folder=log_folder, cluster=cluster)
     if cluster == 'slurm':
+        executor.update_parameters(slurm_array_parallelism=max_jobs)
         executor.update_parameters(**sbatch_params)
     print('Submitting jobs...')
     jobs = executor.map_array(quvac_simulation, ini_files)
