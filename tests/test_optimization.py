@@ -1,22 +1,24 @@
 '''
-Here we provide a test for quantum vacuum signal calculator
-with script
+Here we provide a test for oftimization of quvac
+simulations
 '''
 
 import os
 from pathlib import Path
 
+import pytest
 import numpy as np
 from scipy.constants import c
+from ax.service.ax_client import AxClient
 
-from quvac.grid import get_xyz_size, get_t_size
 from quvac.utils import write_yaml
+from quvac.cluster.optimization import gather_trials_data
 
 
-SCRIPT_PATH = 'src/quvac/cluster/gridscan.py'
+SCRIPT_PATH = 'src/quvac/cluster/optimization.py'
 
-
-def test_gridscan():
+@pytest.mark.slow
+def test_optimization():
     # Define field parameters
     tau = 25e-15
     W = 25
@@ -62,6 +64,9 @@ def test_gridscan():
         'field_2': field_2,
     }
 
+    path = 'data/test/test_optimization'
+    Path(path).mkdir(parents=True, exist_ok=True)
+
     ini_data = {
         'fields': fields_params,
         'grid': {
@@ -77,45 +82,46 @@ def test_gridscan():
             'nthreads': 8
         },
         'postprocess': {
-            'calculate_spherical': False,
-            'calculate_discernible': False,
+            'calculate_spherical': True,
+            'calculate_discernible': True,
         },
+        'scales': {
+            
+        },
+        'save_path': path
     }
 
-    beta_arr = [0, 45, 90]
-    variables_data = {
-        'create_grids': True,
-        'fields': {
+    optimization_data = {
+        'name': '2_pulses_beta',
+        'parameters': {
             'field_2': {
-                'beta': [0, 90, 3]
+                'beta': [0, 90]
             }
         },
         'cluster': {
             'cluster': 'local',
-            'max_parallel_jobs': 10,
-        }
+        },
+        'n_trials': 10,
+        'objectives': [['N_total', False]],
     }
 
-    path = 'data/test/test_gridscan'
-    Path(path).mkdir(parents=True, exist_ok=True)
-
-    ini_file = os.path.join(path, 'ini.yaml')
+    ini_file = os.path.join(path, 'ini.yml')
     write_yaml(ini_file, ini_data)
 
-    variables_file = os.path.join(path, 'variables.yaml')
-    write_yaml(variables_file, variables_data)
+    optimization_file = os.path.join(path, 'optimization.yml')
+    write_yaml(optimization_file, optimization_data)
 
     # Launch simulation
-    status = os.system(f"{SCRIPT_PATH} --input {ini_file} --variables {variables_file}")
+    status = os.system(f"{SCRIPT_PATH} --input {ini_file} --optimization {optimization_file}")
     assert status == 0, "Script execution did not finish successfully"
 
-    folders = [f'#field_2:beta_{beta}' for beta in beta_arr]
-    data = []
-    for folder in folders:
-        data_loc = np.load(os.path.join(path, folder, 'spectra.npz'))
-        data.append(data_loc['N_total'])
+    client_json = os.path.join(path, 'experiment.json')
+    ax_client = (AxClient.load_from_json_file(client_json))
+
+    trials_params = gather_trials_data(ax_client, metric_names=['N_total'])
+    betas = [val['field_2:beta'] for val in trials_params.values()]
+    N_total = [val['N_total'] for val in trials_params.values()]
+    beta_max = betas[np.argmax(N_total)]
     
-    err_msg = 'Calculated results do not agree with analytics'
-    assert np.isclose(data[1]/data[0], 130/64, rtol=1e-1), err_msg
-
-
+    err_msg = 'Optimization-found value of beta is not close to the real optimum'
+    assert np.isclose(beta_max, 90., rtol=1e-1), err_msg
