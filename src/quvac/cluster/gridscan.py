@@ -134,10 +134,10 @@ def cluster_gridscan(ini_file, variables_file, save_path=None, wisdom_file=None)
         Path(save_path).mkdir(parents=True, exist_ok=True)
 
     ini_default = read_yaml(ini_file)
-    cluster_params = ini_default.get('cluster', {})
-    if cluster_params:
-        ini_default.pop('cluster')
     variables = read_yaml(variables_file)
+    cluster_params = variables.get('cluster', {})
+    if cluster_params:
+        variables.pop('cluster')
 
     create_grids = variables.get('create_grids', False)
     if 'create_grids' in variables:
@@ -160,7 +160,7 @@ def cluster_gridscan(ini_file, variables_file, save_path=None, wisdom_file=None)
     cluster = cluster_params.get('cluster', 'local')
     log_folder = os.path.join(save_path, 'submitit_logs')
     sbatch_params = cluster_params.get('sbatch_params', DEFAULT_SUBMITIT_PARAMS)
-    max_jobs = cluster_params.get('max_jobs', 5)
+    max_jobs = cluster_params.get('max_parallel_jobs', 5)
     executor = submitit.AutoExecutor(folder=log_folder, cluster=cluster)
     if cluster == 'slurm':
         executor.update_parameters(slurm_array_parallelism=max_jobs)

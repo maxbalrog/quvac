@@ -80,10 +80,6 @@ def test_gridscan():
             'calculate_spherical': False,
             'calculate_discernible': False,
         },
-        'cluster': {
-            'cluster': 'local',
-            'max_jobs': 10,
-        }
     }
 
     beta_arr = [0, 45, 90]
@@ -93,10 +89,14 @@ def test_gridscan():
             'field_2': {
                 'beta': [0, 90, 3]
             }
+        },
+        'cluster': {
+            'cluster': 'local',
+            'max_parallel_jobs': 10,
         }
     }
 
-    path = '../data/test/test_gridscan'
+    path = 'data/test/test_gridscan'
     Path(path).mkdir(parents=True, exist_ok=True)
 
     ini_file = os.path.join(path, 'ini.yaml')
