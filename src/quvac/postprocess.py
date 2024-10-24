@@ -125,7 +125,7 @@ class VacuumEmissionAnalyzer:
                            global_dict=self.__dict__)
         self.N_tot *= self.dVk
     
-    def get_polarization_vector(self, angles, perp_type='optical axis'):
+    def _get_polarization_vector(self, angles, perp_type='optical axis'):
         if perp_type == 'optical axis':
             self.epx, self.epy, self.epz = get_polarization_vector(*angles)
         elif perp_type == 'local axis':
@@ -145,7 +145,7 @@ class VacuumEmissionAnalyzer:
         angles[-1] += pi/2
 
         # get one polarization direction to project on:
-        self.ep = get_polarization_vector(self, angles, perp_type)
+        self.ep = self._get_polarization_vector(angles, perp_type)
         
         # Calculate perp signal
         ep_e1 = "(epx*e1x + epy*e1y + epz*e1z)"
@@ -258,8 +258,8 @@ class VacuumEmissionAnalyzer:
 
         if perp_type:
             angle_keys = 'theta phi beta'.split()
-            angles = [self.fields_params['fields'][f'field_{perp_field_idx}'][key]
-                    for key in angle_keys]
+            angles = [self.fields_params[perp_field_idx][key]
+                      for key in angle_keys]
             self.get_perp_signal(angles, perp_type=perp_type)
 
         if calculate_spherical:
