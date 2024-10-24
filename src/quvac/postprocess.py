@@ -258,7 +258,7 @@ class VacuumEmissionAnalyzer:
 
         if perp_type:
             angle_keys = 'theta phi beta'.split()
-            angles = [self.fields_params[perp_field_idx][key]
+            angles = [self.fields_params[perp_field_idx-1][key]
                       for key in angle_keys]
             self.get_perp_signal(angles, perp_type=perp_type)
 
