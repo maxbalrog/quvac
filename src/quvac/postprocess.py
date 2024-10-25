@@ -148,9 +148,6 @@ class VacuumEmissionAnalyzer:
             self.epx = ne.evaluate('ky*efz - kz*efy')
             self.epy = ne.evaluate('kz*efx - kx*efz')
             self.epz = ne.evaluate('kx*efy - ky*efx')
-            # self.epx = ne.evaluate("e1x*cos(beta) + e2x*sin(beta)", global_dict=self.__dict__)
-            # self.epy = ne.evaluate("e1y*cos(beta) + e2y*sin(beta)", global_dict=self.__dict__)
-            # self.epz = ne.evaluate("e1z*cos(beta) + e2z*sin(beta)", global_dict=self.__dict__)
         return (self.epx, self.epy, self.epz)
 
     def get_perp_signal(self, angles, perp_type='optical axis'):
