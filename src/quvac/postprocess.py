@@ -124,15 +124,33 @@ class VacuumEmissionAnalyzer:
         self.N_tot = ne.evaluate("sum(N_xyz)",
                            global_dict=self.__dict__)
         self.N_tot *= self.dVk
+
+    def get_polarization_from_field(self):
+        field = MaxwellMultiple(self.fields_params, self.grid_xyz)
+        a1, a2 = field.a1, field.a2
+        Ex = ne.evaluate('e1x*a1 + e2x*a2', global_dict=self.__dict__)
+        Ey = ne.evaluate('e1y*a1 + e2y*a2', global_dict=self.__dict__)
+        Ez = ne.evaluate('e1z*a1 + e2z*a2', global_dict=self.__dict__)
+        E = ne.evaluate('sqrt(Ex**2 + Ey**2 + Ez**2)')
+        efx, efy, efz = Ex / E, Ey / E, Ez / E
+        return (efx, efy, efz)
     
     def _get_polarization_vector(self, angles, perp_type='optical axis'):
         if perp_type == 'optical axis':
             self.epx, self.epy, self.epz = get_polarization_vector(*angles)
         elif perp_type == 'local axis':
             beta = angles[-1]
-            self.epx = ne.evaluate("e1x*cos(beta) + e2x*sin(beta)", global_dict=self.__dict__)
-            self.epy = ne.evaluate("e1y*cos(beta) + e2y*sin(beta)", global_dict=self.__dict__)
-            self.epz = ne.evaluate("e1z*cos(beta) + e2z*sin(beta)", global_dict=self.__dict__)
+            efx, efy, efz = self.get_polarization_from_field()
+            kx, ky, kz = [k/self.kabs for k in self.kmeshgrid]
+            kx[0,0,0] = 0.
+            ky[0,0,0] = 0.
+            kz[0,0,0] = 0.
+            self.epx = ne.evaluate('ky*efz - kz*efy')
+            self.epy = ne.evaluate('kz*efx - kx*efz')
+            self.epz = ne.evaluate('kx*efy - ky*efx')
+            # self.epx = ne.evaluate("e1x*cos(beta) + e2x*sin(beta)", global_dict=self.__dict__)
+            # self.epy = ne.evaluate("e1y*cos(beta) + e2y*sin(beta)", global_dict=self.__dict__)
+            # self.epz = ne.evaluate("e1z*cos(beta) + e2z*sin(beta)", global_dict=self.__dict__)
         return (self.epx, self.epy, self.epz)
 
     def get_perp_signal(self, angles, perp_type='optical axis'):
