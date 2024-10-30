@@ -130,37 +130,40 @@ class GaussianAnalytic(ExplicitField):
         self.nu = ne.evaluate('y/w0', global_dict=self.__dict__)
         self.zeta = ne.evaluate('z/zR', global_dict=self.__dict__)
         self.rho = ne.evaluate('xi**2 + nu**2', global_dict=self.__dict__)
-        self.f = ne.evaluate('exp(1j*arctan(zeta))/sqrt(1 + zeta**2)',
+        self.f = ne.evaluate('exp(-1j*arctan(zeta))/sqrt(1 + zeta**2)',
                               global_dict=self.__dict__)
+        for n in range(1,5):
+            self.__dict__[f'f{n}'] = ne.evaluate('1/(1+zeta**2)**(n/2) * exp(1j*n*arctan(zeta))',
+                                                 global_dict=self.__dict__)
 
         self.Ex_terms = {
             0: '1',
-            2: 'eps**2 * f**2 * (xi**2 - f*rho**4/4)',
-            4: ('eps**4 * f**2 * (1/8 - f*rho**2/4 + f**2*rho**2*(xi**2 - rho**2/16) - '
-                  'f**3*rho**4*(xi**2/4 + rho**2/8) + f**4*rho**8/32)')
+            2: 'eps**2 * f2 * (xi**2 - f1*rho**4/4)',
+            4: ('eps**4 * f2 * (1/8 - f1*rho**2/4 + f2*rho**2*(xi**2 - rho**2/16) - '
+                'f3*rho**4*(xi**2/4 + rho**2/8) + f4*rho**8/32)')
         }
         self.Ey_terms = {
             0: '0',
-            2: 'eps**2 * f**2',
-            4: 'eps**4*f**4*rho**2 * (1 - f*rho**2/4)'
+            2: 'eps**2 * f2',
+            4: 'eps**4*f4*rho**2 * (1 - f1*rho**2/4)'
         }
         self.Ez_terms = {
             0: '0',
-            1: 'eps * f',
-            3: 'eps**3 * f**2 * (-0.5 + f*rho**2 - f**2*rho**4/4)',
-            5: ('eps**5 * f**3/8 * (-3 - 3*f*rho**2 + 17*f**2*rho**4/2 - '
-                '3*f**3*rho**6 + f**4*rho**8/4)')
+            1: 'eps * f1',
+            3: 'eps**3 * f2 * (-0.5 + f1*rho**2 - f2*rho**4/4)',
+            5: ('eps**5 * f3 * (-3/8 - 3*f1*rho**2/8 + 17*f2*rho**4/16 - '
+                '3*f3*rho**6/8 + f4*rho**8/32)')
         }
         self.By_terms = {
             0: '1',
-            2: 'eps**2 * f**2*rho**2/2 * (1 - f*rho**2/2)',
-            4: 'eps**4 * f**2/8 * (-1 + 2*f*rho**2 + 5/2*f**2*rho**4 - 2*f**3*rho**6 + f**4*rho**8/4)'
+            2: 'eps**2 * f2*rho**2 * (1/2 - f1*rho**2/4)',
+            4: 'eps**4 * f2 * (-1/8 + f1*rho**2/4 + 5*f2*rho**4/16 - f3*rho**6/4 + f4*rho**8/32)'
         }
         self.Bz_terms = {
             0: '0',
-            1: 'eps * f',
-            3: 'eps**3*f**2/2 * (1 + f*rho**2 - f**2*rho**4/2)',
-            5: 'eps**5*f**3/8 * (3 + 3*f*rho**2 + 3*f**2*rho**4/2 - 2*f**3*rho**6 + f**4*rho**8/4)'
+            1: 'eps * f1',
+            3: 'eps**3*f2 * (1/2 + f1*rho**2/2 - f2*rho**4/4)',
+            5: 'eps**5*f3 * (3/8 + 3*f1*rho**2/8 + 3*f2*rho**4/16 - f3*rho**6/4 + f4*rho**8/32)'
         }
 
     def calculate_ho_orders(self):
@@ -194,20 +197,20 @@ class GaussianAnalytic(ExplicitField):
         self.psi_plane = ne.evaluate("(omega*(t-t0) - k*z)", global_dict=self.__dict__)
         self.phase = "(phase_no_t + psi_plane)"
 
-        Et = ne.evaluate(f"-E * 1.j*exp(-(2.*psi_plane/(omega*tau))**2) * exp(-1.j*{self.phase})",
+        Et = ne.evaluate(f"E * exp(-(2.*psi_plane/(omega*tau))**2) * exp(-1.j*{self.phase})",
                         global_dict=self.__dict__)
         # if mode == 'real':
         #     Et = Et.real
         
         if self.order > 0:
-            self.Ex = ne.evaluate('Et * Ex_ho', global_dict=self.__dict__)
-            self.Ey = ne.evaluate('Et * Ey_ho * xi * nu', global_dict=self.__dict__)
-            self.Ez = ne.evaluate('1j*Et * Ez_ho * xi', global_dict=self.__dict__)
+            self.Ex = ne.evaluate('1j*Et * Ex_ho', global_dict=self.__dict__)
+            self.Ey = ne.evaluate('1j*Et * Ey_ho * xi * nu', global_dict=self.__dict__)
+            self.Ez = ne.evaluate('Et * Ez_ho * xi', global_dict=self.__dict__)
             self.Bx = 0.
-            self.By = ne.evaluate('Et * By_ho', global_dict=self.__dict__)
-            self.Bz = ne.evaluate('1j*Et * Bz_ho * nu', global_dict=self.__dict__)
+            self.By = ne.evaluate('1j*Et * By_ho', global_dict=self.__dict__)
+            self.Bz = ne.evaluate('Et * Bz_ho * nu', global_dict=self.__dict__)
         else:
-            self.Ex = self.By = Et.copy()
+            self.Ex = self.By = 1j*Et.copy()
             self.Ey = self.Ez = self.Bx = self.Bz = 0.
 
         if mode == 'real':
