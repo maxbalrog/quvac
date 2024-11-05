@@ -129,11 +129,11 @@ class GaussianAnalytic(ExplicitField):
         self.xi = ne.evaluate('x/w0', global_dict=self.__dict__)
         self.nu = ne.evaluate('y/w0', global_dict=self.__dict__)
         self.zeta = ne.evaluate('z/zR', global_dict=self.__dict__)
-        self.rho = ne.evaluate('xi**2 + nu**2', global_dict=self.__dict__)
+        self.rho = ne.evaluate('sqrt(xi**2 + nu**2)', global_dict=self.__dict__)
         self.f = ne.evaluate('exp(-1j*arctan(zeta))/sqrt(1 + zeta**2)',
                               global_dict=self.__dict__)
         for n in range(1,5):
-            self.__dict__[f'f{n}'] = ne.evaluate('1/(1+zeta**2)**(n/2) * exp(1j*n*arctan(zeta))',
+            self.__dict__[f'f{n}'] = ne.evaluate('1/(1+zeta**2)**(n/2) * exp(-1j*n*arctan(zeta))',
                                                  global_dict=self.__dict__)
 
         self.Ex_terms = {
@@ -179,7 +179,6 @@ class GaussianAnalytic(ExplicitField):
                                                         if order <= self.order])
             self.__dict__[f'{name}_ho'] = ne.evaluate(self.__dict__[f'{name}_expr'],
                                                       global_dict=self.__dict__)
-            print(self.__dict__[f'{name}_expr'])
                  
     def check_energy(self):
         E, B = self.calculate_field(t=0)
