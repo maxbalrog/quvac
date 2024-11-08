@@ -59,4 +59,40 @@ class ExternalField(Field):
         for field in self.fields:
             E_out, B_out = field.calculate_field(t, E_out=E_out, B_out=B_out)
         return E_out, B_out
+    
+
+class ProbePumpField(Field):
+    '''
+    Class for splitting fields into probe and pump
+
+    Parameters
+    ----------
+    fields_params: list of dicts (field_params)
+        External fields
+    grid: (1d-np.array, 1d-np.array, 1d-np.array)
+        xyz spatial grid to calculate fields on 
+    '''
+    def __init__(self, fields_params, grid, probe_pump_idx=None, nthreads=None):
+        if not probe_pump_idx:
+            probe_pump_idx = {
+                'probe': [0],
+                'pump': [1]
+            }
+
+        self.grid = grid
+        self.grid.get_k_grid()
+
+        self.nthreads = nthreads if nthreads else os.cpu_count()
+
+        probe_params = [fields_params[idx] for idx in probe_pump_idx['probe']]
+        pump_params = [fields_params[idx] for idx in probe_pump_idx['pump']]
+
+        self.probe_field = ExternalField(probe_params, grid, nthreads=nthreads)
+        self.pump_field = ExternalField(pump_params, grid, nthreads=nthreads)
+            
+    def calculate_probe_pump_fields(self, t, E_probe=None, B_probe=None,
+                                    E_pump=None, B_pump=None):
+        self.probe_field.calculate_field(t, E_out=E_probe, B_out=B_probe)
+        self.pump_field.calculate_field(t, E_out=E_pump, B_out=B_pump)
+        return (E_probe, B_probe), (E_pump, B_pump)
 

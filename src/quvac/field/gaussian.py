@@ -1,8 +1,4 @@
 '''This script implements analytic expression for paraxial gaussian'''
-'''
-TODO:
-    - Add next order paraxial Gaussians (???)
-'''
 
 import numpy as np
 import numexpr as ne
