@@ -139,7 +139,7 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
     if isinstance(fields_params, dict):
         fields_params = list(fields_params.values())
     grid_params = ini_config["grid"]
-    perf_params = ini_config["performance"]
+    perf_params = ini_config.get("performance", {})
 
     # Determine integrator type
     integrator_params = ini_config.get('integrator', {})
