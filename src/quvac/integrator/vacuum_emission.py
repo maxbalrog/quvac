@@ -30,10 +30,9 @@ class VacuumEmission(object):
     '''
     def __init__(self, field, grid, nthreads=None, channels=False):
         self.field = field
-        self.grid = grid
-        self.grid.get_k_grid()
+        self.grid_xyz = grid
         # Update local dict with variables from GridXYZ class
-        self.__dict__.update(self.grid.__dict__)
+        self.__dict__.update(self.grid_xyz.__dict__)
         self.channels = channels
 
         self.omega = self.kabs*c

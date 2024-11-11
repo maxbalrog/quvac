@@ -65,9 +65,9 @@ class GaussianAnalytic(ExplicitField):
             self.E0 = 1.e10
 
         # Define grid variables
-        self.grid = grid
+        self.grid_xyz = grid
         grid_keys = 'grid_shape xyz dV'.split()
-        self.__dict__.update({k:v for k,v in self.grid.__dict__.items() 
+        self.__dict__.update({k:v for k,v in self.grid_xyz.__dict__.items() 
                               if k in grid_keys})
         
         # Define additional field variables

@@ -167,6 +167,7 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
 
     # Get grids
     grid_xyz, grid_t = setup_grids(fields_params, grid_params)
+    grid_xyz.get_k_grid()
     logger.info("Grids are created")
 
     # Field setup

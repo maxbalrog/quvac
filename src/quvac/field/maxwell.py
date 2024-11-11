@@ -26,10 +26,8 @@ class MaxwellField(Field):
     equations 
     '''
     def __init__(self, grid):
-        self.grid_obj = grid
-        if not self.grid_obj.k_grid_calculated:
-            self.grid_obj.get_k_grid()
-        self.__dict__.update(self.grid_obj.__dict__)
+        self.grid_xyz = grid
+        self.__dict__.update(self.grid_xyz.__dict__)
 
         self.omega = self.kabs*c
         self.norm_ifft = self.dVk / (2.*pi)**3
@@ -98,7 +96,7 @@ class MaxwellMultiple(MaxwellField):
         field_type = field_params['field_type']
         if field_type in SPATIAL_MODEL_FIELDS:
             cls = SPATIAL_MODEL_FIELDS[field_type]
-            ini_field = cls(field_params, self.grid_obj)
+            ini_field = cls(field_params, self.grid_xyz)
             self.t0 = ini_field.t0
             a1, a2 = ini_field.get_a12(ini_field.t0)
         return a1, a2
