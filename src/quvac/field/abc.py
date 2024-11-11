@@ -27,10 +27,8 @@ class ExplicitField(Field):
     every time step the formula is called to calculate the fields
     '''
     def __init__(self, grid):
-        self.grid_obj = grid
-        if not self.grid_obj.k_grid_calculated:
-            self.grid_obj.get_k_grid()
-        self.__dict__.update(self.grid_obj.__dict__)
+        self.grid_xyz = grid
+        self.__dict__.update(self.grid_xyz.__dict__)
 
         # Define FFT shifts
         k_grid = [np.fft.fftshift(kx) for kx in self.kgrid]

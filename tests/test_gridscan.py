@@ -7,10 +7,9 @@ import os
 from pathlib import Path
 
 import numpy as np
-from scipy.constants import c
 
-from quvac.grid import get_xyz_size, get_t_size
-from quvac.utils import write_yaml
+from quvac.utils import read_yaml, write_yaml
+from config import DEFAULT_CONFIG_PATH
 
 
 SCRIPT_PATH = 'src/quvac/cluster/gridscan.py'
@@ -18,69 +17,7 @@ SCRIPT_PATH = 'src/quvac/cluster/gridscan.py'
 
 def test_gridscan():
     # Define field parameters
-    tau = 25e-15
-    W = 25
-    lam = 0.8e-6
-    w01 = 1*lam
-    w02 = 1*lam
-    theta = 180
-    beta = 90
-
-    mode = 'maxwell'
-
-    # Define fields
-    field_1 = {
-        "field_type": f"paraxial_gaussian_{mode}",
-        "focus_x": [0.,0.,0.],
-        "focus_t": 0.,
-        "theta": 0,
-        "phi": 0,
-        "beta": 0,
-        "lam": lam,
-        "w0": w01,
-        "tau": tau,
-        "W": W,
-        "phase0": 0,
-    }
-
-    field_2 = {
-        "field_type": f"paraxial_gaussian_{mode}",
-        "focus_x": [0.,0.,0.],
-        "focus_t": 0.,
-        "theta": theta,
-        "phi": 0,
-        "beta": beta,
-        "lam": lam,
-        "w0": w02,
-        "tau": tau,
-        "W": W,
-        "phase0": 0,
-    }
-
-    fields_params = {
-        'field_1': field_1,
-        'field_2': field_2,
-    }
-
-    ini_data = {
-        'fields': fields_params,
-        'grid': {
-            'mode': 'dynamic',
-            'collision_geometry': 'z',
-            'transverse_factor': 15,
-            'longitudinal_factor': 6,
-            'time_factor': 4,
-            'spatial_resolution': 1,
-            'time_resolution': 1,
-        },
-        'performance': {
-            'nthreads': 8
-        },
-        'postprocess': {
-            'calculate_spherical': False,
-            'calculate_discernible': False,
-        },
-    }
+    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
 
     beta_arr = [0, 45, 90]
     variables_data = {

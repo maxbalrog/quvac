@@ -1,0 +1,1 @@
+DEFAULT_CONFIG_PATH = 'tests/default_config.yml'

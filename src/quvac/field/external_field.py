@@ -25,8 +25,7 @@ class ExternalField(Field):
     '''
     def __init__(self, fields_params, grid, nthreads=None):
         self.fields = []
-        self.grid = grid
-        self.grid.get_k_grid()
+        self.grid_xyz = grid
 
         self.nthreads = nthreads if nthreads else os.cpu_count()
 
@@ -48,9 +47,9 @@ class ExternalField(Field):
 
         match field_type:
             case "paraxial_gaussian_analytic":
-                field = GaussianAnalytic(field_params, self.grid)
+                field = GaussianAnalytic(field_params, self.grid_xyz)
             case "maxwell":
-                field = MaxwellMultiple(field_params, self.grid, nthreads=self.nthreads)
+                field = MaxwellMultiple(field_params, self.grid_xyz, nthreads=self.nthreads)
             case _:
                 raise NotImplementedError(f"We do not support '{field_type}' field type")
         self.fields.append(field)
@@ -78,9 +77,6 @@ class ProbePumpField(Field):
                 'probe': [0],
                 'pump': [1]
             }
-
-        self.grid = grid
-        self.grid.get_k_grid()
 
         self.nthreads = nthreads if nthreads else os.cpu_count()
 
