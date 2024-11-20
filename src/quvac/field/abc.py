@@ -27,14 +27,21 @@ class Field(ABC):
 
 class ExplicitField(Field):
     '''
-    For such fields analytic formula is known for all time steps,
-    every time step the formula is called to calculate the fields
+    For such fields analytic formula is known for all time steps.
+    One time step (e.g., focus at t=0) can serve as model field
+    for the calculation of Maxwell coefficients and Maxwell propagation
+    to other time steps
+
+    Parameters:
+    -----------
+    grid: quvac.grid.GridXYZ
+        spatial and spectral grid
     '''
     def __init__(self, grid):
         self.grid_xyz = grid
         self.__dict__.update(self.grid_xyz.__dict__)
 
-        # Define FFT shifts
+        # Define FFT shift
         k_grid = [np.fft.fftshift(kx) for kx in self.kgrid]
         kmeshgrid_shift = np.meshgrid(*k_grid, indexing='ij', sparse=True)
         exp_shift_after_fft = sum([(kx-kx.flatten()[0])*x[0] 
@@ -44,7 +51,6 @@ class ExplicitField(Field):
     def allocate_fft(self):
         self.Ef = [pyfftw.zeros_aligned(self.grid_shape,  dtype='complex128')
                    for _ in range(3)]
-        self.Efx, self.Efy, self.Efz = self.Ef
         # pyfftw scheme
         self.Ef_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
                                     direction='FFTW_FORWARD',
@@ -62,7 +68,7 @@ class ExplicitField(Field):
             self.Ef[idx] *= self.exp_shift_after_fft
 
         # Calculate a1, a2 coefficients
-        self.Efx, self.Efy, self.Efz = self.Ef
+        Efx, Efy, Efz = self.Ef
 
         self.a1 = ne.evaluate(f"dV * (e1x*Efx + e1y*Efy + e1z*Efz)",
                               global_dict=self.__dict__)
@@ -78,11 +84,10 @@ class ExplicitField(Field):
         self.a2 *= np.sqrt(self.W/W_upd)
 
         W_corrected = get_field_energy_kspace(self.a1, self.a2, self.kabs, self.dVk, 
-                                        mode='without 1/k')
+                                              mode='without 1/k')
         logger.info(f'    Energy after "correction":          {W_corrected:.3f} J')
 
-        del self.Ef, self.Ef_fftw, self.Efx, self.Efy, self.Efz
-
+        del self.Ef, self.Ef_fftw
         return self.a1, self.a2
 
 

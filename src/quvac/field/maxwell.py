@@ -26,7 +26,12 @@ class MaxwellField(Field):
     For such fields the initial field distribution (spectral coefficients)
     at a certain time step is given with analytic expression or from file.
     For later time steps the field is propagated according to linear Maxwell 
-    equations 
+    equations
+
+    Parameters:
+    -----------
+    grid: quvac.grid.GridXYZ
+        spatial and spectral grid
     '''
     def __init__(self, grid):
         self.grid_xyz = grid
@@ -39,9 +44,9 @@ class MaxwellField(Field):
             self.__dict__[f'Bf{ax}_expr'] = f"(e2{ax}*a1 - e1{ax}*a2)"
 
     def allocate_ifft(self):
-        self.EB = [pyfftw.zeros_aligned(self.grid_shape,  dtype='complex128')
+        self.EB = [pyfftw.zeros_aligned(self.grid_shape, dtype='complex128')
                    for _ in range(6)]
-        self.EB_ = [pyfftw.zeros_aligned(self.grid_shape,  dtype='complex128')
+        self.EB_ = [pyfftw.zeros_aligned(self.grid_shape, dtype='complex128')
                    for _ in range(6)]
         # pyfftw scheme
         self.EB_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
@@ -64,11 +69,14 @@ class MaxwellField(Field):
         
         # Calculate fourier of fields at time t and transform back to 
         # spatial domain
+        # ========================================================================
         prefactor = ne.evaluate("exp(-1.j*omega*(t-t0))", global_dict=self.__dict__)
         for idx in range(6):
             ne.evaluate(f"prefactor * EB", global_dict={'EB': self.EB_[idx]},
                         out=self.EB[idx])
             self.EB_fftw[idx].execute()
+        # ========================================================================
+
         
         for idx in range(3):
             E_out[idx] += self.EB[idx] * self.norm_ifft
