@@ -3,6 +3,7 @@ This script provides basic linear Maxwell propagation class
 and a particular implementation of GaussianMaxwell
 '''
 import logging
+import os
 
 import numpy as np
 import numexpr as ne
@@ -33,9 +34,11 @@ class MaxwellField(Field):
     grid: quvac.grid.GridXYZ
         spatial and spectral grid
     '''
-    def __init__(self, grid):
+    def __init__(self, grid, nthreads=None):
         self.grid_xyz = grid
         self.__dict__.update(self.grid_xyz.__dict__)
+
+        self.nthreads = nthreads if nthreads else os.cpu_count()
 
         self.c = c
         self.norm_ifft = self.dVk / (2.*pi)**3
@@ -55,7 +58,7 @@ class MaxwellField(Field):
         self.EB_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
                                     direction='FFTW_BACKWARD',
                                     flags=('FFTW_MEASURE', ),
-                                    threads=1)
+                                    threads=self.nthreads)
                         for a in self.EB]
 
     def calculate_field(self, t, E_out=None, B_out=None):
@@ -71,8 +74,7 @@ class MaxwellField(Field):
         # Calculate fourier of fields at time t and transform back to 
         # spatial domain
         for idx in range(6):
-            expr = self.EB_expr[idx]
-            ne.evaluate(f"{expr}", global_dict=self.__dict__, out=self.EB[idx])
+            ne.evaluate(self.EB_expr[idx], global_dict=self.__dict__, out=self.EB[idx])
             self.EB_fftw[idx].execute()
             
             if idx < 3:
@@ -97,7 +99,7 @@ class MaxwellMultiple(MaxwellField):
         number of threads to use for pyfftw
     '''
     def __init__(self, fields, grid, nthreads=None):
-        super().__init__(grid)
+        super().__init__(grid, nthreads)
 
         self.a1, self.a2 = [pyfftw.zeros_aligned(self.grid_shape,  dtype='complex128')
                             for _ in range(2)]

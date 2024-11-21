@@ -7,13 +7,12 @@ It is planned to add support for two versions:
 
 import os
 from pathlib import Path
+import time
 
 import numpy as np
 import numexpr as ne
 from scipy.constants import pi, c, alpha, m_e, hbar, e
 import pyfftw
-
-# from scalene import scalene_profiler
 
 
 BS = m_e**2 * c**2 / (hbar * e) # Schwinger magnetic field
@@ -23,10 +22,15 @@ class VacuumEmission(object):
     '''
     Calculator of Vacuum Emission amplitude from given fields
 
-    Field parameters
-    ----------------
+    Parameters
+    ----------
     field: quvac.Field
         External fields
+    grid: quvac.grid.GridXYZ
+        spatial and spectral grid
+    channels: bool
+        Whether to calculate a particular channel in vacuum emission
+        amplitude
     '''
     def __init__(self, field, grid, nthreads=None, channels=False):
         self.field = field
@@ -86,7 +90,7 @@ class VacuumEmission(object):
         self.tmp_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
                                     direction='FFTW_FORWARD',
                                     flags=('FFTW_MEASURE', ),
-                                    threads=1)
+                                    threads=self.nthreads)
                         for a in self.tmp]
     
     def free_resources(self):
@@ -123,7 +127,8 @@ class VacuumEmission(object):
                 self.tmp_fftw[i].execute()
                 U = self.tmp[i]
                 ne.evaluate(f"U{idx+1}_acc_{ax[i]} + U*exp(1j*kabs*c*t)*dt*weight*dV",
-                            global_dict=self.__dict__, out=self.__dict__[f"U{idx+1}_acc_{ax[i]}"])
+                            global_dict=self.__dict__,
+                            out=self.__dict__[f"U{idx+1}_acc_{ax[i]}"])
 
     def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
         self.dt = t_grid[1] - t_grid[0]
@@ -143,11 +148,15 @@ class VacuumEmission(object):
         self.allocate_result_arrays()
         self.allocate_fft()
 
+        time_integral_start = time.perf_counter()
         self.calculate_time_integral(t_grid, integration_method)
+        time_integral_end = time.perf_counter()
+        time_integral = time_integral_end - time_integral_start
         self.free_resources()
 
         # Results should be in U1_acc and U2_acc
-        prefactor = -1j*np.sqrt(alpha*self.kabs) / (2*pi)**1.5 / 45 / BS**3 * m_e**2 * c**3 / hbar**2
+        dims = 1 / BS**3 * m_e**2 * c**3 / hbar**2
+        prefactor = -1j*np.sqrt(alpha*self.kabs) / (2*pi)**1.5 / 45 * dims
         # Next time need to be careful with f-strings and brackets
         self.S1 = ne.evaluate(f"prefactor * ({self.I_11_expr} - {self.I_22_expr})",
                                global_dict=self.__dict__)
@@ -156,6 +165,7 @@ class VacuumEmission(object):
         # Save amplitudes
         if save_path:
             self.save_amplitudes(save_path)
+        return time_integral
 
     def save_amplitudes(self, save_path):
         Path(os.path.dirname(save_path)).mkdir(parents=True, exist_ok=True)

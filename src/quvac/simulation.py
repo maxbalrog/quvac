@@ -16,12 +16,12 @@ import pyfftw
 
 from quvac.log import (simulation_start_str, simulation_end_str,
                        get_grid_params, get_performance_stats,
-                       get_postprocess_info)
+                       get_postprocess_info, test_run_str)
 from quvac.field.external_field import ExternalField, ProbePumpField
 from quvac.integrator.vacuum_emission import VacuumEmission
 from quvac.grid import setup_grids
 from quvac.postprocess import VacuumEmissionAnalyzer
-from quvac.utils import read_yaml, load_wisdom, save_wisdom
+from quvac.utils import read_yaml, load_wisdom, save_wisdom, format_time
 
 
 logger = logging.getLogger('simulation')
@@ -113,16 +113,23 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
     
     # Determine postprocess steps
     postprocess_params = ini_config.get('postprocess', {})
-    calculate_spherical = postprocess_params.get('calculate_spherical', False)
-    spherical_params = postprocess_params.get('spherical_params', {})
-    calculate_discernible = postprocess_params.get('calculate_discernible', False)
-    perp_type = postprocess_params.get('perp_polarization_type', None)
-    perp_field_idx = postprocess_params.get('perp_field_idx', 1)
+    do_postprocess = True if postprocess_params else False
+    if do_postprocess:
+        calculate_spherical = postprocess_params.get('calculate_spherical', False)
+        spherical_params = postprocess_params.get('spherical_params', {})
+        calculate_discernible = postprocess_params.get('calculate_discernible', False)
+        perp_type = postprocess_params.get('perp_polarization_type', None)
+        perp_field_idx = postprocess_params.get('perp_field_idx', 1)
     
     # Set up number of threads
     nthreads = perf_params.get('nthreads', os.cpu_count())
     ne.set_num_threads(nthreads)
-    pyfftw.config.NUM_THREADS = nthreads
+    nthreads = 1
+    # pyfftw.config.NUM_THREADS = nthreads
+
+    # Check if it's a test run to plan resources
+    test_run = perf_params.get('test_run', False)
+    test_timesteps = perf_params.get('test_timesteps', 5)
 
     # Load fftw-wisdom if possible
     if os.path.exists(wisdom_file):
@@ -134,6 +141,13 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
     grid_print = get_grid_params(grid_xyz, grid_t)
     logger.info(grid_print)
     logger.info("MILESTONE: Grids are created\n")
+
+    # Shortet time grid for the test run
+    if test_run:
+        expected_timesteps = len(grid_t)
+        grid_t = grid_t[:test_timesteps]
+        do_postprocess = False
+        logger.info(f'Performing test run for {test_timesteps} timesteps\n')
 
     # Field setup
     logger.info('Field constructor:\n'
@@ -157,9 +171,9 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
                        f'    Probe idx: {probe_pump['probe']}\n'
                        f'    Pump  idx: {probe_pump['pump']}')
     logger.info(log_message)
-    vacem = VacuumEmission(field, grid_xyz, nthreads, channels=channels)
+    vacem = VacuumEmission(field, grid_xyz, nthreads=nthreads, channels=channels)
     time_vacem_setup = time.perf_counter()
-    vacem.calculate_amplitudes(grid_t, save_path=amplitudes_file)
+    time_integral = vacem.calculate_amplitudes(grid_t, save_path=amplitudes_file)
     time_amplitudes = time.perf_counter()
     maxrss_amplitudes = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     logger.info('MILESTONE: Amplitudes are calculated')
@@ -167,17 +181,18 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
     del field, vacem
 
     # Calculate spectra
-    postprocess_print = get_postprocess_info(postprocess_params)
-    logger.info(postprocess_print)
-    analyzer = VacuumEmissionAnalyzer(fields_params, data_path=amplitudes_file,
-                                      save_path=spectra_file)
-    analyzer.get_spectra(perp_field_idx=perp_field_idx,
-                         perp_type=perp_type,
-                         calculate_spherical=calculate_spherical,
-                         spherical_params=spherical_params,
-                         calculate_discernible=calculate_discernible)
+    if do_postprocess:
+        postprocess_print = get_postprocess_info(postprocess_params)
+        logger.info(postprocess_print)
+        analyzer = VacuumEmissionAnalyzer(fields_params, data_path=amplitudes_file,
+                                        save_path=spectra_file)
+        analyzer.get_spectra(perp_field_idx=perp_field_idx,
+                            perp_type=perp_type,
+                            calculate_spherical=calculate_spherical,
+                            spherical_params=spherical_params,
+                            calculate_discernible=calculate_discernible)
+        logger.info('MILESTONE: Spectra are calculated from amplitudes')
     time_postprocess = time.perf_counter()
-    logger.info('MILESTONE: Spectra are calculated from amplitudes')
 
     # Save gained wisdom (for fftw)
     save_wisdom(ini_file, wisdom_file)
@@ -208,6 +223,17 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
     perf_print = get_performance_stats(perf_stats)
     print(perf_print)
     logger.info(perf_print)
+
+    if test_run:
+        time_overhead = time_amplitudes - time_field_setup - time_integral
+        time_per_iteration = time_integral / len(grid_t)
+        expected_time = time_per_iteration * expected_timesteps
+        time_total = time_overhead + expected_time
+        test_run_str_print = test_run_str.format(format_time(time_per_iteration),
+                                                 format_time(time_overhead),
+                                                 format_time(time_total))
+        logger.info(test_run_str_print)
+        print(test_run_str_print)
 
     print("Simulation finished!")
 

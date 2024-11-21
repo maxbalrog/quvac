@@ -5,8 +5,6 @@ participating fields in one interface
 import os
 import logging
 
-import numpy as np
-
 from quvac.field.abc import Field
 from quvac.field.gaussian import GaussianAnalytic
 from quvac.field.maxwell import MaxwellMultiple
@@ -20,8 +18,8 @@ class ExternalField(Field):
     Class to unite several participating fields under
     one interface
 
-    Parameters
-    ----------
+    Parameters:
+    -----------
     fields_params: list of dicts (field_params)
         External fields
     grid: (1d-np.array, 1d-np.array, 1d-np.array)
@@ -72,12 +70,15 @@ class ProbePumpField(Field):
     '''
     Class for splitting fields into probe and pump
 
-    Parameters
-    ----------
+    Parameters:
+    -----------
     fields_params: list of dicts (field_params)
         External fields
     grid: (1d-np.array, 1d-np.array, 1d-np.array)
-        xyz spatial grid to calculate fields on 
+        xyz spatial grid to calculate fields on
+    probe_pump_idx: dict
+        Required keys: probe, pump
+        Specifies which fields are pump and probe
     '''
     def __init__(self, fields_params, grid, probe_pump_idx=None, nthreads=None):
         if not probe_pump_idx:
