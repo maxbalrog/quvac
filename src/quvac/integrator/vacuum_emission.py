@@ -135,7 +135,8 @@ class VacuumEmission(object):
         if integration_method == "trapezoid":
             end_pts = (0,len(t_grid)-1)
             for i,t in enumerate(t_grid):
-                weight = 0.5 if i in end_pts else 1.
+                # weight = 0.5 if i in end_pts else 1.
+                weight = 1
                 self.calculate_one_time_step(t, weight=weight)
         else:
             err_msg  = ("integration_method should be one of ['trapezoid'] but you " 

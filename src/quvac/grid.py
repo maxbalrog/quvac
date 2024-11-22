@@ -250,8 +250,14 @@ def setup_grids(fields_params, grid_params):
     z = np.linspace(-0.5*z0, 0.5*z0, Nz, endpoint=Nz%2)
     grid_xyz = GridXYZ((x, y, z))
 
-    t0 = grid_params["box_t"]
     Nt = grid_params["Nt"]
-    Nt += int(1 - Nt%2)
-    grid_t = np.linspace(-0.5*t0, 0.5*t0, Nt, endpoint=True)
+    box_t = grid_params["box_t"]
+    # Allow non-symmetric time-grids
+    if isinstance(box_t, float):
+        Nt += int(1 - Nt%2)
+        t0 = box_t
+        grid_t = np.linspace(-0.5*t0, 0.5*t0, Nt, endpoint=True)
+    else:
+        t_start, t_end = box_t
+        grid_t = np.linspace(t_start, t_end, Nt, endpoint=True)
     return grid_xyz, grid_t

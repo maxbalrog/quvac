@@ -29,6 +29,23 @@ Total:                     {:>15s}
 ====================================================
 '''
 
+# timings for parallel
+performance_parallel_str = '''
+Timings:
+====================================================
+Run jobs:                  {:>15s}
+Postprocess:               {:>15s}
+----------------------------------------------------
+Total:                     {:>15s}
+====================================================
+
+Memory (max usage):
+====================================================
+Running jobs:              {:>15s}
+Total:                     {:>15s}
+====================================================
+'''
+
 # grid params
 grid_str = '''
 Grid:
@@ -139,4 +156,21 @@ def get_performance_stats(perf_stats):
                                         timings['total'],
                                         memory['maxrss_amplitudes'],
                                         memory['maxrss_total'])
+    return perf_print 
+
+
+def get_parallel_performance_stats(perf_stats):
+    timings = perf_stats['timings']
+    timings = {
+        'jobs': timings['jobs']-timings['start'],
+        'postprocess': timings['postprocess']-timings['jobs'],
+        'total': timings['postprocess']-timings['start'],
+    }
+    timings = {k: format_time(t) for k,t in timings.items()}
+    memory = {k: format_memory(m) for k,m in perf_stats['memory'].items()}
+    perf_print = performance_parallel_str.format(timings['jobs'],
+                                                timings['postprocess'],
+                                                timings['total'],
+                                                memory['maxrss_jobs'],
+                                                memory['maxrss_total'])
     return perf_print 
