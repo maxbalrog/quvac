@@ -49,7 +49,7 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs,
     for idx in range(n_jobs):
         idx_start, idx_end = Nt_per_job*idx, Nt_per_job*(idx+1)-1
         Nt = Nt_per_job
-        if (n_jobs-1) == idx:
+        if (n_jobs-1) == idx and n_jobs > 1:
             idx_end += 1
             Nt += 1
         box_t = [float(grid_t[idx_start]), float(grid_t[idx_end])]
