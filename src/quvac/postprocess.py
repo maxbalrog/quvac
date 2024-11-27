@@ -4,14 +4,15 @@ Here we provide analyzer classes that calculate from amplitudes:
     - Polarization sensitive signal
     - Discernible signal
 '''
+import os
 import logging
 import warnings
 
 import numpy as np
 import numexpr as ne
 from scipy.constants import pi, c, hbar, epsilon_0
-from scipy.interpolate import RegularGridInterpolator
 from scipy.integrate import trapezoid
+from scipy.ndimage import map_coordinates
 
 from quvac.log import sph_interp_warn
 from quvac.grid import GridXYZ, get_pol_basis
@@ -30,8 +31,17 @@ def get_polarization_vector(theta, phi, beta):
 def sph2cart(r, theta, phi):
     x = r * np.sin(theta) * np.cos(phi)
     y = r * np.sin(theta) * np.sin(phi)
-    z = r * np.cos(theta)
+    z = r * np.cos(theta) * np.ones_like(phi)
     return x, y, z
+
+
+def xyz2idx(xyz, xyz_grid):
+    nx, ny, nz = xyz[0].shape
+    idxs = np.empty((3,nx,ny,nz))
+    for i,(x,grid) in enumerate(zip(xyz, xyz_grid)):
+        x0, x1 = grid[0], grid[-1]
+        idxs[i] = (x-x0) / (x1-x0) * (len(grid)-1)
+    return idxs
 
 
 def cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None,
@@ -51,20 +61,19 @@ def cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None,
         theta = np.arange(0., pi, dangle)
         phi = np.arange(0., 2*pi, dangle)
         spherical_grid = (k, theta, phi)
-    spherical_mesh = np.meshgrid(*spherical_grid, indexing='ij')
+    spherical_mesh = np.meshgrid(*spherical_grid, indexing='ij', sparse=True)
     nk, ntheta, nphi = [len(ax) for ax in spherical_grid]
 
     # Find corresponding cartesian coordinates of spherical mesh:
     # (r,theta,phi) -> (x, y, z)
     xyz_for_sph = sph2cart(*spherical_mesh)
-    xyz_for_sph_pts = np.vstack([ax.flatten() for ax in xyz_for_sph]).T
 
-    # Build interpolator (x,y,z) -> arr
-    arr_interp = RegularGridInterpolator(xyz_grid.kgrid_shifted, arr, fill_value=0.,
-                                         bounds_error=False, **interp_kwargs)
+    # Convert cartesian coordinates to array idx
+    idxs = xyz2idx(xyz_for_sph, xyz_grid.kgrid_shifted)
+    # idxs = np.stack(idxs, axis=0)
 
     # Interpolate data on a desired grid
-    arr_sph = arr_interp(xyz_for_sph_pts).reshape((nk, ntheta, nphi))
+    arr_sph = map_coordinates(arr, idxs, order=1)
     return spherical_grid, arr_sph
 
 
@@ -107,8 +116,8 @@ class VacuumEmissionAnalyzer:
     def __init__(self, fields_params, data_path, save_path=None):
         self.fields_params = fields_params
         # Load data
-        self.data = np.load(data_path)
-        grid = tuple((self.data['x'], self.data['y'], self.data['z']))
+        data = np.load(data_path)
+        grid = tuple((data['x'], data['y'], data['z']))
         self.grid_xyz = GridXYZ(grid)
         self.grid_xyz.get_k_grid()
         # Update local dict with variables from GridXYZ class
@@ -117,17 +126,16 @@ class VacuumEmissionAnalyzer:
         for ax in 'xyz':
             self.__dict__[f'k{ax}'] = np.fft.fftshift(self.__dict__[f'k{ax}'])
 
-        self.S1, self.S2 = self.data['S1'], self.data['S2']
+        self.S1, self.S2 = data['S1'], data['S2']
 
         self.save_path = save_path
 
     def get_total_signal(self):
-        self.S = ne.evaluate("S1.real**2 + S1.imag**2 + S2.real**2 + S2.imag**2",
-                             global_dict=self.__dict__)
-        self.N_xyz = np.fft.fftshift(self.S / (2*pi)**3)
+        S = ne.evaluate("S1.real**2 + S1.imag**2 + S2.real**2 + S2.imag**2",
+                        global_dict=self.__dict__)
+        self.N_xyz = np.fft.fftshift(S / (2*pi)**3)
 
-        self.N_tot = ne.evaluate("sum(N_xyz)",
-                           global_dict=self.__dict__)
+        self.N_tot = ne.evaluate("sum(N_xyz)", global_dict=self.__dict__)
         self.N_tot *= self.dVk
 
     def get_polarization_from_field(self):
@@ -144,7 +152,6 @@ class VacuumEmissionAnalyzer:
         if perp_type == 'optical axis':
             self.epx, self.epy, self.epz = get_polarization_vector(*angles)
         elif perp_type == 'local axis':
-            beta = angles[-1]
             efx, efy, efz = self.get_polarization_from_field()
             kx, ky, kz = [k/self.kabs for k in self.kmeshgrid]
             kx[0,0,0] = 0.
@@ -214,6 +221,7 @@ class VacuumEmissionAnalyzer:
     def get_background(self, discernibility='angular', **interp_kwargs):
         bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
         bgr_N_xyz = self.get_photon_spectrum_from_a12(bgr_field.a1, bgr_field.a2)
+        del bgr_field
 
         # Interpolate on spherical grid
         _, bgr_N_sph = cartesian_to_spherical_array(bgr_N_xyz, self.grid_xyz,

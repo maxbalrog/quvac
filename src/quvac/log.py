@@ -151,8 +151,8 @@ def get_performance_stats(perf_stats):
     perf_print = performance_str.format(timings['field_setup'],
                                         timings['vacem_setup'],
                                         timings['amplitudes'],
-                                        timings['postprocess'],
                                         timings['per_iteration'],
+                                        timings['postprocess'],
                                         timings['total'],
                                         memory['maxrss_amplitudes'],
                                         memory['maxrss_total'])

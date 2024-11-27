@@ -2,11 +2,14 @@
 Useful generic utilities
 '''
 
+from contextlib import contextmanager
 import os
 from pathlib import Path
 import platform
 import yaml
+import zipfile
 
+import numpy as np
 import pyfftw
 
 
@@ -71,3 +74,28 @@ def load_wisdom(wisdom_file):
     with open(wisdom_file, 'rb') as f:
         wisdom = f.read()
     return tuple(wisdom.split(b'\n'))
+
+
+@contextmanager
+def archive_manager(archive_name, keys):
+    keys = [keys] if isinstance(keys, str) else keys
+    f = zipfile.ZipFile(archive_name, "a")
+    files = [f"{key}.npy" for key in keys]
+
+    yield files
+
+    for file in files:
+        f.write(file)
+        os.remove(file)
+    f.close()
+
+
+def add_data_to_npz(save_path, data, create_npz=False):
+    if create_npz:
+        np.savez(save_path, **data)
+    else:
+        new_keys = list(data.keys())
+        with archive_manager(save_path, new_keys) as archive:
+            for file in archive:
+                key = file.split('.')[0]
+                np.save(file, data[key])
