@@ -153,7 +153,7 @@ def get_xyz_size(fields, box_size, grid_res=1, equal_resolution=False):
     if equal_resolution:
         kmax = np.max(kmax) * np.ones(3)
     
-    N = np.ceil(grid_res * box_size * 3 * kmax/pi).astype(int)
+    N = int(np.ceil(grid_res * box_size * 3 * kmax/pi))
     N = [pyfftw.next_fast_len(n) for n in N]
     return N
 
