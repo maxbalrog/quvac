@@ -1,7 +1,7 @@
-'''
+"""
 Here we provide a test for oftimization of quvac
 simulations
-'''
+"""
 
 import os
 from pathlib import Path
@@ -20,46 +20,44 @@ from config import DEFAULT_CONFIG_PATH, OPTIMIZATION_SCRIPT
 def test_optimization():
     ini_data = read_yaml(DEFAULT_CONFIG_PATH)
 
-    path = 'data/test/test_optimization'
+    path = "data/test/test_optimization"
     Path(path).mkdir(parents=True, exist_ok=True)
 
     # Modify some parameters
-    ini_data['postprocess']['calculate_spherical'] = True
-    ini_data['postprocess']['calculate_discernible'] = True
-    ini_data['scales'] = {}
-    ini_data['save_path'] = path
+    ini_data["postprocess"]["calculate_spherical"] = True
+    ini_data["postprocess"]["calculate_discernible"] = True
+    ini_data["scales"] = {}
+    ini_data["save_path"] = path
 
     optimization_data = {
-        'name': '2_pulses_beta',
-        'parameters': {
-            'field_2': {
-                'beta': [0, 90]
-            }
+        "name": "2_pulses_beta",
+        "parameters": {"field_2": {"beta": [0, 90]}},
+        "cluster": {
+            "cluster": "local",
         },
-        'cluster': {
-            'cluster': 'local',
-        },
-        'n_trials': 10,
-        'objectives': [['N_total', False]],
+        "n_trials": 10,
+        "objectives": [["N_total", False]],
     }
 
-    ini_file = os.path.join(path, 'ini.yml')
+    ini_file = os.path.join(path, "ini.yml")
     write_yaml(ini_file, ini_data)
 
-    optimization_file = os.path.join(path, 'optimization.yml')
+    optimization_file = os.path.join(path, "optimization.yml")
     write_yaml(optimization_file, optimization_data)
 
     # Launch simulation
-    status = os.system(f"{OPTIMIZATION_SCRIPT} --input {ini_file} --optimization {optimization_file}")
+    status = os.system(
+        f"{OPTIMIZATION_SCRIPT} --input {ini_file} --optimization {optimization_file}"
+    )
     assert status == 0, "Script execution did not finish successfully"
 
-    client_json = os.path.join(path, 'experiment.json')
-    ax_client = (AxClient.load_from_json_file(client_json))
+    client_json = os.path.join(path, "experiment.json")
+    ax_client = AxClient.load_from_json_file(client_json)
 
-    trials_params = gather_trials_data(ax_client, metric_names=['N_total'])
-    betas = [val['field_2:beta'] for val in trials_params.values()]
-    N_total = [val['N_total'] for val in trials_params.values()]
+    trials_params = gather_trials_data(ax_client, metric_names=["N_total"])
+    betas = [val["field_2:beta"] for val in trials_params.values()]
+    N_total = [val["N_total"] for val in trials_params.values()]
     beta_max = betas[np.argmax(N_total)]
-    
-    err_msg = 'Optimization-found value of beta is not close to the real optimum'
-    assert np.isclose(beta_max, 90., rtol=1e-1), err_msg
+
+    err_msg = "Optimization-found value of beta is not close to the real optimum"
+    assert np.isclose(beta_max, 90.0, rtol=1e-1), err_msg
