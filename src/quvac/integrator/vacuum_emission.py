@@ -45,7 +45,6 @@ class VacuumEmission(object):
         self.nthreads = nthreads if nthreads else os.cpu_count()
 
         # Define symbolic expressions to evaluate later
-        # self.F_expr = "0.5 * (Bx**2 + By**2 + Bz**2 - Ex**2 - Ey**2 - Ez**2)"
         self.F_expr = "(Bx**2 + By**2 + Bz**2 - Ex**2 - Ey**2 - Ez**2)/2"
         self.G_expr = "-(Ex*Bx + Ey*By + Ez*Bz)"
 
@@ -96,6 +95,17 @@ class VacuumEmission(object):
                                     flags=('FFTW_MEASURE', ),
                                     threads=self.nthreads)
                         for a in self.tmp]
+        self.prefactor = np.zeros(self.grid_shape, dtype='complex128')
+
+        self.prefactor_dict = {
+            'kabs': self.kabs,
+            'c': c,
+        }
+
+        self.U_dict = {
+            'F': self.F,
+            'G': self.G
+        }
     
     def free_resources(self):
         del self.E_out, self.B_out
@@ -115,6 +125,8 @@ class VacuumEmission(object):
         
         Ex, Ey, Ez = [E.real for E in self.E_out]
         Bx, By, Bz = [B.real for B in self.B_out]
+        self.U_dict.update({'Ex': Ex, 'Ey': Ey, 'Ez': Ez,
+                            'Bx': Bx, 'By': By, 'Bz': Bz})
 
         ne.evaluate(self.F_expr, out=self.F)
         ne.evaluate(self.G_expr, out=self.G)
@@ -125,19 +137,21 @@ class VacuumEmission(object):
             ne.evaluate(self.G_E_Bp_expr, out=self.G_E_Bp)
         
         # Evaluate U1 and U2 expressions
-        ax = 'xyz'
-        for idx,U_expr in enumerate([self.U1, self.U2]):
+        self.prefactor_dict.update({'t': t})
+        ne.evaluate("exp(1j*kabs*c*t)", local_dict=self.prefactor_dict, out=self.prefactor)
+        for U_key,U_expr in zip(['U1_acc', 'U2_acc'], [self.U1, self.U2]):
             for i,expr in enumerate(U_expr):
-                ne.evaluate(expr, global_dict=self.__dict__, out=self.tmp[i])
+                U_acc = getattr(self, U_key)[i]
+                ne.evaluate(expr, global_dict=self.U_dict, out=self.tmp[i])
                 self.tmp_fftw[i].execute()
                 
-                U = self.tmp[i]
-                # ne.evaluate(f"U{idx+1}_acc_{ax[i]} + U*exp(1j*kabs*c*t)*dt*weight*dV",
-                #             global_dict=self.__dict__,
-                #             out=self.__dict__[f"U{idx+1}_acc_{ax[i]}"])
-                U_res = ne.evaluate(f"U{idx+1}_acc_{ax[i]} + U*exp(1j*kabs*c*t)*dt*weight*dV",
-                                    global_dict=self.__dict__,)
-                self.__dict__[f"U{idx+1}_acc_{ax[i]}"] = U_res.astype(config.CDTYPE)
+                U_res = ne.evaluate(f"U_acc + U*prefactor*dt*dV",
+                                    global_dict={'U_acc': U_acc,
+                                                 'U': self.tmp[i],
+                                                 'prefactor': self.prefactor,
+                                                 'dt': self.dt,
+                                                 'dV': self.dV},)
+                U_acc[:] = U_res.astype(config.CDTYPE)
 
     def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
         self.dt = t_grid[1] - t_grid[0]

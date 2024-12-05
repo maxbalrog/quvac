@@ -53,19 +53,10 @@ class MaxwellField(Field):
 
         self.allocate_tmp()
 
-        self.EB_dict = {
-            'e1x': self.e1x,
-            'e1y': self.e1y,
-            'e1z': self.e1z,
-            'e2x': self.e2x,
-            'e2y': self.e2y,
-            'e2z': self.e2z,
-        }
-
     def allocate_ifft(self):
         self.EB = [pyfftw.zeros_aligned(self.grid_shape, dtype=config.CDTYPE)
                    for _ in range(6)]
-        self.a1t, self.a2t = [np.zeros(self.grid_shape, dtype=config.CDTYPE)
+        self.a1t, self.a2t = [np.zeros(self.grid_shape, dtype='complex128')
                               for _ in range(2)]
         # pyfftw scheme
         self.EB_fftw = [pyfftw.FFTW(a, a, axes=(0, 1, 2),
@@ -73,6 +64,26 @@ class MaxwellField(Field):
                                     flags=('FFTW_MEASURE', ),
                                     threads=self.nthreads)
                         for a in self.EB]
+        
+        self.a_dict = {
+            'kabs': self.kabs,
+            'c': c,
+            't0': self.t0,
+            'norm_ifft': self.norm_ifft,
+            'a1': self.a1,
+            'a2': self.a2,
+        }
+
+        self.EB_dict = {
+            'e1x': self.e1x,
+            'e1y': self.e1y,
+            'e1z': self.e1z,
+            'e2x': self.e2x,
+            'e2y': self.e2y,
+            'e2z': self.e2z,
+            'a1t': self.a1t,
+            'a2t': self.a2t,
+        }
         
     def allocate_tmp(self):
         self.tmp = pyfftw.zeros_aligned(self.grid_shape, dtype='complex128')
@@ -83,22 +94,17 @@ class MaxwellField(Field):
             B_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
         
         # Calculate a1,a2 at time t
+        self.a_dict.update({'t': t})
         ne.evaluate('exp(-1j*kabs*c*(t-t0)) * a1 * norm_ifft',
-                    global_dict=self.__dict__, out=self.tmp)
-        a1t = self.tmp.astype(config.CDTYPE)
+                    global_dict=self.a_dict, out=self.a1t)
         ne.evaluate('exp(-1j*kabs*c*(t-t0)) * a2 * norm_ifft',
-                    global_dict=self.__dict__, out=self.tmp)
-        a2t = self.tmp.astype(config.CDTYPE)
+                    global_dict=self.a_dict, out=self.a2t)
+
         # Calculate fourier of fields at time t and transform back to 
         # spatial domain
-        
-        # 
-        # self.EB_dict.update({'a1t': a1t, 'a2t': a2t})
         for idx in range(6):
-            ne.evaluate(self.EB_expr[idx], global_dict=self.__dict__, out=self.tmp)
-            # ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
-            self.EB[idx] = self.tmp.astype(config.CDTYPE)
-            self.EB_fftw[idx].update_arrays(self.EB[idx], self.EB[idx])
+            ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
+            self.EB[idx][:] = self.tmp.astype(config.CDTYPE)
             self.EB_fftw[idx].execute()
             
             if idx < 3:
