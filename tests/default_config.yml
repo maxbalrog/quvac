@@ -41,7 +41,9 @@ grid:
   transverse_factor: 15
 integrator:
   type: vacuum_emission
-performance: {}
+performance:
+  nthreads: 8
+  pyfftw_threads: 1
 postprocess:
   calculate_discernible: false
   calculate_spherical: false
