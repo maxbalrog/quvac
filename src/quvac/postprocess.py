@@ -62,7 +62,6 @@ def cartesian_to_spherical_array(
         phi = np.arange(0.0, 2 * pi, dangle, dtype=config.FDTYPE)
         spherical_grid = (k, theta, phi)
     spherical_mesh = np.meshgrid(*spherical_grid, indexing="ij", sparse=True)
-    nk, ntheta, nphi = [len(ax) for ax in spherical_grid]
 
     # Find corresponding cartesian coordinates of spherical mesh:
     # (r,theta,phi) -> (x, y, z)
@@ -128,22 +127,14 @@ class VacuumEmissionAnalyzer:
             self.__dict__[f"k{ax}"] = np.fft.fftshift(self.__dict__[f"k{ax}"])
 
         self.S1, self.S2 = data["S1"].astype(config.CDTYPE), data["S2"].astype(config.CDTYPE)
-        logger.info(f"S1, S2: {self.S1.dtype}, {self.S2.dtype}")
 
         self.save_path = save_path
 
     def get_total_signal(self):
-        # S = ne.evaluate(
-        #     "S1.real**2 + S1.imag**2 + S2.real**2 + S2.imag**2",
-        #     global_dict=self.__dict__,
-        # )
         S = self.S1.real**2 + self.S1.imag**2 + self.S2.real**2 + self.S2.imag**2
         self.N_xyz = np.fft.fftshift(S / (2 * pi) ** 3)
-        logger.info(f"N_xyz: {self.N_xyz.dtype}")
 
         self.N_total = np.sum(self.N_xyz) * self.dVk
-        # self.N_tot = ne.evaluate("sum(N_xyz)", global_dict=self.__dict__)
-        # self.N_tot *= self.dVk
 
     def get_polarization_from_field(self):
         field = MaxwellMultiple(self.fields_params, self.grid_xyz)
@@ -185,27 +176,16 @@ class VacuumEmissionAnalyzer:
         e2x, e2y, e2z = self.e2x, self.e2y, self.e2z
 
         # Calculate perp signal
-        # ep_e1 = (epx*e1x + epy*e1y + epz*e1z)
-        # ep_e2 = (epx*e2x + epy*e2y + epz*e2z)
         Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
         Sp = Sp.real**2 + Sp.imag**2
-        logger.info(f"Sp: {Sp.dtype}")
-        # ep_e1 = "(epx*e1x + epy*e1y + epz*e1z)"
-        # ep_e2 = "(epx*e2x + epy*e2y + epz*e2z)"
-        # Sp = ne.evaluate(f"({ep_e1}*S1 + {ep_e2}*S2)", global_dict=self.__dict__)
-        # Sp = ne.evaluate("Sp.real**2 + Sp.imag**2", global_dict=self.__dict__)
+
         self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
-        logger.info(f"Np_xyz: {self.Np_xyz.dtype}")
 
         self.Np_total = np.sum(self.Np_xyz) * self.dVk
-        # self.Np_tot = ne.evaluate("sum(Np_xyz)", global_dict=self.__dict__)
-        # self.Np_tot *= self.dVk
 
     def get_signal_on_sph_grid(
         self, key="N_xyz", spherical_grid=None, angular_resolution=None, **interp_kwargs
     ):
-        # for key in "N_xyz Np_xyz".split():
-        # if key in self.__dict__:
         arr = getattr(self, key)
         spherical_grid, N_sph = cartesian_to_spherical_array(
             arr,
@@ -280,41 +260,6 @@ class VacuumEmissionAnalyzer:
 
     def write_data(self, keys):
         data = {key: getattr(self, key) for key in keys}
-        # data = {
-        #     "kx": self.kx,
-        #     "ky": self.ky,
-        #     "kz": self.kz,
-        #     "N_xyz": self.N_xyz,
-        #     "N_total": self.N_tot,
-        # }
-        # if "Np_tot" in self.__dict__:
-        #     data.update({"ep": self.ep, "Np_xyz": self.Np_xyz, "Np_total": self.Np_tot})
-        # if "N_sph" in self.__dict__:
-        #     data.update(
-        #         {
-        #             "k": self.k,
-        #             "theta": self.theta,
-        #             "phi": self.phi,
-        #             "N_sph": self.N_sph,
-        #             "N_sph_total": self.N_sph_tot,
-        #         }
-        #     )
-        # if "Np_sph" in self.__dict__:
-        #     data.update({"Np_sph": self.Np_sph})
-        # if "N_disc" in self.__dict__:
-        #     data.update(
-        #         {
-        #             "background": self.N_bgr,
-        #             "discernible": self.discernible,
-        #             "N_disc": self.N_disc,
-        #         }
-        #     )
-        # if "N_angular" in self.__dict__:
-        #     data.update(
-        #         {
-        #             "N_angular": self.N_angular,
-        #         }
-        #     )
         np.savez(self.save_path, **data)
 
     def get_total_spectra(
@@ -378,17 +323,3 @@ class VacuumEmissionAnalyzer:
                 calculate_spherical=calculate_spherical,
                 spherical_params=spherical_params,
             )
-    #     self.get_total_signal()
-
-    #     if perp_type:
-    #         angle_keys = "theta phi beta".split()
-    #         angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
-    #         self.get_perp_signal(angles, perp_type=perp_type)
-    #     del self.S1, self.S2
-
-    #     if calculate_spherical:
-    #         self.get_signal_on_sph_grid(**spherical_params)
-    #     if calculate_discernible:
-    #         self.get_discernible_signal()
-
-    #     self.write_data()

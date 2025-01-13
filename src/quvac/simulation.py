@@ -123,11 +123,7 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     nthreads = perf_params.get("nthreads", os.cpu_count())
     ne.set_num_threads(nthreads)
     pyfftw_threads = perf_params.get("pyfftw_threads", nthreads)
-    # Set up global precision for calculations
-    # precision = perf_params.get("precision", "float64")
-    # set_precision(precision)
     use_wisdom = perf_params.get("use_wisdom", True)
-    # logger.info(f"Using {precision} precision")
 
     perf_params = ini_config.get("performance", {})
 
@@ -200,11 +196,7 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
 def postprocess_simulation(ini_config, files, fields_params):
     # Get postprocess params from ini config
     postprocess_params = ini_config.get("postprocess", {})
-    # calculate_spherical = postprocess_params.get("calculate_spherical", False)
-    # spherical_params = postprocess_params.get("spherical_params", {})
-    # calculate_discernible = postprocess_params.get("calculate_discernible", False)
-    # perp_type = postprocess_params.get("perp_polarization_type", None)
-    # perp_field_idx = postprocess_params.get("perp_field_idx", 1)
+
     kwargs = {
         "perp_type": postprocess_params.get("perp_polarization_type", None),
         "perp_field_idx": postprocess_params.get("perp_field_idx", 1),
