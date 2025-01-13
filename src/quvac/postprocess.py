@@ -141,7 +141,7 @@ class VacuumEmissionAnalyzer:
         self.N_xyz = np.fft.fftshift(S / (2 * pi) ** 3)
         logger.info(f"N_xyz: {self.N_xyz.dtype}")
 
-        self.N_tot = np.sum(self.N_xyz) * self.dVk
+        self.N_total = np.sum(self.N_xyz) * self.dVk
         # self.N_tot = ne.evaluate("sum(N_xyz)", global_dict=self.__dict__)
         # self.N_tot *= self.dVk
 
@@ -197,37 +197,37 @@ class VacuumEmissionAnalyzer:
         self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
         logger.info(f"Np_xyz: {self.Np_xyz.dtype}")
 
-        self.Np_tot = np.sum(self.Np_xyz) * self.dVk
+        self.Np_total = np.sum(self.Np_xyz) * self.dVk
         # self.Np_tot = ne.evaluate("sum(Np_xyz)", global_dict=self.__dict__)
         # self.Np_tot *= self.dVk
 
     def get_signal_on_sph_grid(
-        self, spherical_grid=None, angular_resolution=None, **interp_kwargs
+        self, key="N_xyz", spherical_grid=None, angular_resolution=None, **interp_kwargs
     ):
-        for key in "N_xyz Np_xyz".split():
-            if key in self.__dict__:
-                arr = self.__dict__[key]
-                spherical_grid, N_sph = cartesian_to_spherical_array(
-                    arr,
-                    self.grid_xyz,
-                    spherical_grid=spherical_grid,
-                    angular_resolution=angular_resolution,
-                    **interp_kwargs,
-                )
-                sph_key = key.replace("xyz", "sph")
-                sph_total_key = f"{sph_key}_tot"
-                total_key = key.replace("xyz", "tot")
-                self.__dict__[sph_key] = N_sph
+        # for key in "N_xyz Np_xyz".split():
+        # if key in self.__dict__:
+        arr = getattr(self, key)
+        spherical_grid, N_sph = cartesian_to_spherical_array(
+            arr,
+            self.grid_xyz,
+            spherical_grid=spherical_grid,
+            angular_resolution=angular_resolution,
+            **interp_kwargs,
+        )
+        sph_key = key.replace("xyz", "sph")
+        sph_total_key = f"{sph_key}_total"
+        total_key = key.replace("xyz", "total")
+        self.__dict__[sph_key] = N_sph
 
-                N_total = integrate_spherical(N_sph, spherical_grid)
-                self.__dict__[sph_total_key] = N_total
+        N_total = integrate_spherical(N_sph, spherical_grid)
+        self.__dict__[sph_total_key] = N_total
 
-                if not np.isclose(self.__dict__[total_key], N_total, rtol=1e-2):
-                    warn_message = sph_interp_warn.format(
-                        total_key, self.__dict__[total_key], N_total
-                    )
-                    warnings.warn(warn_message)
-                    logger.warning(warn_message)
+        if not np.isclose(self.__dict__[total_key], N_total, rtol=1e-2):
+            warn_message = sph_interp_warn.format(
+                total_key, self.__dict__[total_key], N_total
+            )
+            warnings.warn(warn_message)
+            logger.warning(warn_message)
 
         self.spherical_grid = self.k, self.theta, self.phi = spherical_grid
 
@@ -262,79 +262,133 @@ class VacuumEmissionAnalyzer:
 
     def get_discernible_signal(self, discernibility="angular"):
         # Calculate numerical background
-        self.N_bgr = self.get_background(discernibility=discernibility)
+        self.background = self.get_background(discernibility=discernibility)
 
         # Integrate signal spectrum if required and determine discernible regions
         if discernibility == "angular":
             self.N_angular = integrate_spherical(
                 self.N_sph, self.spherical_grid, axs_integrate=["k"]
             )
-            self.discernible = self.N_angular > self.N_bgr
+            self.discernible = self.N_angular > self.background
         else:
-            self.discernible = self.N_sph > self.N_bgr
+            self.discernible = self.N_sph > self.background
 
         # Integrate over discernible regions
         self.N_disc = integrate_spherical(
             self.N_sph * self.discernible, self.spherical_grid
         )
 
-    def write_data(self):
-        data = {
-            "kx": self.kx,
-            "ky": self.ky,
-            "kz": self.kz,
-            "N_xyz": self.N_xyz,
-            "N_total": self.N_tot,
-        }
-        if "Np_tot" in self.__dict__:
-            data.update({"ep": self.ep, "Np_xyz": self.Np_xyz, "Np_total": self.Np_tot})
-        if "N_sph" in self.__dict__:
-            data.update(
-                {
-                    "k": self.k,
-                    "theta": self.theta,
-                    "phi": self.phi,
-                    "N_sph": self.N_sph,
-                    "N_sph_total": self.N_sph_tot,
-                }
-            )
-        if "Np_sph" in self.__dict__:
-            data.update({"Np_sph": self.Np_sph})
-        if "N_disc" in self.__dict__:
-            data.update(
-                {
-                    "background": self.N_bgr,
-                    "discernible": self.discernible,
-                    "N_disc": self.N_disc,
-                }
-            )
-        if "N_angular" in self.__dict__:
-            data.update(
-                {
-                    "N_angular": self.N_angular,
-                }
-            )
+    def write_data(self, keys):
+        data = {key: getattr(self, key) for key in keys}
+        # data = {
+        #     "kx": self.kx,
+        #     "ky": self.ky,
+        #     "kz": self.kz,
+        #     "N_xyz": self.N_xyz,
+        #     "N_total": self.N_tot,
+        # }
+        # if "Np_tot" in self.__dict__:
+        #     data.update({"ep": self.ep, "Np_xyz": self.Np_xyz, "Np_total": self.Np_tot})
+        # if "N_sph" in self.__dict__:
+        #     data.update(
+        #         {
+        #             "k": self.k,
+        #             "theta": self.theta,
+        #             "phi": self.phi,
+        #             "N_sph": self.N_sph,
+        #             "N_sph_total": self.N_sph_tot,
+        #         }
+        #     )
+        # if "Np_sph" in self.__dict__:
+        #     data.update({"Np_sph": self.Np_sph})
+        # if "N_disc" in self.__dict__:
+        #     data.update(
+        #         {
+        #             "background": self.N_bgr,
+        #             "discernible": self.discernible,
+        #             "N_disc": self.N_disc,
+        #         }
+        #     )
+        # if "N_angular" in self.__dict__:
+        #     data.update(
+        #         {
+        #             "N_angular": self.N_angular,
+        #         }
+        #     )
         np.savez(self.save_path, **data)
 
-    def get_spectra(
+    def get_total_spectra(
+        self,
+        calculate_spherical=False,
+        spherical_params=None,
+        calculate_discernible=False,
+        discernibility="angular"
+    ):
+        self.get_total_signal()
+        keys = "kx ky kz N_xyz N_total".split()
+
+        if calculate_spherical:
+            self.get_signal_on_sph_grid(key="N_xyz", **spherical_params)
+            keys.extend("k theta phi N_sph N_sph_total".split())
+        if calculate_discernible:
+            self.get_discernible_signal(discernibility)
+            keys.extend("background discernible N_disc".split())
+        
+        self.write_data(keys)
+
+    def get_polarization_spectra(
         self,
         perp_field_idx=1,
         perp_type=None,
         calculate_spherical=False,
         spherical_params=None,
-        calculate_discernible=False,
     ):
-        self.get_total_signal()
-
-        if perp_type:
-            angle_keys = "theta phi beta".split()
-            angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
-            self.get_perp_signal(angles, perp_type=perp_type)
-        del self.S1, self.S2
+        angle_keys = "theta phi beta".split()
+        angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
+        self.get_perp_signal(angles, perp_type=perp_type)
+        keys = "kx ky kz Np_xyz Np_total".split()
 
         if calculate_spherical:
-            self.get_signal_on_sph_grid(**spherical_params)
-        if calculate_discernible:
-            self.get_discernible_signal()
+            self.get_signal_on_sph_grid(key="Np_xyz", **spherical_params)
+            keys.extend("k theta phi Np_sph Np_sph_total".split())
+        
+        self.write_data(keys)
 
-        self.write_data()
+    def get_spectra(
+        self,
+        mode="total",
+        perp_field_idx=1,
+        perp_type=None,
+        calculate_spherical=False,
+        spherical_params=None,
+        calculate_discernible=False,
+        discernibility="angular"
+    ):
+        if mode == "total":
+            self.get_total_spectra(
+                calculate_spherical=calculate_spherical,
+                spherical_params=spherical_params,
+                calculate_discernible=calculate_discernible,
+                discernibility=discernibility
+            )
+        elif mode == "polarization":
+            self.get_polarization_spectra(
+                perp_field_idx=perp_field_idx,
+                perp_type=perp_type,
+                calculate_spherical=calculate_spherical,
+                spherical_params=spherical_params,
+            )
+    #     self.get_total_signal()
+
+    #     if perp_type:
+    #         angle_keys = "theta phi beta".split()
+    #         angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
+    #         self.get_perp_signal(angles, perp_type=perp_type)
+    #     del self.S1, self.S2
+
+    #     if calculate_spherical:
+    #         self.get_signal_on_sph_grid(**spherical_params)
+    #     if calculate_discernible:
+    #         self.get_discernible_signal()
+
+    #     self.write_data()
