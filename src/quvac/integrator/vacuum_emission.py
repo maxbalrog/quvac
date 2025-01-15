@@ -222,11 +222,11 @@ class VacuumEmission(object):
         self.S1 = ne.evaluate(
             f"prefactor * ({self.I_11_expr} - {self.I_22_expr})",
             global_dict=self.__dict__,
-        )
+        ).astype(config.CDTYPE)
         self.S2 = ne.evaluate(
             f"prefactor * ({self.I_12_expr} + {self.I_21_expr})",
             global_dict=self.__dict__,
-        )
+        ).astype(config.CDTYPE)
         # Save amplitudes
         if save_path:
             self.save_amplitudes(save_path)

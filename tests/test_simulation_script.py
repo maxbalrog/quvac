@@ -87,7 +87,7 @@ def test_spherical_grid():
     path = "data/test/test_spherical_grid"
     run_test_simulation(path, ini_data)
 
-    data = np.load(os.path.join(path, "spectra.npz"))
+    data = np.load(os.path.join(path, "spectra_total.npz"))
     err_msg = "Total signal on cartesian and spherical grid differ by more than 1%"
     assert np.isclose(data["N_total"], data["N_sph_total"], rtol=1e-2), err_msg
 

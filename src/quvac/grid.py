@@ -86,9 +86,10 @@ def get_pol_basis(theta, phi):
     theta and phi
     """
     e1 = np.array(
-        [np.cos(theta) * np.cos(phi), np.cos(theta) * np.sin(phi), -np.sin(theta)]
+        [np.cos(theta) * np.cos(phi), np.cos(theta) * np.sin(phi), -np.sin(theta)],
+        dtype=config.FDTYPE
     )
-    e2 = np.array([-np.sin(phi), np.cos(phi), 0])
+    e2 = np.array([-np.sin(phi), np.cos(phi), 0], dtype=config.FDTYPE)
     return e1, e2
 
 

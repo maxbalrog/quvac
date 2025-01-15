@@ -6,6 +6,7 @@ Here we provide analyzer classes that calculate from amplitudes:
 """
 
 import logging
+import os
 import warnings
 
 import numexpr as ne
@@ -14,6 +15,7 @@ from scipy.constants import c, epsilon_0, hbar, pi
 from scipy.integrate import trapezoid
 from scipy.ndimage import map_coordinates
 
+from quvac import config
 from quvac.field.maxwell import MaxwellMultiple
 from quvac.grid import GridXYZ, get_pol_basis
 from quvac.log import sph_interp_warn
@@ -23,7 +25,7 @@ logger = logging.getLogger("simulation")
 
 def get_polarization_vector(theta, phi, beta):
     e1, e2 = get_pol_basis(theta, phi)
-    ep = e1 * np.cos(beta) + e2 * np.sin(beta)
+    ep = e1 * np.cos(beta, dtype=config.FDTYPE) + e2 * np.sin(beta, dtype=config.FDTYPE)
     return ep
 
 
@@ -56,12 +58,14 @@ def cartesian_to_spherical_array(
         kmax = np.max(xyz_grid.kabs)
         dangle = angular_resolution if angular_resolution else 1.0 * pi / 180
 
-        k = np.arange(0.0, kmax, dk)
-        theta = np.arange(0.0, pi, dangle)
-        phi = np.arange(0.0, 2 * pi, dangle)
+        k = np.arange(0.0, kmax, dk, dtype=config.FDTYPE)
+        theta = np.arange(0.0, pi, dangle, dtype=config.FDTYPE)
+        phi = np.arange(0.0, 2 * pi, dangle, dtype=config.FDTYPE)
         spherical_grid = (k, theta, phi)
+    elif isinstance(spherical_grid, str) and os.path.isfile(spherical_grid):
+        data = np.load(spherical_grid)
+        spherical_grid = (data["k"], data["theta"], data["phi"])
     spherical_mesh = np.meshgrid(*spherical_grid, indexing="ij", sparse=True)
-    nk, ntheta, nphi = [len(ax) for ax in spherical_grid]
 
     # Find corresponding cartesian coordinates of spherical mesh:
     # (r,theta,phi) -> (x, y, z)
@@ -126,19 +130,15 @@ class VacuumEmissionAnalyzer:
         for ax in "xyz":
             self.__dict__[f"k{ax}"] = np.fft.fftshift(self.__dict__[f"k{ax}"])
 
-        self.S1, self.S2 = data["S1"], data["S2"]
+        self.S1, self.S2 = data["S1"].astype(config.CDTYPE), data["S2"].astype(config.CDTYPE)
 
         self.save_path = save_path
 
     def get_total_signal(self):
-        S = ne.evaluate(
-            "S1.real**2 + S1.imag**2 + S2.real**2 + S2.imag**2",
-            global_dict=self.__dict__,
-        )
+        S = self.S1.real**2 + self.S1.imag**2 + self.S2.real**2 + self.S2.imag**2
         self.N_xyz = np.fft.fftshift(S / (2 * pi) ** 3)
 
-        self.N_tot = ne.evaluate("sum(N_xyz)", global_dict=self.__dict__)
-        self.N_tot *= self.dVk
+        self.N_total = np.sum(self.N_xyz) * self.dVk
 
     def get_polarization_from_field(self):
         field = MaxwellMultiple(self.fields_params, self.grid_xyz)
@@ -175,44 +175,43 @@ class VacuumEmissionAnalyzer:
 
         # get one polarization direction to project on:
         self.ep = self._get_polarization_vector(angles, perp_type)
+        epx, epy, epz = self.ep
+        e1x, e1y, e1z = self.e1x, self.e1y, self.e1z
+        e2x, e2y, e2z = self.e2x, self.e2y, self.e2z
 
         # Calculate perp signal
-        ep_e1 = "(epx*e1x + epy*e1y + epz*e1z)"
-        ep_e2 = "(epx*e2x + epy*e2y + epz*e2z)"
-        Sp = ne.evaluate(f"({ep_e1}*S1 + {ep_e2}*S2)", global_dict=self.__dict__)
-        Sp = ne.evaluate("Sp.real**2 + Sp.imag**2", global_dict=self.__dict__)
+        Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
+        Sp = Sp.real**2 + Sp.imag**2
+
         self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
 
-        self.Np_tot = ne.evaluate("sum(Np_xyz)", global_dict=self.__dict__)
-        self.Np_tot *= self.dVk
+        self.Np_total = np.sum(self.Np_xyz) * self.dVk
 
     def get_signal_on_sph_grid(
-        self, spherical_grid=None, angular_resolution=None, **interp_kwargs
+        self, key="N_xyz", spherical_grid=None, angular_resolution=None, **interp_kwargs
     ):
-        for key in "N_xyz Np_xyz".split():
-            if key in self.__dict__:
-                arr = self.__dict__[key]
-                spherical_grid, N_sph = cartesian_to_spherical_array(
-                    arr,
-                    self.grid_xyz,
-                    spherical_grid=spherical_grid,
-                    angular_resolution=angular_resolution,
-                    **interp_kwargs,
-                )
-                sph_key = key.replace("xyz", "sph")
-                sph_total_key = f"{sph_key}_tot"
-                total_key = key.replace("xyz", "tot")
-                self.__dict__[sph_key] = N_sph
+        arr = getattr(self, key)
+        spherical_grid, N_sph = cartesian_to_spherical_array(
+            arr,
+            self.grid_xyz,
+            spherical_grid=spherical_grid,
+            angular_resolution=angular_resolution,
+            **interp_kwargs,
+        )
+        sph_key = key.replace("xyz", "sph")
+        sph_total_key = f"{sph_key}_total"
+        total_key = key.replace("xyz", "total")
+        self.__dict__[sph_key] = N_sph
 
-                N_total = integrate_spherical(N_sph, spherical_grid)
-                self.__dict__[sph_total_key] = N_total
+        N_total = integrate_spherical(N_sph, spherical_grid)
+        self.__dict__[sph_total_key] = N_total
 
-                if not np.isclose(self.__dict__[total_key], N_total, rtol=1e-2):
-                    warn_message = sph_interp_warn.format(
-                        total_key, self.__dict__[total_key], N_total
-                    )
-                    warnings.warn(warn_message)
-                    logger.warning(warn_message)
+        if not np.isclose(self.__dict__[total_key], N_total, rtol=1e-2):
+            warn_message = sph_interp_warn.format(
+                total_key, self.__dict__[total_key], N_total
+            )
+            warnings.warn(warn_message)
+            logger.warning(warn_message)
 
         self.spherical_grid = self.k, self.theta, self.phi = spherical_grid
 
@@ -224,11 +223,19 @@ class VacuumEmissionAnalyzer:
         )
         N_xyz[0, 0, 0] = 0.0
         return np.fft.fftshift(N_xyz)
-
-    def get_background(self, discernibility="angular", **interp_kwargs):
+    
+    def get_background_xyz(self, add_to_cls_dict=True):
         bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
         bgr_N_xyz = self.get_photon_spectrum_from_a12(bgr_field.a1, bgr_field.a2)
-        del bgr_field
+        if add_to_cls_dict:
+            self.background_xyz = bgr_N_xyz
+        return bgr_N_xyz
+
+    def get_background(self, discernibility="angular", **interp_kwargs):
+        # bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
+        # bgr_N_xyz = self.get_photon_spectrum_from_a12(bgr_field.a1, bgr_field.a2)
+        # del bgr_field
+        bgr_N_xyz = self.get_background_xyz(add_to_cls_dict=False)
 
         # Interpolate on spherical grid
         _, bgr_N_sph = cartesian_to_spherical_array(
@@ -247,76 +254,90 @@ class VacuumEmissionAnalyzer:
 
     def get_discernible_signal(self, discernibility="angular"):
         # Calculate numerical background
-        self.N_bgr = self.get_background(discernibility=discernibility)
+        self.background = self.get_background(discernibility=discernibility)
 
         # Integrate signal spectrum if required and determine discernible regions
         if discernibility == "angular":
             self.N_angular = integrate_spherical(
                 self.N_sph, self.spherical_grid, axs_integrate=["k"]
             )
-            self.discernible = self.N_angular > self.N_bgr
+            self.discernible = self.N_angular > self.background
         else:
-            self.discernible = self.N_sph > self.N_bgr
+            self.discernible = self.N_sph > self.background
 
         # Integrate over discernible regions
         self.N_disc = integrate_spherical(
             self.N_sph * self.discernible, self.spherical_grid
         )
 
-    def write_data(self):
-        data = {
-            "kx": self.kx,
-            "ky": self.ky,
-            "kz": self.kz,
-            "N_xyz": self.N_xyz,
-            "N_total": self.N_tot,
-        }
-        if "Np_tot" in self.__dict__:
-            data.update({"ep": self.ep, "Np_xyz": self.Np_xyz, "Np_total": self.Np_tot})
-        if "N_sph" in self.__dict__:
-            data.update(
-                {
-                    "k": self.k,
-                    "theta": self.theta,
-                    "phi": self.phi,
-                    "N_sph": self.N_sph,
-                    "N_sph_total": self.N_sph_tot,
-                }
-            )
-        if "N_disc" in self.__dict__:
-            data.update(
-                {
-                    "background": self.N_bgr,
-                    "discernible": self.discernible,
-                    "N_disc": self.N_disc,
-                }
-            )
-        if "N_angular" in self.__dict__:
-            data.update(
-                {
-                    "N_angular": self.N_angular,
-                }
-            )
+    def write_data(self, keys):
+        data = {key: getattr(self, key) for key in keys}
         np.savez(self.save_path, **data)
 
-    def get_spectra(
+    def get_total_spectra(
+        self,
+        calculate_xyz_background=False,
+        calculate_spherical=False,
+        spherical_params=None,
+        calculate_discernible=False,
+        discernibility="angular"
+    ):
+        self.get_total_signal()
+        keys = "kx ky kz N_xyz N_total".split()
+
+        if calculate_xyz_background:
+            self.get_background_xyz()
+            keys.extend(["background_xyz"])
+        if calculate_spherical:
+            self.get_signal_on_sph_grid(key="N_xyz", **spherical_params)
+            keys.extend("k theta phi N_sph N_sph_total".split())
+        if calculate_discernible:
+            self.get_discernible_signal(discernibility)
+            keys.extend("background discernible N_disc".split())
+        
+        self.write_data(keys)
+
+    def get_polarization_spectra(
         self,
         perp_field_idx=1,
         perp_type=None,
         calculate_spherical=False,
         spherical_params=None,
-        calculate_discernible=False,
     ):
-        self.get_total_signal()
-
-        if perp_type:
-            angle_keys = "theta phi beta".split()
-            angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
-            self.get_perp_signal(angles, perp_type=perp_type)
+        angle_keys = "theta phi beta".split()
+        angles = [self.fields_params[perp_field_idx - 1][key] for key in angle_keys]
+        self.get_perp_signal(angles, perp_type=perp_type)
+        keys = "kx ky kz Np_xyz Np_total".split()
 
         if calculate_spherical:
-            self.get_signal_on_sph_grid(**spherical_params)
-        if calculate_discernible:
-            self.get_discernible_signal()
+            self.get_signal_on_sph_grid(key="Np_xyz", **spherical_params)
+            keys.extend("k theta phi Np_sph Np_sph_total".split())
+        
+        self.write_data(keys)
 
-        self.write_data()
+    def get_spectra(
+        self,
+        mode="total",
+        perp_field_idx=1,
+        perp_type=None,
+        calculate_xyz_background=False,
+        calculate_spherical=False,
+        spherical_params=None,
+        calculate_discernible=False,
+        discernibility="angular"
+    ):
+        if mode == "total":
+            self.get_total_spectra(
+                calculate_xyz_background=calculate_xyz_background,
+                calculate_spherical=calculate_spherical,
+                spherical_params=spherical_params,
+                calculate_discernible=calculate_discernible,
+                discernibility=discernibility
+            )
+        elif mode == "polarization":
+            self.get_polarization_spectra(
+                perp_field_idx=perp_field_idx,
+                perp_type=perp_type,
+                calculate_spherical=calculate_spherical,
+                spherical_params=spherical_params,
+            )

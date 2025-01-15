@@ -123,11 +123,7 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     nthreads = perf_params.get("nthreads", os.cpu_count())
     ne.set_num_threads(nthreads)
     pyfftw_threads = perf_params.get("pyfftw_threads", nthreads)
-    # Set up global precision for calculations
-    precision = perf_params.get("precision", "float64")
-    set_precision(precision)
     use_wisdom = perf_params.get("use_wisdom", True)
-    logger.info(f"Using {precision} precision")
 
     perf_params = ini_config.get("performance", {})
 
@@ -200,25 +196,31 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
 def postprocess_simulation(ini_config, files, fields_params):
     # Get postprocess params from ini config
     postprocess_params = ini_config.get("postprocess", {})
-    calculate_spherical = postprocess_params.get("calculate_spherical", False)
-    spherical_params = postprocess_params.get("spherical_params", {})
-    calculate_discernible = postprocess_params.get("calculate_discernible", False)
-    perp_type = postprocess_params.get("perp_polarization_type", None)
-    perp_field_idx = postprocess_params.get("perp_field_idx", 1)
+
+    kwargs = {
+        "perp_type": postprocess_params.get("perp_polarization_type", None),
+        "perp_field_idx": postprocess_params.get("perp_field_idx", 1),
+        "calculate_xyz_background": postprocess_params.get("calculate_xyz_background", False),
+        "calculate_spherical": postprocess_params.get("calculate_spherical", False),
+        "spherical_params": postprocess_params.get("spherical_params", {}),
+        "calculate_discernible": postprocess_params.get("calculate_discernible", False),
+        "discernibility": postprocess_params.get("discernibility", "angular"),
+    }
 
     # Do postprocessing
     postprocess_print = get_postprocess_info(postprocess_params)
     logger.info(postprocess_print)
-    analyzer = VacuumEmissionAnalyzer(
-        fields_params, data_path=files['amplitudes'], save_path=files['spectra']
-    )
-    analyzer.get_spectra(
-        perp_field_idx=perp_field_idx,
-        perp_type=perp_type,
-        calculate_spherical=calculate_spherical,
-        spherical_params=spherical_params,
-        calculate_discernible=calculate_discernible,
-    )
+
+    modes = postprocess_params.get("modes", "total polarization").split()
+    for mode in modes:
+        save_path = files['spectra'].replace(".npz", f"_{mode}.npz")
+        analyzer = VacuumEmissionAnalyzer(
+            fields_params, data_path=files['amplitudes'], save_path=save_path
+        )
+        analyzer.get_spectra(
+            mode=mode,
+            **kwargs
+        )
     logger.info("MILESTONE: Spectra are calculated from amplitudes")
 
 
@@ -259,6 +261,12 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom")
     timings = {}
     timings['start'] = time.perf_counter()
     memory = {'maxrss_amplitudes': 0}
+
+    # Set up global precision for calculations
+    perf_params = ini_config.get("performance", {})
+    precision = perf_params.get("precision", "float64")
+    set_precision(precision)
+    logger.info(f"Using {precision} precision")
 
     fields_params = ini_config["fields"]
     if isinstance(fields_params, dict):
