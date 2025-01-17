@@ -5,6 +5,8 @@ scalings from articles
 
 import numpy as np
 from scipy.constants import alpha, c, hbar, m_e, pi
+from scipy.integrate import quad
+from scipy.special import erfc
 
 W_e = m_e * c**2  # electron's rest energy
 lam_C = hbar / (m_e * c)  # reduced Compton wavelength
@@ -49,4 +51,51 @@ def get_two_paraxial_scaling(fields):
         prefactor *= T1 / tau1 * w1 / w01 * lam_C**4 / (w1 * w2) ** 2 / 9
         N_perp += prefactor * theta_term * 9 * np.sin(2 * beta) ** 2
         N_signal += prefactor * theta_term * (130 - 66 * np.cos(2 * beta))
+    return N_signal, N_perp
+
+
+def f_felix(x, r, k0=20):
+    def integrand(k):
+        s = 0
+        for l in [-1, 1]:
+            s += np.exp(2*l*r*x*k) * erfc(l*r*k + x)
+        s = np.abs(s)**2
+        return np.exp(-k**2) * s
+        
+    prefactor = np.sqrt((1 + 2*r**2)/3) * x**2 * np.exp(2*x**2)
+    result = quad(integrand, -k0, k0)
+    return prefactor * result[0]
+
+
+def get_onaxis_scaling(fields, k0=20):
+    """
+    This is an integrated version of Eq.(11) [Eq. (13)] from E. Mosman, F.Karbstein
+    "Vacuum birefringence and diffraction at XFEL: from analytical estimates to optimal parameters"
+    PRD 104.1 (2021): 013006.
+    
+    We assume that 1st field in the list is x-ray
+
+    Parameters:
+    -----------
+    k0: float
+        Integration limit for the integral in F function
+    """
+    wx, w0 = fields[0]["w0"], fields[1]["w0"]
+    beta = wx / w0
+    W = fields[1]["W"]
+    lam_x, lam = fields[0]["lam"], fields[1]["lam"]
+    omega_x = 2 * pi * c / lam_x
+    T, tau = fields[0]["tau"], fields[1]["tau"]
+    zR = pi * w0**2 / lam
+
+    x0 = 4 * zR / (c * np.sqrt(T**2 + 1/2*tau**2))
+    r0 = T / tau
+    Fbeta = f_felix(x0 * np.sqrt(1+2*beta**2), r0, k0=k0)
+    F0 = f_felix(x0, r0, k0=k0)
+
+    prefactor = 4 * alpha**4 / (3*pi)**1.5 * W**2 * (hbar * omega_x)**2 / W_e**4
+    result = prefactor * (lam_C / w0)**4 / (1 + 2*beta**2) * np.sqrt(Fbeta*F0)
+
+    N_signal = 26/45 * result
+    N_perp = 1/25 * result
     return N_signal, N_perp
