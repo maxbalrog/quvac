@@ -43,6 +43,9 @@ class DipoleAnalytic(ExplicitField):
             if key in angles:
                 val *= pi / 180.0
             self.__dict__[key] = val
+        
+        if "envelope" not in self.__dict__:
+            self.envelope = "plane"
 
         # Define grid variables
         self.grid_xyz = grid
@@ -65,20 +68,30 @@ class DipoleAnalytic(ExplicitField):
         # Define variables independent of time
         self.R_expr = 'sqrt(x**2 + y**2 + z**2)' # radius
         self.R =  ne.evaluate(self.R_expr, global_dict=self.__dict__)
-        print(self.x.shape, self.y.shape, self.z.shape)
+        
         self.nx, self.ny, self.nz = [np.nan_to_num(ax/self.R) for ax in (self.x, self.y, self.z)]
 
         self.EB_dict = {"R": self.R,
                         "c": c,
+                        "k": self.k,
+                        "omega": self.omega,
+                        "d0": self.d0,
                         "nx": self.nx,
                         "ny": self.ny,
                         "nz": self.nz}
 
         # Define envelope expressions
-        self.g_expr = 'exp(-(t/tau)**2 + 1j*omega*t)'
-        self.gdot_expr = 'exp(-(t/tau)**2 + 1j*omega*t) * (-2*t/tau**2 + 1j*omega)'
-        self.gdotdot_expr = ('exp(-(t/tau)**2 + 1j*omega*t) * (4*t**2/tau**4 - 2/tau**2 - omega**2 '
-                             '- 4j*t*omega/tau**2)')
+        if self.envelope == "plane":
+            self.g_expr = "1j*exp(-1j*omega*t)"
+            self.gdot_expr = 'omega*exp(-1j*omega*t)'
+            self.gdotdot_expr = "-1j*omega**2*exp(-1j*omega*t)"
+        elif self.envelope == "gauss":
+            self.g_expr = '1j*exp(-(2*t/tau)**2 - 1j*omega*t)'
+            self.gdot_expr = '1j*exp(-(2*t/tau)**2 - 1j*omega*t) * (-4*t/tau**2 - 1j*omega)'
+            self.gdotdot_expr = ('1j*exp(-(2*t/tau)**2 - 1j*omega*t) * (16*t**2/tau**4 - 4/tau**2 - omega**2 '
+                                '+ 8j*t*omega/tau**2)')
+            
+        self.check_energy()
 
     def get_rotation(self):
         # Define rotation transforming (0,0,1) -> (kx,ky,kz) for vectors
@@ -103,7 +116,9 @@ class DipoleAnalytic(ExplicitField):
         E, B = self.calculate_field(t=0)
         W = get_field_energy(E, B, self.dV)
 
-        # if "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
+        if "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
+            self.d0 *= np.sqrt(self.W / W)
+            self.W_num = W * self.d0**2
         #     self.E0 *= np.sqrt(self.W / W)
         #     self.B0 = self.E0 / c
         #     self.E = ne.evaluate(self.E_expr, global_dict=self.__dict__)
@@ -126,6 +141,16 @@ class DipoleAnalytic(ExplicitField):
     
     def gdotdot_plusminus(self, t, sign=1):
         return self.gdotdot(t-self.R/c) + sign*self.gdotdot(t+self.R/c)
+
+    def _fix_singularity(self, t):
+        # fix divergence at R=0
+        Nx,Ny,Nz = self.Ex.shape
+        self.Ex[Nx//2,Ny//2,Nz//2] = 0.
+        self.Ey[Nx//2,Ny//2,Nz//2] = 0.
+        self.Ez[Nx//2,Ny//2,Nz//2] = 4/3*self.k**3*(1+6/(self.tau*self.omega)**2)*np.cos(self.omega*t)
+
+        self.Bx[Nx//2,Ny//2,Nz//2] = 0.
+        self.By[Nx//2,Ny//2,Nz//2] = 0.
     
     def calculate_field(self, t, E_out=None, B_out=None, mode="real"):
         gdotdot_p = self.gdotdot_plusminus(t)
@@ -135,9 +160,7 @@ class DipoleAnalytic(ExplicitField):
         g_m = self.g_plusminus(t, sign=-1)
 
         Bt = ne.evaluate("gdotdot_p/(R*c**2) + gdot_m/(R**2*c)", global_dict=self.EB_dict)
-        Et = ne.evaluate("1j*gdot_p/(c*R**2) + g_m/R**3", global_dict=self.EB_dict)
-        Et = np.nan_to_num(Et)
-        print(Et.max())
+        Et = ne.evaluate("gdot_p/(c*R**2) + g_m/R**3", global_dict=self.EB_dict)
         
         self.Ex = ne.evaluate('nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et', global_dict=self.EB_dict)
         self.Ey = ne.evaluate('ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et', global_dict=self.EB_dict)
@@ -146,6 +169,12 @@ class DipoleAnalytic(ExplicitField):
         self.Bx = ne.evaluate("-ny*Bt", global_dict=self.EB_dict)
         self.By = ne.evaluate("nx*Bt", global_dict=self.EB_dict)
         self.Bz = 0.
+        
+        # fix divergence at R=0
+        self._fix_singularity(t)
+
+        for field in "Ex Ey Ez Bx By Bz".split():
+            self.__dict__[field] *= self.d0
 
         if mode == "real":
             for field in "Ex Ey Ez Bx By Bz".split():
