@@ -2,6 +2,7 @@
 Here we provide utility functions related to fields
 """
 
+import numpy as np
 import numexpr as ne
 from scipy.constants import c, epsilon_0, mu_0, pi
 
@@ -44,3 +45,13 @@ def get_field_energy_kspace(a1, a2, k, dVk, mode="without 1/k"):
     expr = f"sum({a})" if mode == "without 1/k" else f"sum(k**2 * {a})"
     W = 0.5 * epsilon_0 * c**2 * dVk / (2 * pi) ** 3 * ne.evaluate(expr)
     return W
+
+
+def convert_tau(tau):
+    '''
+    This function converts our duration (tau) to the
+    FWHM and Standard Deciation one. We assume the temporal
+    envelope to have the form exp(-t**2/(tau/2)**2)
+    '''
+    result = {'tau': tau, 'FWHM': tau*np.sqrt(np.log(2)), 'std': tau/(2*np.sqrt(2))}
+    return result
