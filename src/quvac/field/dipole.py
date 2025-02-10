@@ -86,10 +86,10 @@ class DipoleAnalytic(ExplicitField):
             self.gdot_expr = 'omega*exp(-1j*omega*t)'
             self.gdotdot_expr = "-1j*omega**2*exp(-1j*omega*t)"
         elif self.envelope == "gauss":
-            self.g_expr = '1j*exp(-(2*t/tau)**2 - 1j*omega*t)'
-            self.gdot_expr = '1j*exp(-(2*t/tau)**2 - 1j*omega*t) * (-4*t/tau**2 - 1j*omega)'
-            self.gdotdot_expr = ('1j*exp(-(2*t/tau)**2 - 1j*omega*t) * (16*t**2/tau**4 - 4/tau**2 - omega**2 '
-                                '+ 8j*t*omega/tau**2)')
+            self.g_expr = '1j*exp(-(t/(tau/2))**2 - 1j*omega*t)'
+            self.gdot_expr = '1j*exp(-(t/(tau/2))**2 - 1j*omega*t) * (-2*t/(tau/2)**2 - 1j*omega)'
+            self.gdotdot_expr = ('1j*exp(-(t/(tau/2))**2 - 1j*omega*t) * (4*t**2/(tau/2)**4 '
+                                 '- 2/(tau/2)**2 - omega**2 + 4j*t*omega/(tau/2)**2)')
             
         self.check_energy()
 

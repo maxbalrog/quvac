@@ -47,11 +47,21 @@ def get_field_energy_kspace(a1, a2, k, dVk, mode="without 1/k"):
     return W
 
 
-def convert_tau(tau):
+def convert_tau(tau, mode="tau"):
     '''
-    This function converts our duration (tau) to the
-    FWHM and Standard Deciation one. We assume the temporal
+    This function converts between our duration (tau) and
+    FWHM and Standard Deviation ones. We assume the temporal
     envelope to have the form exp(-t**2/(tau/2)**2)
     '''
-    result = {'tau': tau, 'FWHM': tau*np.sqrt(np.log(2)), 'std': tau/(2*np.sqrt(2))}
+    match mode:
+        case "tau":
+            result = {'tau': tau, 'FWHM': tau*np.sqrt(np.log(2)),
+                      'std': tau/(2*np.sqrt(2))}
+        case "FWHM":
+            result = {'tau': tau/np.sqrt(np.log(2)), 'FWHM': tau,
+                      'std': tau/(2*np.sqrt(2*np.log(2)))}
+        case "std":
+            result = {'tau': 2*np.sqrt(2)*tau, 'FWHM': 2*tau*np.sqrt(2*np.log(2)),
+                      'std': tau}
+    result = {k: float(v) for k, v in result.items()}
     return result
