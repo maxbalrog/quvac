@@ -59,7 +59,8 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
             im = plt.pcolormesh(ax_bottom[j], ax_top[j], comp, shading=None,
                                 rasterized=True, cmap=cmap)
             plt.xlabel(f"{x_labels[j]} [$\\mu$m]")
-            plt.ylabel("x [$\\mu$m]")
+            if j == 0:
+                plt.ylabel("x [$\\mu$m]")
             plt.title(f"{key} at focal plane")
 
             divider = make_axes_locatable(ax)
