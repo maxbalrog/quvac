@@ -73,10 +73,10 @@ def get_max_edge_intensity(E):
     """
     Ex, Ey, Ez = E
     nx, ny, nz = Ex.shape
-    I = np.sqrt(Ex**2 + Ey**2 + Ez**2)
+    I = np.sqrt(abs(Ex)**2 + abs(Ey)**2 + abs(Ez)**2)
     edges = [np.max(I[0,:,:]), np.max(I[-1,:,:]),
              np.max(I[:,0,:]), np.max(I[:,-1,:]),
              np.max(I[:,:,0]), np.max(I[:,:,-1])]
     Iedge = np.max(edges)
-    print(f"Max intensity at edges: {Iedge/I.max():.2f}")
+    print(f"Max intensity at edges: {Iedge/I.max():.2e}")
     return Iedge
