@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.constants import c, pi
 
 
@@ -49,23 +50,22 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
         if key == "I":
             cmap = "inferno"
 
-        ax = plt.subplot(n_rows, n_cols, i*n_cols+1)
-        plt.pcolormesh(y, x, field_comps[key][:, :, nz//2], shading=None,
-                       rasterized=True, cmap=cmap)
-        plt.colorbar()
-        ax.set_aspect('equal')
-        plt.xlabel("y [$\\mu$m]")
-        plt.ylabel("x [$\\mu$m]")
-        plt.title(f"{key} at z=0")
+        ax_bottom, ax_top = [y, z], [x, x]
+        x_labels = "y z".split()
+        comps = [field_comps[key][:, :, nz//2], field_comps[key][:, ny//2, :]]
 
-        ax = plt.subplot(n_rows, n_cols, i*n_cols+2)
-        plt.pcolormesh(z, x, field_comps[key][:, ny//2, :], shading=None,
-                       rasterized=True, cmap=cmap)
-        plt.colorbar()
-        ax.set_aspect('equal')
-        plt.xlabel("z [$\\mu$m]")
-        plt.ylabel("x [$\\mu$m]")
-        plt.title(f"{key} at z=0")
+        for j,comp in enumerate(comps):
+            ax = plt.subplot(n_rows, n_cols, i*n_cols+j+1)
+            im = plt.pcolormesh(ax_bottom[j], ax_top[j], comp, shading=None,
+                                rasterized=True, cmap=cmap)
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            cbar = plt.colorbar(im, cax=cax)
+
+            ax.set_aspect('equal')
+            plt.xlabel(f"{x_labels[j]} [$\\mu$m]")
+            plt.ylabel("x [$\\mu$m]")
+            plt.title(f"{key} at focal plane")
     save_fig(save_path, "field_profiles_focus")
     plt.show()
 
