@@ -65,3 +65,18 @@ def convert_tau(tau, mode="tau"):
                       'std': tau}
     result = {k: float(v) for k, v in result.items()}
     return result
+
+
+def get_max_edge_intensity(E):
+    """
+    Calculate maximum fields at the edges of the grid
+    """
+    Ex, Ey, Ez = E
+    nx, ny, nz = Ex.shape
+    I = np.sqrt(Ex**2 + Ey**2 + Ez**2)
+    edges = [np.max(I[0,:,:]), np.max(I[-1,:,:]),
+             np.max(I[:,0,:]), np.max(I[:,-1,:]),
+             np.max(I[:,:,0]), np.max(I[:,:,-1])]
+    Iedge = np.max(edges)
+    print(f"Max intensity at edges: {Iedge/I.max():.2f}")
+    return Iedge
