@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.constants import c, pi
 
@@ -21,7 +22,7 @@ def save_fig(save_path, fig_name):
 
 
 def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
-                save_path=None):
+                cnorm='log', save_path=None):
     """
     Plot specified field components
     """
@@ -45,7 +46,7 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
     n_rows = len(plot_keys)
     n_cols = 2
 
-    fig = plt.figure(figsize=(10, 5*n_rows), layout="constrained")
+    fig = plt.figure(figsize=(10, 5*n_rows), layout="tight")
     for i,key in enumerate(plot_keys):
         if key == "I":
             cmap = "inferno"
@@ -55,9 +56,14 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
         comps = [field_comps[key][:, :, nz//2], field_comps[key][:, ny//2, :]]
 
         for j,comp in enumerate(comps):
+            if key == "I":
+                if cnorm == "log":
+                    norm = mcolors.LogNorm(vmin=comp.max()*1e-20, vmax=comp.max())
+                else:
+                    norm = None
             ax = plt.subplot(n_rows, n_cols, i*n_cols+j+1)
             im = plt.pcolormesh(ax_bottom[j], ax_top[j], comp, shading=None,
-                                rasterized=True, cmap=cmap)
+                                rasterized=True, cmap=cmap, norm=norm)
             plt.xlabel(f"{x_labels[j]} [$\\mu$m]")
             if j == 0:
                 plt.ylabel("x [$\\mu$m]")
