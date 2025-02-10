@@ -68,6 +68,7 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
             cbar = plt.colorbar(im, cax=cax)
 
             ax.set_aspect('equal')
+    plt.subplots_adjust(wspace=0.1)
     save_fig(save_path, "field_profiles_focus")
     plt.show()
 
