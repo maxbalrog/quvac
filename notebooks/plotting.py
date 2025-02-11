@@ -26,7 +26,8 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
     """
     Plot specified field components
     """
-    E, B = field.calculate_field(t=t, mode='real')
+    E, B = field.calculate_field(t=t)
+    E, B = [np.real(Ex) for Ex in E], [np.real(Bx) for Bx in B]
     nx, ny, nz = field.grid_shape
     x, y, z = [ax*1e6 for ax in field.grid_xyz.grid]
 
