@@ -73,15 +73,15 @@ class MaxwellField(Field):
         #     )
         #     for a in self.EB
         # ]
-        a = pyfftw.zeros_aligned(self.grid_shape, dtype=config.CDTYPE)
-        self.EB_fftw = pyfftw.FFTW(
-                            a,
-                            a,
-                            axes=(0, 1, 2),
-                            direction="FFTW_BACKWARD",
-                            flags=("FFTW_MEASURE",),
-                            threads=self.nthreads,
-                       )
+        # a = pyfftw.zeros_aligned(self.grid_shape, dtype=config.CDTYPE)
+        # self.EB_fftw = pyfftw.FFTW(
+        #                     a,
+        #                     a,
+        #                     axes=(0, 1, 2),
+        #                     direction="FFTW_BACKWARD",
+        #                     flags=("FFTW_MEASURE",),
+        #                     threads=self.nthreads,
+        #                )
 
         self.a_dict = {
             "kabs": self.kabs,
@@ -105,6 +105,14 @@ class MaxwellField(Field):
 
     def allocate_tmp(self):
         self.tmp = pyfftw.zeros_aligned(self.grid_shape, dtype="complex128")
+        self.EB_fftw = pyfftw.FFTW(
+                            self.tmp,
+                            self.tmp,
+                            axes=(0, 1, 2),
+                            direction="FFTW_BACKWARD",
+                            flags=("FFTW_MEASURE",),
+                            threads=self.nthreads,
+                       )
 
     # def calculate_field(self, t, E_out=None, B_out=None):
     def calculate_field(self, t, E_out=None, B_out=None):
@@ -127,15 +135,25 @@ class MaxwellField(Field):
 
         # Calculate fourier of fields at time t and transform back to
         # spatial domain
+        # for idx in range(6):
+        #     ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
+        #     if idx < 3:
+        #         E_out[idx][:] = self.tmp.astype(config.CDTYPE)
+        #         self.EB_fftw.update_arrays(E_out[idx], E_out[idx])
+        #     else:
+        #         B_out[idx-3][:] = self.tmp.astype(config.CDTYPE)
+        #         self.EB_fftw.update_arrays(B_out[idx-3], B_out[idx-3])
+        #     self.EB_fftw.execute()
         for idx in range(6):
             ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
+            self.EB_fftw.execute()
             if idx < 3:
                 E_out[idx][:] = self.tmp.astype(config.CDTYPE)
-                self.EB_fftw.update_arrays(E_out[idx], E_out[idx])
+                # self.EB_fftw.update_arrays(E_out[idx], E_out[idx])
             else:
                 B_out[idx-3][:] = self.tmp.astype(config.CDTYPE)
-                self.EB_fftw.update_arrays(B_out[idx-3], B_out[idx-3])
-            self.EB_fftw.execute()
+                # self.EB_fftw.update_arrays(B_out[idx-3], B_out[idx-3])
+            # self.EB_fftw.execute()
         return E_out, B_out
 
 
