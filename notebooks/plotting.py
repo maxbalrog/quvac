@@ -26,11 +26,12 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
     """
     Plot specified field components
     """
-    E_out, B_out = [[np.zeros(field.grid_shape, dtype=np.complex128) for _ in range(3)]
+    Nxyz = field.grid_xyz.grid_shape
+    E_out, B_out = [[np.zeros(Nxyz, dtype=np.complex128) for _ in range(3)]
                     for _ in range(2)]
     E, B = field.calculate_field(t=t, E_out=E_out, B_out=B_out)
     E, B = [np.real(Ex) for Ex in E], [np.real(Bx) for Bx in B]
-    nx, ny, nz = field.grid_shape
+    nx, ny, nz = Nxyz
     x, y, z = [ax*1e6 for ax in field.grid_xyz.grid]
 
     I = (E[0]**2 + E[1]**2 + E[2]**2 + B[0]**2 + B[1]**2 + B[2]**2)/2
