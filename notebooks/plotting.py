@@ -99,3 +99,5 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
     save_fig(save_path, "field_slices_focus")
     plt.show()
 
+    return field_comps
+
