@@ -80,3 +80,10 @@ def get_max_edge_intensity(E):
     Iedge = np.max(edges)
     print(f"Max intensity at edges: {Iedge/I.max():.2e}")
     return Iedge
+
+
+def get_intensity(field, t):
+    E, B = field.calculate_field(t=t)
+    E, B = [np.real(Ex) for Ex in E], [np.real(Bx) for Bx in B]
+    I = (E[0]**2 + E[1]**2 + E[2]**2 + B[0]**2 + B[1]**2 + B[2]**2)/2
+    return I
