@@ -39,15 +39,15 @@ class DipoleAnalytic(ExplicitField):
     '''
     def __init__(self, field_params, grid):
         super().__init__(grid)
-        
+
         angles = "theta phi beta".split()
         for key, val in field_params.items():
             if key in angles:
                 val *= pi / 180.0
             self.__dict__[key] = val
         
-        if "envelope" not in self.__dict__:
-            self.envelope = "plane"
+        self.envelope = self.__dict__.get("envelope", "plane")
+        self.dipole_type = self.__dict__.get("dipole_type", "electric")
 
         # Define grid variables
         self.grid_xyz = grid
@@ -178,6 +178,12 @@ class DipoleAnalytic(ExplicitField):
         
         # fix divergence at R=0
         self._fix_singularity(t)
+
+        # h-dipole (magnetic) transformation
+        if self.dipole_type == "magnetic":
+            self.Ex, self.Bx = -self.Bx, self.Ex
+            self.Ey, self.By = -self.By, self.Ey
+            self.Ez, self.Bz = -self.Bz, self.Ez
 
         for field in "Ex Ey Ez Bx By Bz".split():
             self.__dict__[field] *= self.d0
