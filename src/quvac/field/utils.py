@@ -47,22 +47,27 @@ def get_field_energy_kspace(a1, a2, k, dVk, mode="without 1/k"):
     return W
 
 
-def convert_tau(tau, mode="tau"):
+def convert_tau(tau, mode="1/e^2"):
     '''
-    This function converts between our duration (tau) and
+    This function converts between our duration (1/e^2) and
     FWHM and Standard Deviation ones. We assume the temporal
     envelope to have the form exp(-t**2/(tau/2)**2)
     '''
     match mode:
         case "tau":
-            result = {'tau': tau, 'FWHM': tau*np.sqrt(np.log(2)),
+            result = {'1/e^2': tau, 'FWHM': tau*np.sqrt(np.log(2)),
+                      'FWHM-Intensity': tau*np.sqrt(np.log(2)/2),
                       'std': tau/(2*np.sqrt(2))}
         case "FWHM":
-            result = {'tau': tau/np.sqrt(np.log(2)), 'FWHM': tau,
+            result = {'1/e^2': tau/np.sqrt(np.log(2)), 'FWHM': tau,
+                      'FWHM-Intensity': tau/np.sqrt(2),
                       'std': tau/(2*np.sqrt(2*np.log(2)))}
+        case "FWHM-Intensity":
+            result = {'1/e^2': tau/np.sqrt(np.log(2)/2), 'FWHM': tau*np.sqrt(2),
+                      'FWHM-Intensity': tau, 'std': tau/(2*np.sqrt(np.log(2)))}
         case "std":
-            result = {'tau': 2*np.sqrt(2)*tau, 'FWHM': 2*tau*np.sqrt(2*np.log(2)),
-                      'std': tau}
+            result = {'1/e^2': 2*np.sqrt(2)*tau, 'FWHM': 2*tau*np.sqrt(2*np.log(2)),
+                      'FWHM-Intensity': 2*tau*np.sqrt(np.log(2)), 'std': tau}
     result = {k: float(v) for k, v in result.items()}
     return result
 
