@@ -238,6 +238,7 @@ def create_multibeam(params, n_beams=6, mode='belt', theta0=0):
             case "sphere":
                 for j,phi in enumerate(phi_arr):
                     idx = i*3 + j
-                    params_beam['phi'] = phi
-                    beams[f"field_{idx+1}"] = params_beam
+                    params_phi = deepcopy(params_beam)
+                    params_phi['phi'] = phi
+                    beams[f"field_{idx+1}"] = params_phi
     return beams
