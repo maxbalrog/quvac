@@ -1,5 +1,7 @@
 """This script implements analytic expression for dipole wave"""
 
+from copy import deepcopy
+
 import numexpr as ne
 import numpy as np
 from scipy.constants import c, pi
@@ -205,3 +207,37 @@ class DipoleAnalytic(ExplicitField):
             ne.evaluate("Bi + mx*Bx + my*By + mz*Bz", out=Bi, global_dict=self.__dict__)
 
         return E_out, B_out
+    
+
+def create_multibeam(params, n_beams=6, mode='belt', theta0=0):
+    '''
+    Create multibeam configuration from several focused pulses
+    to approximate the dipole wave and achieve higher intensity
+    at focus. Configuration follows from 
+    
+    S. S. Bulanov, et al. "Multiple Colliding Electromagnetic Pulses: 
+    A Way to Lower the Threshold of e+ e-Pair Production from Vacuum." 
+    PRL 104.22 (2010): 220404.
+    '''
+    # distribute the energy
+    W_per_beam = params['W'] / n_beams
+    beams = {}
+    if mode == "sphere":
+        n_parts = n_beams // 3
+        phi_arr = [0, 45, -45]
+
+    # create geometry
+    theta_c = 360/n_beams
+    for i in range(n_beams):
+        params_beam = deepcopy(params)
+        params_beam['W'] = W_per_beam
+        params_beam['theta'] = i*theta_c + theta0
+        match mode:
+            case "belt":
+                beams[f"field_{i+1}"] = params_beam
+            case "sphere":
+                for j,phi in enumerate(phi_arr):
+                    idx = i*3 + j
+                    params_beam['phi'] = phi
+                    beams[f"field_{idx+1}"] = params_beam
+    return beams
