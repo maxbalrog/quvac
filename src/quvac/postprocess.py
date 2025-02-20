@@ -128,7 +128,7 @@ def get_a12_from_amplitudes(S1, S2, k):
     spectral coefficients a1 and a2 (similar to Maxwell fields)
     k = kabs
     '''
-    prefactor = 2*hbar*k/(epsilon_0*c)
+    prefactor = np.sqrt(2*hbar*k/(epsilon_0*c))
     a1 = S1 * prefactor
     a2 = S2 * prefactor
     return a1, a2
