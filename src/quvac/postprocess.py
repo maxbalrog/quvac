@@ -286,7 +286,7 @@ class VacuumEmissionAnalyzer:
         _, bgr_N_sph = cartesian_to_spherical_array(
             bgr_N_xyz,
             self.grid_xyz,
-            spherical_grid=self.spherical_grid,
+            spherical_grid=self.__dict__.get('spherical_grid', None),
             **interp_kwargs,
         )
 
