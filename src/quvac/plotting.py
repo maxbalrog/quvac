@@ -51,7 +51,7 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', scale=None, norm=
 
 
 def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
-                cnorm='log', save_path=None):
+                cnorm='log', norm_lim=1e-20, save_path=None):
     """
     Plot specified field components
     """
@@ -91,7 +91,7 @@ def plot_fields(field, t, plot_keys=None, cmap='coolwarm',
         for j,comp in enumerate(comps):
             norm = None
             if key == "Intensity" and cnorm == "log":
-                norm = mcolors.LogNorm(vmin=comp.max()*1e-20, vmax=comp.max())
+                norm = mcolors.LogNorm(vmin=comp.max()*norm_lim, vmax=comp.max())
             ax = plt.subplot(n_rows, n_cols, i*n_cols+j+1)
             im = plt.pcolormesh(ax_bottom[j], ax_top[j], comp, shading=None,
                                 rasterized=True, cmap=cmap, norm=norm)
