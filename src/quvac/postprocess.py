@@ -134,6 +134,19 @@ def get_a12_from_amplitudes(S1, S2, k):
     return a1, a2
 
 
+def get_spectra_from_Stokes(P0, P1, P2, P3, basis="linear"):
+    match basis:
+        case "linear":
+            P = P1
+        case "linear-45":
+            P = P2
+        case "circular":
+            P = P3
+    Nf = 0.5 * (P0 + P)
+    Np = 0.5 * (P0 - P)
+    return Nf, Np
+
+
 class VacuumEmissionAnalyzer:
     """
     Calculates spectra and observables from amplitudes
@@ -172,7 +185,6 @@ class VacuumEmissionAnalyzer:
     def get_polarization_from_field(self):
         perp_field_params = self.fields_params[self.perp_field_idx]
         field = MaxwellMultiple([perp_field_params], self.grid_xyz)
-        # field = MaxwellMultiple(self.fields_params, self.grid_xyz)
         a1, a2 = field.a1, field.a2
         Ex = ne.evaluate("e1x*a1 + e2x*a2", global_dict=self.__dict__)
         Ey = ne.evaluate("e1y*a1 + e2y*a2", global_dict=self.__dict__)
@@ -182,20 +194,6 @@ class VacuumEmissionAnalyzer:
         E_inv = np.nan_to_num(1. / E)
         efx, efy, efz = Ex * E_inv, Ey * E_inv, Ez * E_inv
         return (efx, efy, efz)
-
-    # def _get_polarization_vector(self, angles, perp_type="optical axis"):
-    #     if perp_type == "optical axis":
-    #         self.epx, self.epy, self.epz = get_polarization_vector(*angles)
-    #     elif perp_type == "local axis":
-    #         efx, efy, efz = self.get_polarization_from_field()
-    #         kx, ky, kz = [k / self.kabs for k in self.kmeshgrid]
-    #         kx[0, 0, 0] = 0.0
-    #         ky[0, 0, 0] = 0.0
-    #         kz[0, 0, 0] = 0.0
-    #         self.epx = ne.evaluate("ky*efz - kz*efy")
-    #         self.epy = ne.evaluate("kz*efx - kx*efz")
-    #         self.epz = ne.evaluate("kx*efy - ky*efx")
-    #     return (self.epx, self.epy, self.epz)
 
     def _get_polarization_vector(self, angles, perp_type="optical axis"):
         '''
@@ -227,10 +225,8 @@ class VacuumEmissionAnalyzer:
         """
         angles = [angle * pi / 180 for angle in angles]
         # Here we make sure that perp polarization would be calculated
-        # angles[-1] += pi / 2
 
         # get one polarization direction to project on:
-        # self.ep = self._get_polarization_vector(angles, perp_type)
         self.ef, self.ep = self._get_polarization_vector(angles, perp_type)
         epx, epy, epz = self.ep
         e1x, e1y, e1z = self.e1x, self.e1y, self.e1z
@@ -250,6 +246,12 @@ class VacuumEmissionAnalyzer:
         '''
         Given amplitudes S1,S2 for arbitrary linear polarization
         basis e1,e2, calculate Stokes vectors for detector ep
+
+        For given ef (||) and ep (perp):
+        P0 = N_xyz = (S_||)**2 + (S_perp)**2
+        P1 = (S_||)**2 - (S_perp)**2
+        P2 = (S_45)**2 - (S_-45)**2     - difference of linear polarizations in 45 basis
+        P3 = (S_right)**2 - (S_left)**2 - difference of circular polarizations
         '''
         e1x, e1y, e1z = self.e1x, self.e1y, self.e1z
         e2x, e2y, e2z = self.e2x, self.e2y, self.e2z
