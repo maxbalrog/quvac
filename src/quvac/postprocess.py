@@ -183,11 +183,33 @@ class VacuumEmissionAnalyzer:
         efx, efy, efz = Ex * E_inv, Ey * E_inv, Ez * E_inv
         return (efx, efy, efz)
 
+    # def _get_polarization_vector(self, angles, perp_type="optical axis"):
+    #     if perp_type == "optical axis":
+    #         self.epx, self.epy, self.epz = get_polarization_vector(*angles)
+    #     elif perp_type == "local axis":
+    #         efx, efy, efz = self.get_polarization_from_field()
+    #         kx, ky, kz = [k / self.kabs for k in self.kmeshgrid]
+    #         kx[0, 0, 0] = 0.0
+    #         ky[0, 0, 0] = 0.0
+    #         kz[0, 0, 0] = 0.0
+    #         self.epx = ne.evaluate("ky*efz - kz*efy")
+    #         self.epy = ne.evaluate("kz*efx - kx*efz")
+    #         self.epz = ne.evaluate("kx*efy - ky*efx")
+    #     return (self.epx, self.epy, self.epz)
+
     def _get_polarization_vector(self, angles, perp_type="optical axis"):
+        '''
+        Calculate polarization vectors parallel to chosen axis and perp to it
+        ef - field polarization (parallel)
+        ep - perp polarization
+        '''
         if perp_type == "optical axis":
+            self.efx, self.efy, self.efz = get_polarization_vector(*angles)
+            angles[-1] += pi / 2
             self.epx, self.epy, self.epz = get_polarization_vector(*angles)
         elif perp_type == "local axis":
             efx, efy, efz = self.get_polarization_from_field()
+            self.efx, self.efy, self.efz = efx, efy, efz
             kx, ky, kz = [k / self.kabs for k in self.kmeshgrid]
             kx[0, 0, 0] = 0.0
             ky[0, 0, 0] = 0.0
@@ -195,7 +217,7 @@ class VacuumEmissionAnalyzer:
             self.epx = ne.evaluate("ky*efz - kz*efy")
             self.epy = ne.evaluate("kz*efx - kx*efz")
             self.epz = ne.evaluate("kx*efy - ky*efx")
-        return (self.epx, self.epy, self.epz)
+        return (self.efx, self.efy, self.efz), (self.epx, self.epy, self.epz)
 
     def get_perp_signal(self, angles, perp_type="optical axis",
                         stokes=False):
@@ -205,31 +227,44 @@ class VacuumEmissionAnalyzer:
         """
         angles = [angle * pi / 180 for angle in angles]
         # Here we make sure that perp polarization would be calculated
-        angles[-1] += pi / 2
+        # angles[-1] += pi / 2
 
         # get one polarization direction to project on:
-        self.ep = self._get_polarization_vector(angles, perp_type)
+        # self.ep = self._get_polarization_vector(angles, perp_type)
+        self.ef, self.ep = self._get_polarization_vector(angles, perp_type)
         epx, epy, epz = self.ep
         e1x, e1y, e1z = self.e1x, self.e1y, self.e1z
         e2x, e2y, e2z = self.e2x, self.e2y, self.e2z
 
-        # Calculate perp signal
-        Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
-        Sp = Sp.real**2 + Sp.imag**2
+        # Calculate perp signal or stokes parameters
         if stokes:
-            pass
+            self.get_Stokes_vector_for_ep()
+        else:
+            Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
+            Sp = Sp.real**2 + Sp.imag**2
 
-        self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
+            self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
+            self.Np_total = np.sum(self.Np_xyz) * self.dVk
 
-        self.Np_total = np.sum(self.Np_xyz) * self.dVk
-
-    def get_Stokes_vector_for_ep(ep):
+    def get_Stokes_vector_for_ep(self):
         '''
         Given amplitudes S1,S2 for arbitrary linear polarization
         basis e1,e2, calculate Stokes vectors for detector ep
         '''
+        e1x, e1y, e1z = self.e1x, self.e1y, self.e1z
+        e2x, e2y, e2z = self.e2x, self.e2y, self.e2z
+        efx, efy, efz = self.ef
+        epx, epy, epz = self.ep
 
-        
+        Sf = (efx*e1x + efy*e1y + efz*e1z)*self.S1 + (efx*e2x + efy*e2y + efz*e2z)*self.S2
+        Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
+
+        P1 = Sf.real**2 + Sf.imag**2 - (Sp.real**2 + Sp.imag**2)
+        P2 = 2 * np.real(Sf * np.conj(Sp))
+        P3 = -2 * np.imag(Sf * np.conj(Sp))
+
+        self.P1, self.P2, self.P3 = [np.fft.fftshift(P / (2 * pi) ** 3)
+                                     for P in (P1,P2,P3)]
 
     def get_signal_on_sph_grid(
         self, key="N_xyz", spherical_grid=None, angular_resolution=None, **interp_kwargs
@@ -361,16 +396,28 @@ class VacuumEmissionAnalyzer:
         perp_type=None,
         calculate_spherical=False,
         spherical_params=None,
+        stokes=False,
     ):
         self.perp_field_idx = perp_field_idx - 1
         angle_keys = "theta phi beta".split()
         angles = [self.fields_params[self.perp_field_idx][key] for key in angle_keys]
-        self.get_perp_signal(angles, perp_type=perp_type)
-        keys = "kx ky kz Np_xyz Np_total epx epy epz".split()
+        self.get_perp_signal(angles, perp_type=perp_type, stokes=stokes)
+        # keys = "kx ky kz Np_xyz Np_total epx epy epz".split()
+        keys = "kx ky kz epx epy epz efx efy efz".split()
 
-        if calculate_spherical:
-            self.get_signal_on_sph_grid(key="Np_xyz", **spherical_params)
-            keys.extend("k theta phi Np_sph Np_sph_total".split())
+        if not stokes:
+            keys.extend("Np_xyz Np_total".split())
+            if calculate_spherical:
+                self.get_signal_on_sph_grid(key="Np_xyz", **spherical_params)
+                keys.extend("k theta phi Np_sph Np_sph_total".split())
+        else:
+            stokes_keys = "P1 P2 P3".split()
+            keys.extend(stokes_keys)
+            if calculate_spherical:
+                keys.extend("k theta phi".split())
+                for stokes_key in stokes_keys:
+                    self.get_signal_on_sph_grid(key=stokes_key, **spherical_params)
+                    keys.extend([f"{stokes_key}_sph"])
         
         self.write_data(keys)
 
@@ -389,6 +436,7 @@ class VacuumEmissionAnalyzer:
         perp_type=None,
         calculate_xyz_background=False,
         bgr_idx=None,
+        stokes=False,
         calculate_spherical=False,
         spherical_params=None,
         calculate_discernible=False,
@@ -410,6 +458,7 @@ class VacuumEmissionAnalyzer:
                 perp_type=perp_type,
                 calculate_spherical=calculate_spherical,
                 spherical_params=spherical_params,
+                stokes=stokes,
             )
         elif mode == "mix_signal_bg":
             self.get_mix_signal_bg(add_signal_bg=add_signal_bg)

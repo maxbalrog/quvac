@@ -200,6 +200,7 @@ def postprocess_simulation(ini_config, files, fields_params):
     kwargs = {
         "perp_type": postprocess_params.get("perp_polarization_type", None),
         "perp_field_idx": postprocess_params.get("perp_field_idx", 1),
+        "stokes": postprocess_params.get("stokes", False),
         "calculate_xyz_background": postprocess_params.get("calculate_xyz_background", False),
         "bgr_idx": postprocess_params.get("bgr_idx", False),
         "calculate_spherical": postprocess_params.get("calculate_spherical", False),
