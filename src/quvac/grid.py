@@ -255,6 +255,25 @@ def get_t_size(t_start, t_end, lam, grid_res=1):
     return int(np.ceil((t_end - t_start) * fmax * 6 * grid_res))
 
 
+def get_box_size(fields_params, grid_params):
+    perp_max = 0
+    for field in fields_params:
+        ftype = field["field_type"]
+        if "gauss" in ftype:
+            length = field.get("w0", 0)
+        elif "dipole" in ftype:
+            length = c * field.get("tau", 0)
+        perp_max = np.maximum(length, perp_max)
+    
+    # perp_max = max([field.get("w0", 0) for field in fields_params])
+    tau_max = max([field.get("tau", 0) for field in fields_params])
+
+    transverse_size = perp_max * grid_params["transverse_factor"]
+    longitudinal_size = tau_max * c * grid_params["longitudinal_factor"]
+
+    return transverse_size, longitudinal_size
+
+
 def create_dynamic_grid(fields_params, grid_params):
     """
     Dynamically create grids from given laser parameters.
@@ -272,12 +291,13 @@ def create_dynamic_grid(fields_params, grid_params):
     # Create spatial box
     collision_geometry = grid_params.get("collision_geometry", "z")
 
-    w0_max = max([field.get("w0", 0) for field in fields_params])
+    # w0_max = max([field.get("w0", 0) for field in fields_params])
     tau_max = max([field.get("tau", 0) for field in fields_params])
     lam_min = min([field.get("lam") for field in fields_params])
 
-    transverse_size = w0_max * grid_params["transverse_factor"]
-    longitudinal_size = tau_max * c * grid_params["longitudinal_factor"]
+    # transverse_size = w0_max * grid_params["transverse_factor"]
+    # longitudinal_size = tau_max * c * grid_params["longitudinal_factor"]
+    transverse_size, longitudinal_size = get_box_size(fields_params, grid_params)
 
     box_xyz = [0, 0, 0]
     for i, ax in enumerate("xyz"):

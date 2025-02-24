@@ -147,10 +147,6 @@ class DipoleAnalytic(ExplicitField):
 
     def _fix_singularity(self, t):
         # fix divergence at R=0
-        # omega, tau = self.omega, self.tau
-        # cos_pref = 6*omega/(tau/2)**2 - 12*omega*t**2/(tau/2)**4 + omega**3
-        # sin_pref = 2*t/(tau/2)**2 * (4*t**2/(tau/2)**4 - 3*omega**2 - 6/(tau/2)**2)
-        # E0 = 4/3/c**3 * np.exp(-t**2/(tau/2)**2) * (cos_pref*np.cos(omega*t) + sin_pref*np.sin(omega*t))
 
         Nx,Ny,Nz = self.Ex.shape
         self.Ex[Nx//2,Ny//2,Nz//2] = 0.
