@@ -4,6 +4,7 @@ Script to create images of participating fields
 """
 import argparse
 from copy import deepcopy
+import gc
 import os
 import time
 from pathlib import Path
@@ -11,6 +12,7 @@ from pathlib import Path
 from quvac.field.external_field import ExternalField
 from quvac.grid import setup_grids
 from quvac.plotting import plot_fields
+from quvac.simulation import set_precision
 from quvac.utils import read_yaml
 
 
@@ -35,6 +37,10 @@ def image_fields(ini_file, save_path=None):
     fields_params = ini_config['fields']
     grid_params = ini_config["grid"]
 
+    perf_params = ini_config.get("performance", {})
+    precision = perf_params.get("precision", "float32")
+    set_precision(precision)
+
     # Setup grids
     grid_xyz, grid_t = setup_grids(deepcopy(fields_params), deepcopy(grid_params))
     grid_xyz.get_k_grid()
@@ -49,6 +55,8 @@ def image_fields(ini_file, save_path=None):
         for t0 in [0, grid_t[-1]]:
             save_loc = os.path.join(save_path, f"field_{idx+1}_t0_{t0*1e15:.1f}fs")
             plot_fields(field, t=t0, plot_keys=plot_keys, norm_lim=1e-10, save_path=save_loc)
+        del field
+        gc.collect()
     print("Plotting finished successfully")
     
 
