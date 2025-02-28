@@ -1,10 +1,5 @@
 # Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+from quvac import __cls_names__
 
 project = 'quvac'
 copyright = '2025, maxbalrog'
@@ -15,31 +10,37 @@ release = '0.1.0'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "autoapi.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx.ext.autosummary", 
-    "autoapi.extension",]
-autosummary_generate = True
+    "sphinx.ext.autosummary",]
+# autosummary_generate = True
 
 autoapi_dirs = ["../../src/quvac"]  # Path to your package
 autoapi_options = [
     "members",
-    # "undoc-members",
+    "undoc-members",
     # "private-members",
-    "special-members",
-    "imported-members",
+    # "special-members",
+    # "imported-members",
     "show-inheritance",  # Show class inheritance diagrams
     "show-module-summary",  # Generates a summary per module
-    "generate-api-docs",
 ]
-autoapi_ignore = ["*/cluster/*", "*log*"]
+autoapi_python_class_content = "both"
+autoapi_ignore = ["*/cluster/*", "*.ipynb_checkpoints/*"]
 
 templates_path = ['_templates']
 exclude_patterns = []
 
+# Skip dublicate entries for class attributes and methods present in
+# class docstring and __init__ method
 def skip_undocumented_members(app, what, name, obj, skip, options):
-    if what == "attribute" and not obj.__doc__:
-        skip = True
+    if what == "attribute":
+        for cls_name in __cls_names__:
+            if cls_name in name:
+                skip = True
+    if what == "method" and "grid" in name:
+        print(name)
     return skip
 
 def setup(app):

@@ -4,5 +4,6 @@ API Documentation
 .. toctree::
    :maxdepth: 2
 
-.. autoapi:: quvac
-   :noindex:
+.. automodule:: quvac
+   :members:
+   :no-index:
