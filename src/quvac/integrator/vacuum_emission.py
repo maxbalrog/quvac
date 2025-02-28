@@ -1,8 +1,16 @@
 """
-This script implements calculation of vacuum emission integral (box diagram, F^4)
-It is planned to add support for two versions:
-    - Calculation of total vacuum emission signal for given field configuration
-    - Separation of fields into pump and probe with subsequent calculation of probe channel signal
+Calculation of vacuum emission integral (box diagram, F^4).
+
+Currently supports:
+
+1. Calculation of total vacuum emission signal for given field configuration. 
+All fields are treated as external.
+
+2. Separation of fields into pump and probe with subsequent calculation of
+probe channel signal.
+
+.. note::
+    For details on implementation check out Theory section.
 """
 
 import os
@@ -19,19 +27,23 @@ from quvac import config
 BS = m_e**2 * c**2 / (hbar * e)  # Schwinger magnetic field
 
 
-class VacuumEmission(object):
+class VacuumEmission:
     """
     Calculator of Vacuum Emission amplitude from given fields
 
     Parameters
     ----------
-    field: quvac.Field
-        External fields
-    grid: quvac.grid.GridXYZ
-        spatial and spectral grid
-    channels: bool
-        Whether to calculate a particular channel in vacuum emission
-        amplitude
+    field : quvac.Field
+        External fields.
+    grid : quvac.grid.GridXYZ
+        Spatial and spectral grid.
+    nthreads : int, optional
+        Number of threads to use for calculations. If not provided, 
+        defaults to the number of CPU cores.
+    channels : bool, optional
+        Whether to calculate a particular channel in vacuum emission amplitude. 
+        Default is False.
+
     """
 
     def __init__(self, field, grid, nthreads=None, channels=False):
@@ -56,7 +68,7 @@ class VacuumEmission(object):
             self.U1 = [f"(4*E{ax}*F + 7*B{ax}*G)" for ax in "xyz"]
             self.U2 = [f"(4*B{ax}*F - 7*E{ax}*G)" for ax in "xyz"]
         else:
-            self.define_channel_variables()
+            self._define_channel_variables()
 
         self.I_ij = {
             f"{i}{j}": f"(e{i}x*U{j}_acc_x + e{i}y*U{j}_acc_y + e{i}z*U{j}_acc_z)"
@@ -66,7 +78,10 @@ class VacuumEmission(object):
         for key, val in self.I_ij.items():
             self.__dict__[f"I_{key}_expr"] = val
 
-    def define_channel_variables(self):
+    def _define_channel_variables(self):
+        """
+        Define variables for channel-separated signal (linear in probe).
+        """
         self.F_B_Bp_expr = "(Bx*Bpx + By*Bpy + Bz*Bpz - Ex*Epx - Ey*Epy - Ez*Epz)"
         self.G_Ep_B_expr = "-(Epx*Bx + Epy*By + Epz*Bz)"
         self.G_E_Bp_expr = "-(Ex*Bpx + Ey*Bpy + Ez*Bpz)"
@@ -84,7 +99,10 @@ class VacuumEmission(object):
             for ax in "xyz"
         ]
 
-    def allocate_fields(self):
+    def _allocate_fields(self):
+        """
+        Allocate memory for field calculations.
+        """
         self.E_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
         self.B_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
         if self.channels:
@@ -95,13 +113,19 @@ class VacuumEmission(object):
                 np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)
             ]
 
-    def allocate_result_arrays(self):
+    def _allocate_result_arrays(self):
+        """
+        Allocate memory for result arrays.
+        """
         self.U1_acc = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
         self.U2_acc = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
         self.U1_acc_x, self.U1_acc_y, self.U1_acc_z = self.U1_acc
         self.U2_acc_x, self.U2_acc_y, self.U2_acc_z = self.U2_acc
 
-    def allocate_fft(self):
+    def _allocate_fft(self):
+        """
+        Allocate memory for FFT calculations.
+        """
         self.tmp = [
             pyfftw.zeros_aligned(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)
         ]
@@ -126,13 +150,19 @@ class VacuumEmission(object):
 
         self.U_dict = {"F": self.F, "G": self.G}
 
-    def free_resources(self):
+    def _free_resources(self):
+        """
+        Free allocated resources.
+        """
         del self.E_out, self.B_out
         del self.tmp, self.tmp_fftw
 
     def calculate_one_time_step(self, t, weight=1):
+        """
+        Calculate the field and U terms (integrand) for one time step.
+        """
         # Calculate fields
-        self.allocate_fields()
+        self._allocate_fields()
 
         if not self.channels:
             self.field.calculate_field(t, E_out=self.E_out, B_out=self.B_out)
@@ -188,6 +218,9 @@ class VacuumEmission(object):
                 U_acc[:] = U_res.astype(config.CDTYPE)
 
     def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
+        """
+        Calculate the time integral.
+        """
         self.dt = t_grid[1] - t_grid[0]
         if integration_method == "trapezoid":
             end_pts = (0, len(t_grid) - 1)
@@ -205,15 +238,18 @@ class VacuumEmission(object):
     def calculate_amplitudes(
         self, t_grid, integration_method="trapezoid", save_path=None
     ):
+        """
+        Calculate the vacuum emission amplitudes and save the result.
+        """
         # Allocate resources
-        self.allocate_result_arrays()
-        self.allocate_fft()
+        self._allocate_result_arrays()
+        self._allocate_fft()
 
         time_integral_start = time.perf_counter()
         self.calculate_time_integral(t_grid, integration_method)
         time_integral_end = time.perf_counter()
         time_integral = time_integral_end - time_integral_start
-        self.free_resources()
+        self._free_resources()
 
         # Results should be in U1_acc and U2_acc
         dims = 1 / BS**3 * m_e**2 * c**3 / hbar**2
@@ -233,6 +269,9 @@ class VacuumEmission(object):
         return time_integral
 
     def save_amplitudes(self, save_path):
+        """
+        Save the calculated amplitudes to a file.
+        """
         Path(os.path.dirname(save_path)).mkdir(parents=True, exist_ok=True)
         data = {
             "x": self.grid[0],

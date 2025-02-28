@@ -27,7 +27,7 @@ autoapi_options = [
     "show-module-summary",  # Generates a summary per module
 ]
 autoapi_python_class_content = "both"
-autoapi_ignore = ["*/cluster/*", "*.ipynb_checkpoints/*"]
+autoapi_ignore = ["*/cluster/*", "*.ipynb_checkpoints/*",]
 
 templates_path = ['_templates']
 exclude_patterns = []
