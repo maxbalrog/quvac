@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
-Here we provide a script to launch Vacuum Emission simulation
-IN PARALLEL (using submitit for semi-slurm submission type),
-do postprocessing and measure performance
+Script to launch Vacuum Emission simulation IN PARALLEL 
+(using submitit for semi-slurm submission type), do postprocessing
+and measure performance.
+
+Usage:
+
+.. code-block:: bash
+
+    python simulation_parallel.py -i <input>.yaml -o <output_dir> 
+    --wisdom <wisdom_file>
 """
 import argparse
 import logging
@@ -16,16 +23,36 @@ import submitit
 
 from quvac.config import DEFAULT_SUBMITIT_PARAMS
 from quvac.grid import setup_grids
-from quvac.log import (get_parallel_performance_stats, get_postprocess_info,
+from quvac.log import (get_parallel_performance_stats,
                        simulation_end_str, simulation_start_str)
-from quvac.postprocess import VacuumEmissionAnalyzer
 from quvac.simulation import get_dirs, quvac_simulation, postprocess_simulation
 from quvac.utils import read_yaml, write_yaml, get_maxrss
 
-logger = logging.getLogger("simulation")
+_logger = logging.getLogger("simulation")
 
 
 def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path):
+    """
+    Create initialization files for parallel jobs.
+
+    Parameters
+    ----------
+    ini_config : dict
+        Dictionary containing the initialization configuration.
+    grid_xyz : quvac.grid.GridXYZ
+        The spatial grid object.
+    grid_t : numpy.ndarray
+        The temporal grid array.
+    n_jobs : int
+        Number of parallel jobs.
+    save_path : str
+        Path to save the initialization files.
+
+    Returns
+    -------
+    ini_files : list of str
+        List of paths to the initialization files for each job.
+    """
     Nt_total = len(grid_t)
     Nt_per_job = Nt_total // n_jobs
 
@@ -59,6 +86,16 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
 
 
 def collect_results(ini_files, amplitudes_file):
+    """
+    Collect results from parallel jobs and combine them.
+
+    Parameters
+    ----------
+    ini_files : list of str
+        List of paths to the initialization files for each job.
+    amplitudes_file : str
+        Path to save the combined amplitudes.
+    """
     amplitude_files = [
         os.path.join(os.path.dirname(ini_file), "amplitudes.npz")
         for ini_file in ini_files
@@ -74,7 +111,15 @@ def collect_results(ini_files, amplitudes_file):
     np.savez(amplitudes_file, **amplitude_total)
 
 
-def parse_args():
+def _parse_args():
+    """
+    Parse command-line arguments.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed command-line arguments.
+    """
     description = "Calculate quantum vacuum signal for given external fields"
     argparser = argparse.ArgumentParser(description=description)
     argparser.add_argument(
@@ -93,11 +138,21 @@ def quvac_simulation_parallel(
     ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom"
 ):
     """
-    We read ini script and parallelization parameters
+    Launch a single quvac simulation for given <ini>.yaml file in parallel.
+
     Depending on available jobs, we split the total time interval
     into several sub-intervals and submit each sub-interval for
     calculation as a separate quvac simulation (without postprocessing).
     Then we gather all S1 and S2 in the main process and do main postprocessing.
+
+    Parameters
+    ----------
+    ini_file : str
+        Path to the initialization file.
+    save_path : str, optional
+        Path to save simulation results to, by default None.
+    wisdom_file : str, optional
+        Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".
     """
     # Check that ini file and save_path exists
     files = get_dirs(ini_file, save_path, wisdom_file)
@@ -121,7 +176,7 @@ def quvac_simulation_parallel(
     # Start time
     time_log_start = time.asctime(time.localtime())
     start_print = simulation_start_str.format(time_log_start)
-    logger.info(start_print)
+    _logger.info(start_print)
     timings = {}
     timings['start'] = time.perf_counter()
 
@@ -153,17 +208,17 @@ def quvac_simulation_parallel(
         executor.update_parameters(**sbatch_params)
 
     # Submit jobs
-    logger.info("MILESTONE: Submitting jobs...")
+    _logger.info("MILESTONE: Submitting jobs...")
     jobs = executor.map_array(quvac_simulation, ini_files)
-    logger.info("MILESTONE: Jobs submitted, waiting for results...")
+    _logger.info("MILESTONE: Jobs submitted, waiting for results...")
 
     # Wait till all jobs end
     outputs = [job.result() for job in jobs]
-    logger.info("MILESTONE: Jobs are finished")
+    _logger.info("MILESTONE: Jobs are finished")
 
     # Collect all results
     collect_results(ini_files, files['amplitudes'])
-    logger.info("MILESTONE: Results from individual jobs are collected")
+    _logger.info("MILESTONE: Results from individual jobs are collected")
     timings['jobs'] = time.perf_counter()
 
     maxrss_jobs = get_maxrss()
@@ -184,16 +239,16 @@ def quvac_simulation_parallel(
 
     perf_print = get_parallel_performance_stats(perf_stats)
     print(perf_print)
-    logger.info(perf_print)
+    _logger.info(perf_print)
 
     print("Simulation finished!")
 
     # End time
     time_log_end = time.asctime(time.localtime())
     end_print = simulation_end_str.format(time_log_end)
-    logger.info(end_print)
+    _logger.info(end_print)
 
 
 if __name__ == "__main__":
-    args = parse_args()
+    args = _parse_args()
     quvac_simulation_parallel(args.input, args.output, args.wisdom)

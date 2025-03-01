@@ -13,7 +13,8 @@ extensions = [
     "autoapi.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx.ext.autosummary",]
+    "sphinx.ext.autosummary",
+    "sphinx_copybutton",]
 # autosummary_generate = True
 
 autoapi_dirs = ["../../src/quvac"]  # Path to your package
