@@ -11,6 +11,9 @@ dependencies = [
   "numexpr",
   "pyfftw",
   "tqdm",
+  "submitit",
+  "pyyaml",
+  "pytest",
 ]
 requires-python = ">=3.12"
 authors = [
@@ -18,7 +21,7 @@ authors = [
 ]
 maintainers = [
 ]
-description = "Calculate quantum vacuum signal from laser collisions"
+description = "Calculate quantum vacuum signal from laser collisions."
 readme = "README.md"
 license = {file = "LICENSE"}
 keywords = ["quantum", "vacuum", "qed", "maxwell", "electrodynamics"]
@@ -28,6 +31,9 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
+optimization = [
+  "ax"
+]
 
 
 [project.urls]

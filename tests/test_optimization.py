@@ -8,8 +8,12 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from ax.service.ax_client import AxClient
-from scipy.constants import c
+
+try:
+    from ax.service.ax_client import AxClient
+except ModuleNotFoundError:
+    print("`ax` package should be installed to use optimization")
+    raise ModuleNotFoundError("`ax` package not found")
 
 from quvac.cluster.optimization import gather_trials_data
 from quvac.utils import read_yaml, write_yaml
