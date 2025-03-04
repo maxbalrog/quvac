@@ -145,6 +145,8 @@ is a phase factor mismatch between two transforms.
 References
 ^^^^^^^^^^
 
-.. [1] F. Karbstein. "Probing vacuum polarization effects with high-intensity lasers." Particles 3.1 (2020): 39-61.
+.. [1] F. Karbstein. "Probing vacuum polarization effects with high-intensity lasers." 
+    Particles 3.1 (2020): 39-61.
 
-.. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities in generic laser fields." PRD 99.1 (2019): 016006.
+.. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities 
+    in generic laser fields." PRD 99.1 (2019): 016006.
