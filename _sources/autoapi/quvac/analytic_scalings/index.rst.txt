@@ -1,0 +1,80 @@
+quvac.analytic_scalings
+=======================
+
+.. py:module:: quvac.analytic_scalings
+
+.. autoapi-nested-parse::
+
+   Calculation of analytic scalings from articles.
+
+   Currently supports:
+
+   1. Total signal and perpendicular signal for two colliding
+   paraxial gaussian beams (off-axis).
+
+   2. More exact scaling for on-axis collision of two beams.
+
+   ----
+
+   .. [1] F. Karbstein, et al. "Vacuum birefringence at x-ray free-electron
+       lasers." NJP 23.9 (2021): 095001.
+
+   .. [2] E. Mosman, F.Karbstein "Vacuum birefringence and diffraction at
+       XFEL: from analytical estimates to optimal parameters." PRD 104.1
+       (2021): 013006.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.analytic_scalings.get_two_paraxial_scaling
+   quvac.analytic_scalings.get_onaxis_scaling
+
+
+Module Contents
+---------------
+
+.. py:function:: get_two_paraxial_scaling(fields, channels='both')
+
+   Calculate the total signal and perpendicular signal for two colliding
+   paraxial Gaussian beams (off-axis).
+
+   :param fields: List of dictionaries containing the field parameters.
+   :type fields: list of dict
+   :param channels: Channels to iterate through, by default "both".
+   :type channels: str, optional
+
+   :returns: * **N_signal** (*float*) -- Total signal.
+             * **N_perp** (*float*) -- Perpendicular signal.
+
+   .. rubric:: Notes
+
+   We introduced additional polarization-dependent factors (beta). The
+   formula should work for theta not close to 180, loose focusing and
+   short pulse duration. Result for N_perp should be used only for beta=45.
+
+   This is a variation of Eq.(25) from [1]_.
+
+
+.. py:function:: get_onaxis_scaling(fields, k0=20)
+
+   Calculate the more exact scaling for on-axis collision of two beams.
+
+   :param fields: List of dictionaries containing the field parameters.
+   :type fields: list of dict
+   :param k0: Integration limit for the integral in F function, by default 20.
+   :type k0: float, optional
+
+   :returns: * **N_signal** (*float*) -- Total signal.
+             * **N_perp** (*float*) -- Perpendicular signal.
+
+   .. rubric:: Notes
+
+   We assume that the 1st field in the list is x-ray.
+
+   This is an integrated version of Eq.(11) [Eq. (13)] from [2]_.
+
+

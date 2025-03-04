@@ -1,0 +1,38 @@
+quvac.integrator.abc
+====================
+
+.. py:module:: quvac.integrator.abc
+
+.. autoapi-nested-parse::
+
+   Abstract interfaces for different integrators.
+
+   .. warning::
+       Currently not used...
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.integrator.abc.Integrator
+
+
+Module Contents
+---------------
+
+.. py:class:: Integrator
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract integrator class.
+
+
+   .. py:method:: calculate_amplitudes(t_grid)
+      :abstractmethod:
+
+
+

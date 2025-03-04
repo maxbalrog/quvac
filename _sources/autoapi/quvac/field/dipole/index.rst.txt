@@ -1,0 +1,132 @@
+quvac.field.dipole
+==================
+
+.. py:module:: quvac.field.dipole
+
+.. autoapi-nested-parse::
+
+   Analytic expression for dipole wave and function to create multibeam
+   configuration by compining several focused fields.
+
+   ----
+
+   .. [1] I. Gonoskov et al. "Dipole pulse theory: Maximizing the field
+       amplitude from 4 π focused laser pulses." PRA 86.5 (2012): 053836.
+
+   .. [2] S. S. Bulanov et al. "Multiple Colliding Electromagnetic Pulses:
+       A Way to Lower the Threshold of e+ e-Pair Production from Vacuum."
+       PRL 104.22 (2010): 220404.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.dipole.DipoleAnalytic
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.field.dipole.create_multibeam
+
+
+Module Contents
+---------------
+
+.. py:class:: DipoleAnalytic(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.ExplicitField`
+
+
+   Analytic expression for dipole wave.
+
+   :param field_params:
+                        Dictionary containing the field parameters.
+                            - focus_x : tuple of float
+                                Location of spatial focus (x, y, z).
+                            - focus_t : float
+                                Location of temporal focus.
+                            - theta : float
+                                Spherical angle of dipole moment d0 with z-axis (in degrees).
+                            - phi : float
+                                Spherical angle of dipole moment d0 with x-axis (in degrees).
+                            - lam : float
+                                Pulse wavelength.
+                            - tau : float
+                                Duration.
+                            - W : float, optional
+                                Energy.
+                            - envelope : str
+                                Envelope type, either "plane" or "gauss".
+                            - dipole_type : str
+                                Type of dipole, either "electric" or "magnetic".
+   :type field_params: dict
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. rubric:: Notes
+
+   Dipole wave expression is from [1]_.
+
+   d0 is along ez by default.
+
+
+   .. py:method:: get_rotation()
+
+      Defines the rotation transforming (0,0,1) -> (kx,ky,kz)
+      for vectors and (1,0,0) -> e(beta) = e1*cos(beta) + e2*sin(beta).
+
+
+
+   .. py:method:: rotate_coordinates()
+
+      Rotates the coordinate grid.
+
+
+
+   .. py:method:: set_envelope_expressions()
+
+      Defines envelope expressions.
+
+
+
+   .. py:method:: check_energy()
+
+      Checks and adjusts the energy of the field.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, mode='real')
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+
+.. py:function:: create_multibeam(params, n_beams=6, mode='belt', theta0=0)
+
+   Create multibeam configuration from several focused pulses to
+   approximate the dipole wave and achieve higher intensity
+   at focus.
+
+   :param params: Dictionary containing the field parameters.
+   :type params: dict
+   :param n_beams: Number of beams, by default 6.
+   :type n_beams: int, optional
+   :param mode: Configuration mode, either 'belt' or 'sphere', by default 'belt'.
+   :type mode: str, optional
+   :param theta0: Initial angle for the beams, by default 0.
+   :type theta0: float, optional
+
+   :returns: **beams** -- Dictionary containing the parameters for each beam.
+   :rtype: dict
+
+   .. rubric:: Notes
+
+   Configuration follows from [2]_.
+
+

@@ -1,0 +1,73 @@
+quvac.integrator.vacuum_emission
+================================
+
+.. py:module:: quvac.integrator.vacuum_emission
+
+.. autoapi-nested-parse::
+
+   Calculation of vacuum emission integral (box diagram, F^4).
+
+   Currently supports:
+
+   1. Calculation of total vacuum emission signal for given field configuration.
+   All fields are treated as external.
+
+   2. Separation of fields into pump and probe with subsequent calculation of
+   probe channel signal.
+
+   .. note::
+       For details on implementation check out Theory section.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.integrator.vacuum_emission.VacuumEmission
+
+
+Module Contents
+---------------
+
+.. py:class:: VacuumEmission(field, grid, nthreads=None, channels=False)
+
+   Calculator of Vacuum Emission amplitude from given fields
+
+   :param field: External fields.
+   :type field: quvac.Field
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+   :param nthreads: Number of threads to use for calculations. If not provided,
+                    defaults to the number of CPU cores.
+   :type nthreads: int, optional
+   :param channels: Whether to calculate a particular channel in vacuum emission amplitude.
+                    Default is False.
+   :type channels: bool, optional
+
+
+   .. py:method:: calculate_one_time_step(t, weight=1)
+
+      Calculate the field and U terms (integrand) for one time step.
+
+
+
+   .. py:method:: calculate_time_integral(t_grid, integration_method='trapezoid')
+
+      Calculate the time integral.
+
+
+
+   .. py:method:: calculate_amplitudes(t_grid, integration_method='trapezoid', save_path=None)
+
+      Calculate the vacuum emission amplitudes and save the result.
+
+
+
+   .. py:method:: save_amplitudes(save_path)
+
+      Save the calculated amplitudes to a file.
+
+
+

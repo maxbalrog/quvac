@@ -1,0 +1,106 @@
+quvac.field.gaussian
+====================
+
+.. py:module:: quvac.field.gaussian
+
+.. autoapi-nested-parse::
+
+   Analytic expression for paraxial gaussian (0-order and higher-orders).
+
+   ----
+
+   .. [1] Y. I. Salamin. "Fields of a Gaussian beam beyond the paraxial
+       approximation." Applied Physics B 86 (2007): 319-326.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.gaussian.GaussianAnalytic
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianAnalytic(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.ExplicitField`
+
+
+   Analytic expression for paraxial Gaussian beam.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'focus_x' : tuple of float
+                                Location of spatial focus (x, y, z).
+                            - 'focus_t' : float
+                                Location of temporal focus.
+                            - 'theta' : float
+                                Polar angle of k-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of k-vector (in degrees).
+                            - 'beta' : float
+                                Polarization angle (in degrees).
+                            - 'lam' : float
+                                Wavelength of the pulse.
+                            - 'w0' : float
+                                Waist size.
+                            - 'tau' : float
+                                Duration.
+                            - 'phase0' : float
+                                Phase delay at focus.
+                            - 'E0' : float, optional
+                                Amplitude (either E0 or W is required).
+                            - 'W' : float, optional
+                                Energy (either E0 or W is required).
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. rubric:: Notes
+
+   All field parameters are in SI units.
+
+   Higher-order paraxial Gaussian orders are from [1]_.
+
+
+   .. py:method:: get_rotation()
+
+      Defines the rotation transforming (0,0,1) -> (kx,ky,kz)
+      for vectors and (1,0,0) -> e(beta) = e1*cos(beta) + e2*sin(beta).
+
+
+
+   .. py:method:: rotate_coordinates()
+
+      Rotates the coordinate grid.
+
+
+
+   .. py:method:: define_ho_variables()
+
+      Define higher order variables.
+
+
+
+   .. py:method:: calculate_ho_orders()
+
+      Calculate higher order terms for the fields.
+
+
+
+   .. py:method:: check_energy()
+
+      Check and adjust the field energy.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, mode='real')
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+

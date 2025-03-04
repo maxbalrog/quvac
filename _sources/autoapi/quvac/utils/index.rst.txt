@@ -1,0 +1,125 @@
+quvac.utils
+===========
+
+.. py:module:: quvac.utils
+
+.. autoapi-nested-parse::
+
+   Useful generic utilities.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.utils.read_yaml
+   quvac.utils.write_yaml
+   quvac.utils.format_time
+   quvac.utils.format_memory
+   quvac.utils.save_wisdom
+   quvac.utils.load_wisdom
+   quvac.utils.get_maxrss
+   quvac.utils.zip_directory_shutil
+   quvac.utils.find_classes_in_package
+
+
+Module Contents
+---------------
+
+.. py:function:: read_yaml(yaml_file)
+
+   Read a YAML file and return its contents.
+
+   :param yaml_file: Path to the YAML file.
+   :type yaml_file: str
+
+   :returns: Contents of the YAML file.
+   :rtype: dict
+
+
+.. py:function:: write_yaml(yaml_file, data)
+
+   Write data to a YAML file.
+
+   :param yaml_file: Path to the YAML file.
+   :type yaml_file: str
+   :param data: Data to write to the YAML file.
+   :type data: dict
+
+
+.. py:function:: format_time(seconds)
+
+   Format time in seconds to a human-readable string.
+
+   :param seconds: Time in seconds.
+   :type seconds: float
+
+   :returns: Formatted time string.
+   :rtype: str
+
+
+.. py:function:: format_memory(mem)
+
+   Format memory in kilobytes to a human-readable string.
+
+   :param mem: Memory in kilobytes.
+   :type mem: float
+
+   :returns: Formatted memory string.
+   :rtype: str
+
+
+.. py:function:: save_wisdom(ini_file, wisdom_file=None, add_host_name=False)
+
+   Save FFTW wisdom to a file.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param wisdom_file: Path to save the FFTW wisdom, by default None.
+   :type wisdom_file: str, optional
+   :param add_host_name: Whether to add the host name to the wisdom file name, by default False.
+   :type add_host_name: bool, optional
+
+
+.. py:function:: load_wisdom(wisdom_file)
+
+   Load FFTW wisdom from a file.
+
+   :param wisdom_file: Path to the FFTW wisdom file.
+   :type wisdom_file: str
+
+   :returns: FFTW wisdom.
+   :rtype: tuple
+
+
+.. py:function:: get_maxrss()
+
+   Get the maximum resident set size used (in kilobytes).
+
+   :returns: Maximum resident set size used.
+   :rtype: int
+
+
+.. py:function:: zip_directory_shutil(directory_path, output_path)
+
+   Zip a directory using shutil.
+
+   :param directory_path: Path to the directory to zip.
+   :type directory_path: str
+   :param output_path: Path to save the zipped directory.
+   :type output_path: str
+
+
+.. py:function:: find_classes_in_package(package_name)
+
+   Find all class names in a given package.
+
+   :param package_name: Name of the package.
+   :type package_name: str
+
+   :returns: List of class names in the package.
+   :rtype: list of str
+
+

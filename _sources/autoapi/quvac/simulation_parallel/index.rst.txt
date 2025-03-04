@@ -1,0 +1,79 @@
+quvac.simulation_parallel
+=========================
+
+.. py:module:: quvac.simulation_parallel
+
+.. autoapi-nested-parse::
+
+   Script to launch Vacuum Emission simulation IN PARALLEL
+   (using submitit for semi-slurm submission type), do postprocessing
+   and measure performance.
+
+   Usage:
+
+   .. code-block:: bash
+
+       python simulation_parallel.py -i <input>.yaml -o <output_dir>
+       --wisdom <wisdom_file>
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.simulation_parallel.create_ini_files_for_parallel
+   quvac.simulation_parallel.collect_results
+   quvac.simulation_parallel.quvac_simulation_parallel
+
+
+Module Contents
+---------------
+
+.. py:function:: create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path)
+
+   Create initialization files for parallel jobs.
+
+   :param ini_config: Dictionary containing the initialization configuration.
+   :type ini_config: dict
+   :param grid_xyz: The spatial grid object.
+   :type grid_xyz: quvac.grid.GridXYZ
+   :param grid_t: The temporal grid array.
+   :type grid_t: numpy.ndarray
+   :param n_jobs: Number of parallel jobs.
+   :type n_jobs: int
+   :param save_path: Path to save the initialization files.
+   :type save_path: str
+
+   :returns: **ini_files** -- List of paths to the initialization files for each job.
+   :rtype: list of str
+
+
+.. py:function:: collect_results(ini_files, amplitudes_file)
+
+   Collect results from parallel jobs and combine them.
+
+   :param ini_files: List of paths to the initialization files for each job.
+   :type ini_files: list of str
+   :param amplitudes_file: Path to save the combined amplitudes.
+   :type amplitudes_file: str
+
+
+.. py:function:: quvac_simulation_parallel(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
+
+   Launch a single quvac simulation for given <ini>.yaml file in parallel.
+
+   Depending on available jobs, we split the total time interval
+   into several sub-intervals and submit each sub-interval for
+   calculation as a separate quvac simulation (without postprocessing).
+   Then we gather all S1 and S2 in the main process and do main postprocessing.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param save_path: Path to save simulation results to, by default None.
+   :type save_path: str, optional
+   :param wisdom_file: Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".
+   :type wisdom_file: str, optional
+
+

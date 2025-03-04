@@ -1,0 +1,129 @@
+quvac.simulation
+================
+
+.. py:module:: quvac.simulation
+
+.. autoapi-nested-parse::
+
+   Script to launch Vacuum Emission simulation, do postprocessing
+   and measure performance.
+
+   Usage:
+
+   .. code-block:: bash
+
+       python simulation.py -i <input>.yaml -o <output_dir> --wisdom <wisdom_file>
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.simulation.check_dirs
+   quvac.simulation.get_filenames
+   quvac.simulation.get_dirs
+   quvac.simulation.set_precision
+   quvac.simulation.run_simulation
+   quvac.simulation.postprocess_simulation
+   quvac.simulation.quvac_simulation
+
+
+Module Contents
+---------------
+
+.. py:function:: check_dirs(ini_file, save_path)
+
+   Check if directories exist and create them if necessary.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param save_path: Path to save the results.
+   :type save_path: str
+
+   :returns: **save_path** -- Validated save path.
+   :rtype: str
+
+
+.. py:function:: get_filenames(ini_file, save_path, wisdom_file)
+
+   Get filenames for saving simulation data.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param save_path: Path to save the results.
+   :type save_path: str
+   :param wisdom_file: Path to save pyfftw-wisdom.
+   :type wisdom_file: str
+
+   :returns: **files** -- Dictionary containing filenames for saving simulation data.
+   :rtype: dict
+
+
+.. py:function:: get_dirs(ini_file, save_path, wisdom_file)
+
+   Get directories for saving simulation data.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param save_path: Path to save the results.
+   :type save_path: str
+   :param wisdom_file: Path to save pyfftw-wisdom.
+   :type wisdom_file: str
+
+   :returns: **files** -- Dictionary containing directories for saving simulation data.
+   :rtype: dict
+
+
+.. py:function:: set_precision(precision)
+
+   Set global precision for calculations.
+
+   :param precision: Precision type, either "float32" or "float64".
+   :type precision: str
+
+
+.. py:function:: run_simulation(ini_config, fields_params, files, timings, memory)
+
+   Run the vacuum emission simulation.
+
+   :param ini_config: Dictionary containing the initialization configuration.
+   :type ini_config: dict
+   :param fields_params: List of dictionaries containing the field parameters.
+   :type fields_params: list of dict
+   :param files: Dictionary containing filenames for saving simulation data.
+   :type files: dict
+   :param timings: Dictionary to store timing information.
+   :type timings: dict
+   :param memory: Dictionary to store memory usage information.
+   :type memory: dict
+
+   :returns: * **timings** (*dict*) -- Updated dictionary with timing information.
+             * **memory** (*dict*) -- Updated dictionary with memory usage information.
+
+
+.. py:function:: postprocess_simulation(ini_config, files, fields_params)
+
+   Perform postprocessing on the simulation data.
+
+   :param ini_config: Dictionary containing the initialization configuration.
+   :type ini_config: dict
+   :param files: Dictionary containing filenames for saving simulation data.
+   :type files: dict
+   :param fields_params: List of dictionaries containing the field parameters.
+   :type fields_params: list of dict
+
+
+.. py:function:: quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
+
+   Launch a single quvac simulation for given <ini>.yaml file.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+   :param save_path: Path to save simulation results to, by default None.
+   :type save_path: str, optional
+   :param wisdom_file: Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".
+   :type wisdom_file: str, optional
+
+

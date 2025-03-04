@@ -1,0 +1,47 @@
+quvac.field
+===========
+
+.. py:module:: quvac.field
+
+.. autoapi-nested-parse::
+
+   Various field profiles and interfaces to unite them.
+
+   .. note::
+       After implementing a new field profile, it should be added to the
+       ``ANALYTIC_FIELDS`` and ``SPATIAL_MODEL_FIELDS`` dicts in the
+       ``quvac.field.__init__``. These dictionaries connect ``field_type``
+       keywords in the ``ini.yaml`` files and particular field implementations.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/quvac/field/abc/index
+   /autoapi/quvac/field/dipole/index
+   /autoapi/quvac/field/external_field/index
+   /autoapi/quvac/field/gaussian/index
+   /autoapi/quvac/field/maxwell/index
+   /autoapi/quvac/field/utils/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   quvac.field.ANALYTIC_FIELDS
+   quvac.field.SPATIAL_MODEL_FIELDS
+
+
+Package Contents
+----------------
+
+.. py:data:: ANALYTIC_FIELDS
+
+.. py:data:: SPATIAL_MODEL_FIELDS
+

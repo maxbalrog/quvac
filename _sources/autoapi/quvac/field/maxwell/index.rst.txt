@@ -1,0 +1,109 @@
+quvac.field.maxwell
+===================
+
+.. py:module:: quvac.field.maxwell
+
+.. autoapi-nested-parse::
+
+   Basic linear Maxwell propagation class for a single field and
+   a unified interface combining several Maxwell fields into one.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.maxwell.MaxwellField
+   quvac.field.maxwell.MaxwellMultiple
+
+
+Module Contents
+---------------
+
+.. py:class:: MaxwellField(grid, nthreads=None)
+
+   Bases: :py:obj:`quvac.field.abc.Field`
+
+
+   Basic linear Maxwell propagation class for a single field.
+
+   For such fields, the initial field distribution (spectral coefficients)
+   at a certain time step is given with an analytic expression or from a file.
+   For later time steps, the field is propagated according to linear Maxwell
+   equations.
+
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to
+                    the number of CPU cores.
+   :type nthreads: int, optional
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None)
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+
+.. py:class:: MaxwellMultiple(fields, grid, nthreads=None)
+
+   Bases: :py:obj:`MaxwellField`
+
+
+   Combine spectral coefficients from several fields and
+   propagate them as one field.
+
+   :param fields: Parameters of the fields.
+   :type fields: dict or list of dict
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the number of CPU cores.
+   :type nthreads: int, optional
+
+   .. attribute:: a1
+
+      First spectral coefficient.
+
+      :type: np.array
+
+   .. attribute:: a2
+
+      Second spectral coefficient.
+
+      :type: np.array
+
+   .. attribute:: fields
+
+      List of field parameter dictionaries.
+
+      :type: list of dict
+
+   .. attribute:: t0
+
+      Initial time for the field.
+
+      :type: float
+
+
+   .. py:method:: get_a12_from_field(field_params)
+
+      Get the spectral coefficients a1 and a2 from the field parameters.
+
+      :param field_params: Dictionary containing the parameters for the field.
+      :type field_params: dict
+
+      :returns: The spectral coefficients a1 and a2.
+      :rtype: tuple of np.array
+
+      :raises NotImplementedError: If the field type is not supported.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None)
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+

@@ -1,0 +1,137 @@
+quvac.field.utils
+=================
+
+.. py:module:: quvac.field.utils
+
+.. autoapi-nested-parse::
+
+   Utility functions related to fields.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.field.utils.get_field_energy
+   quvac.field.utils.get_field_energy_kspace
+   quvac.field.utils.convert_tau
+   quvac.field.utils.get_max_edge_amplitude
+   quvac.field.utils.get_intensity
+
+
+Module Contents
+---------------
+
+.. py:function:: get_field_energy(E, B, dV)
+
+   Calculate the numerical energy of the field on a spatial grid.
+
+   :param E: Electric field components as a tuple of three numpy arrays (Ex, Ey, Ez).
+   :type E: np.array
+   :param B: Magnetic field components as a tuple of three numpy arrays (Bx, By, Bz).
+   :type B: np.array
+   :param dV: Volume element.
+   :type dV: float
+
+   :returns: The calculated energy of the field.
+   :rtype: float
+
+   .. rubric:: Notes
+
+   The energy is calculated using the formula:
+
+   W = sum(0.5 * epsilon_0 * c**2 * dV * abs(E)**2 + 0.5 / mu_0 * dV * abs(B)**2)
+
+
+.. py:function:: get_field_energy_kspace(a1, a2, k, dVk, mode='without 1/k')
+
+   Calculate the numerical energy of the field on a spectral grid.
+
+   :param a1: First spectral coefficient.
+   :type a1: np.array
+   :param a2: Second spectral coefficient.
+   :type a2: np.array
+   :param k: Wavevector.
+   :type k: np.array
+   :param dVk: Spectral volume element.
+   :type dVk: float
+   :param mode: Convention for the definition of a1 and a2 ('without 1/k' or 'with 1/k').
+                Default is 'without 1/k'.
+   :type mode: str, optional
+
+   :returns: The calculated energy of the field.
+   :rtype: float
+
+   .. rubric:: Notes
+
+   The energy is calculated using the formula:
+
+   W = 0.5 * epsilon_0 * c**2 * dVk / (2 * pi)**3 * sum(abs(a1)**2 + abs(a2)**2)
+
+   If mode is 'with 1/k', the formula is:
+
+   W = 0.5 * epsilon_0 * c**2 * dVk / (2 * pi)**3 * sum(k**2 * {abs(a1)**2 + abs(a2)**2})
+
+
+.. py:function:: convert_tau(tau, mode='1/e^2')
+
+   Convert between different pulse duration conventions.
+
+   :param tau: Pulse duration.
+   :type tau: float
+   :param mode: The convention of the input pulse duration. Options are '1/e^2',
+                'FWHM', 'FWHM-Intensity', and 'std'. Default is '1/e^2'.
+   :type mode: str, optional
+
+   :returns:
+
+             Dictionary containing the pulse duration in different conventions:
+                 - '1/e^2' : float
+                     Pulse duration in 1/e^2 convention.
+                 - 'FWHM' : float
+                     Pulse duration in Full Width at Half Maximum (FWHM) convention.
+                 - 'FWHM-Intensity' : float
+                     Pulse duration in FWHM-Intensity convention.
+                 - 'std' : float
+                     Pulse duration in standard deviation convention.
+   :rtype: dict
+
+   .. rubric:: Notes
+
+   The temporal envelope is assumed to have the form exp(-t**2/(tau/2)**2).
+
+
+.. py:function:: get_max_edge_amplitude(E)
+
+   Calculate the maximum field amplitude at the edges of the grid.
+
+   :param E: Electric field components as a tuple of three numpy arrays (Ex, Ey, Ez).
+   :type E: tuple of np.array
+
+   :returns: The maximum field amplitude at the edges of the grid.
+   :rtype: float
+
+   .. rubric:: Notes
+
+   Electric field is assumed to be complex.
+
+
+.. py:function:: get_intensity(field, t)
+
+   Calculate the field intensity at a given time.
+
+   :param field: Field object with a ``calculate_field`` method.
+   :type field: object
+   :param t: The time at which to calculate the field intensity.
+   :type t: float
+
+   :returns: The calculated field intensity.
+   :rtype: np.array
+
+   .. rubric:: Notes
+
+   The intensity is calculated as (abs(E)**2 + abs(B)**2)/2
+
+

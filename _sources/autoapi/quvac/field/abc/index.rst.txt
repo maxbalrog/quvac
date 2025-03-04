@@ -1,0 +1,131 @@
+quvac.field.abc
+===============
+
+.. py:module:: quvac.field.abc
+
+.. autoapi-nested-parse::
+
+   Abstract interfaces for field classes.
+
+   For details about spectral coefficient calculation (a1, a2)
+   refer to Theory section of documentation.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.abc.Field
+   quvac.field.abc.ExplicitField
+   quvac.field.abc.FieldFromFile
+
+
+Module Contents
+---------------
+
+.. py:class:: Field
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for fields.
+
+   This class defines the interface for calculating fields at a given time step.
+   Subclasses must implement the ``calculate_field`` method.
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, **kwargs)
+      :abstractmethod:
+
+
+      Calculates fields for a given time step.
+
+      :param t: The time step at which to calculate the fields.
+      :type t: float
+      :param E_out: Output array for the electric field.
+      :type E_out: array-like, optional
+      :param B_out: Output array for the magnetic field.
+      :type B_out: array-like, optional
+      :param \*\*kwargs: Additional parameters for field calculation.
+      :type \*\*kwargs: dict
+
+      :returns: **E_out, B_out** -- The electric and magnetic fields at the given time step.
+      :rtype: array-like
+
+
+
+.. py:class:: ExplicitField(grid)
+
+   Bases: :py:obj:`Field`
+
+
+   For fields with an analytic formula known in the whole space at
+   least in the focus (t=0).
+
+   One time step (e.g., focus at t=0) can serve as a model field
+   for the calculation of Maxwell coefficients and Maxwell propagation
+   to other time steps.
+
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. attribute:: grid_xyz
+
+      The spatial and spectral grid.
+
+      :type: quvac.grid.GridXYZ
+
+   .. attribute:: Ef
+
+      The electric field in Fourier space.
+
+      :type: list of complex numpy.ndarray
+
+   .. attribute:: Ef_fftw
+
+      The FFTW objects for the electric field.
+
+      :type: list of pyfftw.FFTW
+
+   .. attribute:: a1
+
+      The a1 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+   .. attribute:: a2
+
+      The a2 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+
+   .. py:method:: get_a12(t0=None)
+
+      Calculates the a1 and a2 coefficients at a given time step.
+
+      :param t0: The time step at which to calculate the coefficients. If None, uses self.t0.
+      :type t0: float, optional
+
+      :returns: * **a1** (*numpy.ndarray*) -- The a1 spectral coefficient.
+                * **a2** (*numpy.ndarray*) -- The a2 spectral coefficient.
+
+      .. rubric:: Notes
+
+      After the projection of the field on spectral coefficients, its energy
+      is corrected to the desired value.
+
+
+
+.. py:class:: FieldFromFile
+
+   Bases: :py:obj:`Field`
+
+
+   For fields that are loaded from file.
+
+   Not implemented yet.
+
+

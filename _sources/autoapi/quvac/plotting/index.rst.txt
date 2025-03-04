@@ -1,0 +1,98 @@
+quvac.plotting
+==============
+
+.. py:module:: quvac.plotting
+
+.. autoapi-nested-parse::
+
+   Useful plotting functions.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.plotting.save_fig
+   quvac.plotting.pi_formatter
+   quvac.plotting.plot_mollweide
+   quvac.plotting.plot_fields
+
+
+Module Contents
+---------------
+
+.. py:function:: save_fig(save_path, fig_name)
+
+   Save figure to file as png and pdf.
+
+   :param save_path: Path to the directory where the figure will be saved.
+   :type save_path: str
+   :param fig_name: Name of the figure file.
+   :type fig_name: str
+
+
+.. py:function:: pi_formatter(x, pos)
+
+   Format axis ticks as multiples of pi.
+
+   :param x: Tick value.
+   :type x: float
+   :param pos: Tick position.
+   :type pos: int
+
+   :returns: Formatted tick label.
+   :rtype: str
+
+
+.. py:function:: plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None)
+
+   Plot data on a Mollweide projection.
+
+   :param fig: Figure object.
+   :type fig: matplotlib.figure.Figure
+   :param ax: Axes object.
+   :type ax: matplotlib.axes.Axes
+   :param phi: Array of azimuthal angles.
+   :type phi: numpy.ndarray
+   :param theta: Array of polar angles.
+   :type theta: numpy.ndarray
+   :param data: Data to be plotted.
+   :type data: numpy.ndarray
+   :param cmap: Colormap, by default 'coolwarm'.
+   :type cmap: str, optional
+   :param norm: Normalization for the colormap, by default None.
+   :type norm: matplotlib.colors.Normalize, optional
+
+   :returns: **ax** -- Axes object with the plot.
+   :rtype: matplotlib.axes.Axes
+
+
+.. py:function:: plot_fields(field, t, plot_keys=None, cmap='coolwarm', cnorm='log', norm_lim=1e-20, save_path=None)
+
+   Plot specified field components.
+
+   Plotted figures:
+   1. (x,y) and (x,z) profiles at the focus.
+   2. x, y, z slices through the focus.
+
+   :param field: Field object containing the field data.
+   :type field: quvac.field.Field
+   :param t: Time at which to plot the field.
+   :type t: float
+   :param plot_keys: List of field components to plot, by default None.
+   :type plot_keys: list of str, optional
+   :param cmap: Colormap, by default 'coolwarm'.
+   :type cmap: str, optional
+   :param cnorm: Normalization type, by default 'log'.
+   :type cnorm: str, optional
+   :param norm_lim: Normalization limit, by default 1e-20.
+   :type norm_lim: float, optional
+   :param save_path: Path to save the plots, by default None.
+   :type save_path: str, optional
+
+   :returns: **field_comps** -- Dictionary containing the field components.
+   :rtype: dict
+
+

@@ -1,0 +1,454 @@
+quvac.postprocess
+=================
+
+.. py:module:: quvac.postprocess
+
+.. autoapi-nested-parse::
+
+   Analyzer class that calculate different observables from amplitudes.
+
+   Currently supports:
+
+   1. Total (polarization insensitive) signal.
+   2. Polarization sensitive signal:
+       - As a projection to fixed optical axis.
+       - As a projection to local polarization axis.
+       - 3 stokes parameters (P1, P2, P3) for arbitrary
+         linear polarization basis.
+
+   3. Discernible signal.
+   4. Background field spectra.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.postprocess.VacuumEmissionAnalyzer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.postprocess.get_polarization_vector
+   quvac.postprocess.sph2cart
+   quvac.postprocess.xyz2idx
+   quvac.postprocess.cartesian_to_spherical_array
+   quvac.postprocess.integrate_spherical
+   quvac.postprocess.get_simulation_fields
+   quvac.postprocess.transform_S12_to_a12
+   quvac.postprocess.get_spectra_from_Stokes
+
+
+Module Contents
+---------------
+
+.. py:function:: get_polarization_vector(theta, phi, beta)
+
+   Calculate the polarization vector.
+
+   :param theta: Polar angle (in radians).
+   :type theta: float
+   :param phi: Azimuthal angle (in radians).
+   :type phi: float
+   :param beta: Polarization angle (in radians).
+   :type beta: float
+
+   :returns: **ep** -- Polarization vector.
+   :rtype: numpy.ndarray
+
+
+.. py:function:: sph2cart(r, theta, phi)
+
+   Convert spherical coordinates to Cartesian coordinates.
+
+   :param r: Radial distance.
+   :type r: numpy.ndarray
+   :param theta: Polar angle.
+   :type theta: numpy.ndarray
+   :param phi: Azimuthal angle.
+   :type phi: numpy.ndarray
+
+   :returns: **x, y, z** -- Cartesian coordinates.
+   :rtype: numpy.ndarray
+
+
+.. py:function:: xyz2idx(xyz, xyz_grid)
+
+   Convert Cartesian coordinates to array indices.
+
+   :param xyz: Cartesian coordinates.
+   :type xyz: tuple of numpy.ndarray
+   :param xyz_grid: Cartesian grid.
+   :type xyz_grid: tuple of numpy.ndarray
+
+   :returns: **idxs** -- Array indices.
+   :rtype: numpy.ndarray
+
+
+.. py:function:: cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None, angular_resolution=None, **interp_kwargs)
+
+   Transform an array with data on Cartesian grid to the array with data
+   on spherical grid.
+
+   :param arr: Array with data on Cartesian grid.
+   :type arr: numpy.ndarray
+   :param xyz_grid: Cartesian grid object.
+   :type xyz_grid: quvac.grid.GridXYZ
+   :param spherical_grid: Spherical grid or path to the file containing the spherical grid,
+                          by default None.
+   :type spherical_grid: tuple or str, optional
+   :param angular_resolution: Angular resolution, by default None.
+   :type angular_resolution: float, optional
+   :param \*\*interp_kwargs: Additional interpolation parameters. Currently not used, implement
+                             in the future.
+   :type \*\*interp_kwargs: dict
+
+   :returns: * **spherical_grid** (*tuple*) -- Spherical grid.
+             * **arr_sph** (*numpy.ndarray*) -- Array with data on spherical grid.
+
+
+.. py:function:: integrate_spherical(arr, axs, axs_names=['k', 'theta', 'phi'], axs_integrate=['k', 'theta', 'phi'])
+
+   Integrate an array over spherical coordinates.
+
+   :param arr: Array to be integrated.
+   :type arr: numpy.ndarray
+   :param axs: List of axes.
+   :type axs: list of numpy.ndarray
+   :param axs_names: List of axis names, by default ["k", "theta", "phi"].
+   :type axs_names: list of str, optional
+   :param axs_integrate: List of axes to integrate over, by default ["k", "theta", "phi"].
+   :type axs_integrate: list of str, optional
+
+   :returns: **integrand** -- Integrated array.
+   :rtype: numpy.ndarray
+
+   :raises AssertionError: Axes of array and axs names do not match.
+
+   .. rubric:: Notes
+
+   We assume that the array is given on a spherical grid without
+   the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).
+
+   The function uses trapezoidal rule for integration.
+
+
+.. py:function:: get_simulation_fields(ini_file)
+
+   Get simulation fields from an initialization file.
+
+   :param ini_file: Path to the initialization file.
+   :type ini_file: str
+
+   :returns: **fields** -- List of field objects.
+   :rtype: list of quvac.field.ExternalField
+
+
+.. py:function:: transform_S12_to_a12(S1, S2, k, transform='forward')
+
+   Calculate spectral coefficients a1 and a2 from complex signal
+   amplitudes S1 and S2.
+
+   :param S1: Complex signal amplitude S1.
+   :type S1: numpy.ndarray
+   :param S2: Complex signal amplitude S2.
+   :type S2: numpy.ndarray
+   :param k: Wave number.
+   :type k: numpy.ndarray
+   :param transform: Transformation direction, by default "forward".
+   :type transform: str, optional
+
+   :returns: **a1, a2** -- Spectral coefficients a1 and a2.
+   :rtype: numpy.ndarray
+
+   .. rubric:: Notes
+
+   The backward transform corresponds to a12 -> S12.
+
+
+.. py:function:: get_spectra_from_Stokes(P0, P1, P2, P3, basis='linear')
+
+   Calculate spectra from Stokes parameters.
+
+   :param P0: Stokes parameter P0.
+   :type P0: numpy.ndarray
+   :param P1: Stokes parameter P1.
+   :type P1: numpy.ndarray
+   :param P2: Stokes parameter P2.
+   :type P2: numpy.ndarray
+   :param P3: Stokes parameter P3.
+   :type P3: numpy.ndarray
+   :param basis: Polarization basis, by default "linear".
+   :type basis: str, optional
+
+   :returns: **Nf, Np** -- Parallel and perpendicular-polarized spectra.
+   :rtype: numpy.ndarray
+
+
+.. py:class:: VacuumEmissionAnalyzer(fields_params, data_path, save_path=None)
+
+   Calculates spectra and observables from amplitudes.
+
+   Amplitudes are provided by
+   ``quvac.integrator.vacuum_emission.VacuumEmission`` class.
+
+   :param fields_params: Dictionary containing the field parameters.
+   :type fields_params: dict
+   :param data_path: Path to the data file.
+   :type data_path: str
+   :param save_path: Path to save the results, by default None.
+   :type save_path: str, optional
+
+   .. attribute:: fields_params
+
+      Dictionary containing the field parameters.
+
+      :type: dict
+
+   .. attribute:: grid_xyz
+
+      The spatial grid object.
+
+      :type: quvac.grid.GridXYZ
+
+   .. attribute:: S1
+
+      Complex signal amplitude S1.
+
+      :type: numpy.ndarray
+
+   .. attribute:: S2
+
+      Complex signal amplitude S2.
+
+      :type: numpy.ndarray
+
+   .. attribute:: save_path
+
+      Path to save the results.
+
+      :type: str
+
+
+   .. py:method:: get_total_signal()
+
+      Calculates the total signal.
+
+
+
+   .. py:method:: get_polarization_from_field()
+
+      Calculates the polarization from the field.
+
+      :returns: Tuple containing the polarization components (efx, efy, efz).
+      :rtype: tuple
+
+
+
+   .. py:method:: get_perp_signal(angles, perp_type='optical axis', stokes=False)
+
+      Calculates the perpendicular signal.
+
+      :param angles: Tuple containing the angles (theta, phi, beta) in degrees.
+      :type angles: tuple
+      :param perp_type: Type of perpendicular polarization, by default "optical axis".
+      :type perp_type: str, optional
+      :param stokes: Whether to calculate Stokes parameters, by default False.
+      :type stokes: bool, optional
+
+
+
+   .. py:method:: get_Stokes_vector_for_ep()
+
+      Given amplitudes S1,S2 for arbitrary linear polarization
+      basis e1,e2, calculate Stokes vectors for detector ep.
+
+      For given ef (||) and ep (perp):
+          - P0 = N_xyz = (S_||)**2 + (S_perp)**2
+
+          - P1 = (S_||)**2 - (S_perp)**2
+
+          - P2 = (S_45)**2 - (S_135)**2     - difference of linear
+            polarizations in 45 basis.
+
+          - P3 = (S_right)**2 - (S_left)**2 - difference of circular
+            polarizations.
+
+
+
+
+   .. py:method:: get_signal_on_sph_grid(key='N_xyz', spherical_grid=None, angular_resolution=None, check_total=False, **interp_kwargs)
+
+      Transforms an array with data on Cartesian grid to the array with
+      data on spherical grid.
+
+      :param key: Key for the data array, by default "N_xyz".
+      :type key: str, optional
+      :param spherical_grid: Spherical grid or path to the file containing the spherical grid,
+                             by default None.
+      :type spherical_grid: tuple or str, optional
+      :param angular_resolution: Angular resolution, by default None.
+      :type angular_resolution: float, optional
+      :param check_total: Whether to check the total signal, by default False.
+      :type check_total: bool, optional
+      :param \*\*interp_kwargs: Additional interpolation parameters.
+      :type \*\*interp_kwargs: dict
+
+
+
+   .. py:method:: get_photon_spectrum_from_a12(a1, a2)
+
+      Calculates the photon spectrum from spectral coefficients a1 and a2.
+
+      :param a1: Spectral coefficient a1.
+      :type a1: numpy.ndarray
+      :param a2: Spectral coefficient a2.
+      :type a2: numpy.ndarray
+
+      :returns: Photon spectrum.
+      :rtype: numpy.ndarray
+
+
+
+   .. py:method:: get_background_xyz(add_to_cls_dict=True, bgr_idx=None)
+
+      Calculates the background field spectra on Cartesian grid.
+
+      :param add_to_cls_dict: Whether to add the background spectra to the class dictionary,
+                              by default True.
+      :type add_to_cls_dict: bool, optional
+      :param bgr_idx: Index of the background field, by default None.
+      :type bgr_idx: int, optional
+
+      :returns: Background field spectra.
+      :rtype: numpy.ndarray
+
+
+
+   .. py:method:: get_background(discernibility='angular', bgr_idx=None, **interp_kwargs)
+
+      Calculates the background field spectra.
+
+      :param discernibility: Type of discernibility, by default "angular".
+      :type discernibility: str, optional
+      :param bgr_idx: Index of the background field, by default None.
+      :type bgr_idx: int, optional
+      :param \*\*interp_kwargs: Additional interpolation parameters.
+      :type \*\*interp_kwargs: dict
+
+      :returns: Background field spectra.
+      :rtype: numpy.ndarray
+
+
+
+   .. py:method:: get_discernible_signal(discernibility='angular')
+
+      Calculates the discernible signal.
+
+      :param discernibility: Type of discernibility, by default "angular".
+      :type discernibility: str, optional
+
+
+
+   .. py:method:: get_signal_a12(add_signal_bg=False)
+
+      Calculates the spectral coefficients a1 and a2 from signal amplitudes S1 and S2.
+
+      :param add_signal_bg: Whether to add the background signal, by default False.
+      :type add_signal_bg: bool, optional
+
+
+
+   .. py:method:: write_data(keys)
+
+      Writes the data to a file.
+
+      :param keys: List of keys for the data to be written.
+      :type keys: list of str
+
+
+
+   .. py:method:: get_total_spectra(calculate_xyz_background=False, bgr_idx=None, calculate_spherical=False, spherical_params=None, calculate_discernible=False, discernibility='angular')
+
+      Calculates the total spectra.
+
+      :param calculate_xyz_background: Whether to calculate the background spectra on Cartesian grid,
+                                       by default False.
+      :type calculate_xyz_background: bool, optional
+      :param bgr_idx: Index of the background field, by default None.
+      :type bgr_idx: int, optional
+      :param calculate_spherical: Whether to calculate the spectra on spherical grid,
+                                  by default False.
+      :type calculate_spherical: bool, optional
+      :param spherical_params: Parameters for the spherical grid, by default None.
+      :type spherical_params: dict, optional
+      :param calculate_discernible: Whether to calculate the discernible signal, by default False.
+      :type calculate_discernible: bool, optional
+      :param discernibility: Type of discernibility, by default "angular".
+      :type discernibility: str, optional
+
+
+
+   .. py:method:: get_polarization_spectra(perp_field_idx=1, perp_type=None, calculate_spherical=False, spherical_params=None, stokes=False)
+
+      Calculates the polarization spectra.
+
+      :param perp_field_idx: Index of the perpendicular field, by default 1.
+      :type perp_field_idx: int, optional
+      :param perp_type: Type of perpendicular polarization, by default None.
+      :type perp_type: str, optional
+      :param calculate_spherical: Whether to calculate the spectra on spherical grid,
+                                  by default False.
+      :type calculate_spherical: bool, optional
+      :param spherical_params: Parameters for the spherical grid, by default None.
+      :type spherical_params: dict, optional
+      :param stokes: Whether to calculate Stokes parameters, by default False.
+      :type stokes: bool, optional
+
+
+
+   .. py:method:: get_mix_signal_bg(add_signal_bg=False)
+
+      Calculates the mixed signal and background.
+
+      :param add_signal_bg: Whether to add the background signal, by default False.
+      :type add_signal_bg: bool, optional
+
+
+
+   .. py:method:: get_spectra(mode='total', perp_field_idx=1, perp_type=None, calculate_xyz_background=False, bgr_idx=None, stokes=False, calculate_spherical=False, spherical_params=None, calculate_discernible=False, discernibility='angular', add_signal_bg=False)
+
+      Calculates the spectra based on the specified mode.
+
+      :param mode: Mode of the calculation, by default "total".
+      :type mode: str, optional
+      :param perp_field_idx: Index of the perpendicular field, by default 1.
+      :type perp_field_idx: int, optional
+      :param perp_type: Type of perpendicular polarization, by default None.
+      :type perp_type: str, optional
+      :param calculate_xyz_background: Whether to calculate the background spectra on Cartesian grid,
+                                       by default False.
+      :type calculate_xyz_background: bool, optional
+      :param bgr_idx: Index of the background field, by default None.
+      :type bgr_idx: int, optional
+      :param stokes: Whether to calculate Stokes parameters, by default False.
+      :type stokes: bool, optional
+      :param calculate_spherical: Whether to calculate the spectra on spherical grid,
+                                  by default False.
+      :type calculate_spherical: bool, optional
+      :param spherical_params: Parameters for the spherical grid, by default None.
+      :type spherical_params: dict, optional
+      :param calculate_discernible: Whether to calculate the discernible signal, by default False.
+      :type calculate_discernible: bool, optional
+      :param discernibility: Type of discernibility, by default "angular".
+      :type discernibility: str, optional
+      :param add_signal_bg: Whether to add the background signal, by default False.
+      :type add_signal_bg: bool, optional
+
+
+

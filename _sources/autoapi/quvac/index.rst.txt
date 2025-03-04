@@ -1,0 +1,25 @@
+quvac
+=====
+
+.. py:module:: quvac
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/quvac/analytic_scalings/index
+   /autoapi/quvac/config/index
+   /autoapi/quvac/field/index
+   /autoapi/quvac/grid/index
+   /autoapi/quvac/integrator/index
+   /autoapi/quvac/log/index
+   /autoapi/quvac/plotting/index
+   /autoapi/quvac/postprocess/index
+   /autoapi/quvac/simulation/index
+   /autoapi/quvac/simulation_parallel/index
+   /autoapi/quvac/utils/index
+
+

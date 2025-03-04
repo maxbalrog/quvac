@@ -1,0 +1,1090 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.integrator" href="../integrator/index.html" /><link rel="prev" title="quvac.field.utils" href="../field/utils/index.html" />
+
+    <!-- Generated with Sphinx 8.2.1 and Furo 2024.08.06 -->
+        <title>quvac.grid - quvac 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">quvac 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">quvac 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../implementation.html">Implementation</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">quvac</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of quvac</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../analytic_scalings/index.html">quvac.analytic_scalings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../config/index.html">quvac.config</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../field/index.html">quvac.field</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of quvac.field</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../field/abc/index.html">quvac.field.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../field/dipole/index.html">quvac.field.dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../field/external_field/index.html">quvac.field.external_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../field/gaussian/index.html">quvac.field.gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../field/maxwell/index.html">quvac.field.maxwell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../field/utils/index.html">quvac.field.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">quvac.grid</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../integrator/index.html">quvac.integrator</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of quvac.integrator</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../integrator/abc/index.html">quvac.integrator.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../integrator/vacuum_emission/index.html">quvac.integrator.vacuum_emission</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../log/index.html">quvac.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../plotting/index.html">quvac.plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simulation/index.html">quvac.simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simulation_parallel/index.html">quvac.simulation_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/index.html">quvac.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../_sources/autoapi/quvac/grid/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-quvac.grid">
+<span id="quvac-grid"></span><h1>quvac.grid<a class="headerlink" href="#module-quvac.grid" title="Link to this heading">¶</a></h1>
+<p>Functions for creating spatial and temporal grids.</p>
+<p>1. <code class="docutils literal notranslate"><span class="pre">GridXYZ</span></code> class that calculates the spatial grid and its
+Fourier counterpart.</p>
+<p>2. Helper function <code class="docutils literal notranslate"><span class="pre">setup_grids</span></code> that automatically creates
+grids either dynamically or from given grid sizes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The dynamic grid creation is experimental and should be used with caution.
+Especially, when testing on new physical problems, it is recommended to
+visualize participating Maxwell fields and check the grid sizes.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Parts of dynamical grid creation for gaussian beams were initially
+implemented by Alexander Blinne (<code class="docutils literal notranslate"><span class="pre">get_kmax_from_bw</span></code>, <code class="docutils literal notranslate"><span class="pre">get_xyz_size</span></code>,
+<code class="docutils literal notranslate"><span class="pre">get_t_size</span></code>).</p>
+</div>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GridXYZ</span></code></a></p></td>
+<td><p>Calculates spatial grid and its Fourier counterpart.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.get_ek" title="quvac.grid.get_ek"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ek</span></code></a>(theta, phi)</p></td>
+<td><p>Calculate k-vector for given spherical angles theta and phi.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.get_pol_basis" title="quvac.grid.get_pol_basis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_pol_basis</span></code></a>(theta, phi)</p></td>
+<td><p>Calculate polarization basis for given spherical angles theta and phi.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.gaussian_bandwidth" title="quvac.grid.gaussian_bandwidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_bandwidth</span></code></a>(field_params)</p></td>
+<td><p>Calculate the gaussian bandwidth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.dipole_bandwidth" title="quvac.grid.dipole_bandwidth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dipole_bandwidth</span></code></a>(field_params)</p></td>
+<td><p>Calculate the dipole bandwidth.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.get_bw" title="quvac.grid.get_bw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bw</span></code></a>(field_params)</p></td>
+<td><p>Calculate the bandwidths for a given field type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.get_kmax_from_bw" title="quvac.grid.get_kmax_from_bw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kmax_from_bw</span></code></a>(field_params)</p></td>
+<td><p>Calculate the maximum k-vector from bandwidth along each dimension</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.get_kmax_grid" title="quvac.grid.get_kmax_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kmax_grid</span></code></a>(field_params)</p></td>
+<td><p>Calculate the maximum k-vector along each dimension for a given field type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.get_xyz_size" title="quvac.grid.get_xyz_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xyz_size</span></code></a>(fields, box_size[, grid_res, ...])</p></td>
+<td><p>Calculate necessary spatial resolution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.get_t_size" title="quvac.grid.get_t_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_t_size</span></code></a>(t_start, t_end, lam[, grid_res])</p></td>
+<td><p>Calculate necessary temporal resolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.get_box_size" title="quvac.grid.get_box_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_box_size</span></code></a>(fields_params, grid_params)</p></td>
+<td><p>Calculate the necessary box size for the spatial grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.grid.create_dynamic_grid" title="quvac.grid.create_dynamic_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_dynamic_grid</span></code></a>(fields_params, grid_params)</p></td>
+<td><p>Dynamically create grids from given laser parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.grid.setup_grids" title="quvac.grid.setup_grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_grids</span></code></a>(fields_params, grid_params)</p></td>
+<td><p>Create spatial and temporal grids from given sizes or</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">GridXYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.GridXYZ" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates spatial grid and its Fourier counterpart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>grid</strong> (<em>tuple</em><em> of </em><em>np.array</em>) – A tuple containing three numpy arrays (x, y, z) representing the spatial grid
+for field discretization.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.grid" title="Link to this definition">¶</a></dt>
+<dd><p>The spatial grid for field discretization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.grid_shape">
+<span class="sig-name descname"><span class="pre">grid_shape</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.grid_shape" title="Link to this definition">¶</a></dt>
+<dd><p>The shape of the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.xyz">
+<span class="sig-name descname"><span class="pre">xyz</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.xyz" title="Link to this definition">¶</a></dt>
+<dd><p>The meshgrid of the spatial grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.dxyz">
+<span class="sig-name descname"><span class="pre">dxyz</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.dxyz" title="Link to this definition">¶</a></dt>
+<dd><p>The grid spacing in each dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.dV">
+<span class="sig-name descname"><span class="pre">dV</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.dV" title="Link to this definition">¶</a></dt>
+<dd><p>The volume element of the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.kgrid">
+<span class="sig-name descname"><span class="pre">kgrid</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.kgrid" title="Link to this definition">¶</a></dt>
+<dd><p>The k-space grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.kgrid_shifted">
+<span class="sig-name descname"><span class="pre">kgrid_shifted</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.kgrid_shifted" title="Link to this definition">¶</a></dt>
+<dd><p>The shifted k-space grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.dkxkykz">
+<span class="sig-name descname"><span class="pre">dkxkykz</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.dkxkykz" title="Link to this definition">¶</a></dt>
+<dd><p>The spacing in k-space for each dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.dVk">
+<span class="sig-name descname"><span class="pre">dVk</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.dVk" title="Link to this definition">¶</a></dt>
+<dd><p>The volume element in k-space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.kmeshgrid">
+<span class="sig-name descname"><span class="pre">kmeshgrid</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.kmeshgrid" title="Link to this definition">¶</a></dt>
+<dd><p>The meshgrid of the k-space grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.kabs">
+<span class="sig-name descname"><span class="pre">kabs</span></span><a class="headerlink" href="#quvac.grid.GridXYZ.kabs" title="Link to this definition">¶</a></dt>
+<dd><p>The absolute value of the k-vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">e1x,</span> <span class="pre">e1y,</span> <span class="pre">e1z</span></span></dt>
+<dd><p>The x, y, and z components of the first polarization vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">e2x,</span> <span class="pre">e2y,</span> <span class="pre">e2z</span></span></dt>
+<dd><p>The x, y, and z components of the second polarization vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quvac.grid.GridXYZ.get_k_grid">
+<span class="sig-name descname"><span class="pre">get_k_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.GridXYZ.get_k_grid" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the k-space grid and polarization vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_ek">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_ek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_ek" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate k-vector for given spherical angles theta and phi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> (<em>float</em>) – The polar angle in radians.</p></li>
+<li><p><strong>phi</strong> (<em>float</em>) – The azimuthal angle in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 3-element array representing the k-vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_pol_basis">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_pol_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_pol_basis" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate polarization basis for given spherical angles theta and phi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta</strong> (<em>float</em>) – The polar angle in radians.</p></li>
+<li><p><strong>phi</strong> (<em>float</em>) – The azimuthal angle in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing two 3-element arrays representing the polarization
+basis vectors e1 and e2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.gaussian_bandwidth">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">gaussian_bandwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.gaussian_bandwidth" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the gaussian bandwidth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Dictionary containing the field parameters. Required keys are:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>tau<span class="classifier">float</span></dt><dd><p>Pulse duration.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>w0<span class="classifier">float, optional</span></dt><dd><p>Beam waist. If ‘w0’ is not provided, ‘w0x’ and ‘w0y’ are used.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the perpendicular and longitudinal bandwidths
+kbw_perp, kbw_long).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The bandwidths are calculated from the Fourier transform of transverse and
+longitudinal Gaussian profiles:</p>
+<ul class="simple">
+<li><p>exp(-r**2/w0**2) -&gt; exp(-w0**2*kperp**2/4) -&gt; kperp_bw ~ 2*2/w0</p></li>
+<li><p>exp(-t**2/(tau/2)**2) -&gt; exp(-tau**2*k**2/16) -&gt; k_long ~ 2*4/(c*tau)</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.dipole_bandwidth">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">dipole_bandwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.dipole_bandwidth" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the dipole bandwidth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Dictionary containing the field parameters. Required keys are:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>lam<span class="classifier">float</span></dt><dd><p>Wavelength of the pulse.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tau<span class="classifier">float</span></dt><dd><p>Pulse duration.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the perpendicular and longitudinal bandwidths
+(kbw_perp, kbw_long).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The length scales are taken from:
+I. Gonoskov et al. “Dipole pulse theory: Maximizing the field amplitude
+from 4π focused laser pulses.” PRA 86.5 (2012): 053836.</p>
+<p>l_para = 0.58 * lam</p>
+<p>l_perp = 0.4 * lam</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_bw">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_bw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_bw" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the bandwidths for a given field type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_params</strong> (<em>dict</em>) – Dictionary containing the field parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the perpendicular and longitudinal bandwidths (kbw_perp, kbw_long).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the field type is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_kmax_from_bw">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_kmax_from_bw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_kmax_from_bw" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the maximum k-vector from bandwidth along each dimension
+for a given field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Dictionary containing the field parameters. Required keys are:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>lam<span class="classifier">float</span></dt><dd><p>Wavelength of the pulse.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tau<span class="classifier">float</span></dt><dd><p>Pulse duration.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>theta<span class="classifier">float</span></dt><dd><p>Polar angle in degrees.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>phi<span class="classifier">float</span></dt><dd><p>Azimuthal angle in degrees.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 3-element array representing the maximum k-vector along each dimension.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The maximum k-vector is calculated based on the bandwidths derived from the
+field parameters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_kmax_grid">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_kmax_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_kmax_grid" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the maximum k-vector along each dimension for a given field type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_params</strong> (<em>dict</em>) – Dictionary containing the field parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 3-element array representing the maximum k-vector along each dimension.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the field type is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_xyz_size">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_xyz_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_xyz_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate necessary spatial resolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields</strong> (<em>dict</em><em> or </em><em>list</em><em> of </em><em>dict</em>) – Parameters of participating fields.</p></li>
+<li><p><strong>box_size</strong> (<em>sequence</em><em> of </em><em>float</em>) – Box size for 3 dimensions.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Controls the resolution (default is 1).</p></li>
+<li><p><strong>equal_resolution</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating if equal resolution in every dimension is needed (default is False).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List containing the number of grid points along each dimension.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_t_size">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_t_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_t_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate necessary temporal resolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_start</strong> (<em>float</em>) – Start time.</p></li>
+<li><p><strong>t_end</strong> (<em>float</em>) – End time.</p></li>
+<li><p><strong>lam</strong> (<em>float</em>) – Wavelength.</p></li>
+<li><p><strong>grid_res</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor to scale the resolution (default is 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of time steps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.get_box_size">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">get_box_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.get_box_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the necessary box size for the spatial grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields_params</strong> (<em>list</em><em> of </em><em>dict</em>) – <dl class="simple">
+<dt>Parameters of participating fields. Each dictionary should contain:</dt><dd><ul>
+<li><dl class="simple">
+<dt>field_type<span class="classifier">str</span></dt><dd><p>Type of the field.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>w0<span class="classifier">float, optional</span></dt><dd><p>Beam waist for focused fields.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tau<span class="classifier">float, optional</span></dt><dd><p>Pulse duration.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>grid_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Grid parameters. Required keys are:</dt><dd><ul>
+<li><dl class="simple">
+<dt>transverse_factor<span class="classifier">float</span></dt><dd><p>Factor to scale the transverse size.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>longitudinal_factor<span class="classifier">float</span></dt><dd><p>Factor to scale the longitudinal size.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the transverse and longitudinal sizes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The box size is calculated based on the maximum beam waist and pulse duration
+among the fields, scaled by the transverse and longitudinal factors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.create_dynamic_grid">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">create_dynamic_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.create_dynamic_grid" title="Link to this definition">¶</a></dt>
+<dd><p>Dynamically create grids from given laser parameters.
+One should be careful with this option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields_params</strong> (<em>list</em><em> of </em><em>dict</em>) – Parameters of participating fields.</p></li>
+<li><p><strong>grid_params</strong> (<em>dict</em>) – Grid parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Updated grid parameters including calculated box size, number of spatial points,
+and number of temporal points.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.grid.setup_grids">
+<span class="sig-prename descclassname"><span class="pre">quvac.grid.</span></span><span class="sig-name descname"><span class="pre">setup_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quvac.grid.setup_grids" title="Link to this definition">¶</a></dt>
+<dd><p>Create spatial and temporal grids from given sizes or
+dynamically from field parameters (e.g., duration and waist size).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields_params</strong> (<em>list</em><em> of </em><em>dict</em>) – <dl class="simple">
+<dt>Parameters of participating fields. Each dictionary should contain:</dt><dd><ul>
+<li><dl class="simple">
+<dt>field_type<span class="classifier">str</span></dt><dd><p>Type of the field.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>lam<span class="classifier">float</span></dt><dd><p>Wavelength of the pulse.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>w0<span class="classifier">float, optional</span></dt><dd><p>Beam waist for focused fields.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tau<span class="classifier">float, optional</span></dt><dd><p>Pulse duration.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>grid_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Grid parameters. Required keys are:</dt><dd><ul>
+<li><dl class="simple">
+<dt>mode<span class="classifier">str</span></dt><dd><p>Mode of grid creation (‘dynamic’ or ‘static’).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Keys for ‘static’ mode:</dt><dd><ul>
+<li><dl class="simple">
+<dt>box_xyz<span class="classifier">tuple of float</span></dt><dd><p>Box size for the spatial grid.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Nxyz<span class="classifier">tuple of int</span></dt><dd><p>Number of grid points along each spatial dimension.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Nt<span class="classifier">int</span></dt><dd><p>Number of temporal points.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>box_t<span class="classifier">float or tuple of float</span></dt><dd><p>Time duration or start and end times for the temporal grid.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Keys for ‘dynamic’ mode:</dt><dd><ul>
+<li><dl class="simple">
+<dt>spatial_resolution<span class="classifier">float or list of float</span></dt><dd><p>Controls the spatial resolution.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time_resolution<span class="classifier">float</span></dt><dd><p>Controls the temporal resolution.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>collision_geometry<span class="classifier">str</span></dt><dd><p>Specifies the collision geometry (‘x’, ‘y’, ‘z’).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>transverse_factor<span class="classifier">float</span></dt><dd><p>Factor to scale the transverse size.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>longitudinal_factor<span class="classifier">float</span></dt><dd><p>Factor to scale the longitudinal size.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time_factor<span class="classifier">float</span></dt><dd><p>Factor to scale the time duration.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>grid_xyz<span class="classifier">quvac.grid.GridXYZ</span></dt><dd><p>The spatial grid object.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>grid_t<span class="classifier">numpy.ndarray</span></dt><dd><p>The temporal grid array.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The spatial and temporal grids are created based on the mode specified in the grid parameters.
+If ‘dynamic’ mode is selected, the grids are created dynamically based on the field parameters.</p>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../integrator/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">quvac.integrator</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../field/utils/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">quvac.field.utils</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, maxbalrog
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">quvac.grid</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ"><code class="docutils literal notranslate"><span class="pre">GridXYZ</span></code></a><ul>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.grid"><code class="docutils literal notranslate"><span class="pre">GridXYZ.grid</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.grid_shape"><code class="docutils literal notranslate"><span class="pre">GridXYZ.grid_shape</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.xyz"><code class="docutils literal notranslate"><span class="pre">GridXYZ.xyz</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.dxyz"><code class="docutils literal notranslate"><span class="pre">GridXYZ.dxyz</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.dV"><code class="docutils literal notranslate"><span class="pre">GridXYZ.dV</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.kgrid"><code class="docutils literal notranslate"><span class="pre">GridXYZ.kgrid</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.kgrid_shifted"><code class="docutils literal notranslate"><span class="pre">GridXYZ.kgrid_shifted</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.dkxkykz"><code class="docutils literal notranslate"><span class="pre">GridXYZ.dkxkykz</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.dVk"><code class="docutils literal notranslate"><span class="pre">GridXYZ.dVk</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.kmeshgrid"><code class="docutils literal notranslate"><span class="pre">GridXYZ.kmeshgrid</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.kabs"><code class="docutils literal notranslate"><span class="pre">GridXYZ.kabs</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.GridXYZ.get_k_grid"><code class="docutils literal notranslate"><span class="pre">GridXYZ.get_k_grid()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quvac.grid.get_ek"><code class="docutils literal notranslate"><span class="pre">get_ek()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_pol_basis"><code class="docutils literal notranslate"><span class="pre">get_pol_basis()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.gaussian_bandwidth"><code class="docutils literal notranslate"><span class="pre">gaussian_bandwidth()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.dipole_bandwidth"><code class="docutils literal notranslate"><span class="pre">dipole_bandwidth()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_bw"><code class="docutils literal notranslate"><span class="pre">get_bw()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_kmax_from_bw"><code class="docutils literal notranslate"><span class="pre">get_kmax_from_bw()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_kmax_grid"><code class="docutils literal notranslate"><span class="pre">get_kmax_grid()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_xyz_size"><code class="docutils literal notranslate"><span class="pre">get_xyz_size()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_t_size"><code class="docutils literal notranslate"><span class="pre">get_t_size()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.get_box_size"><code class="docutils literal notranslate"><span class="pre">get_box_size()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.create_dynamic_grid"><code class="docutils literal notranslate"><span class="pre">create_dynamic_grid()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.grid.setup_grids"><code class="docutils literal notranslate"><span class="pre">setup_grids()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>
