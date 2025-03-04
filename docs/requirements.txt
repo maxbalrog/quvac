@@ -1,4 +1,5 @@
 pip==24.0
+jinja2<3.1
 furo==2024.8.6
 sphinx-autoapi==3.5.0
 sphinx-copybutton==0.5.2
