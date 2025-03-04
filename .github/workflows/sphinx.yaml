@@ -8,6 +8,12 @@ jobs:
     permissions:
       contents: write
     steps:
+        # Step 1: Run custom Bash commands
+    - name: Run pre-setup commands
+      run: |
+        echo "Running pre-setup commands..."
+        sudo apt-get update
+        /usr/local/bin/python -m pip install --upgrade pip
     - uses: actions/checkout@v4
       with:
         persist-credentials: false
