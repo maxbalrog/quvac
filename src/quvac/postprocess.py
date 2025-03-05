@@ -725,7 +725,7 @@ class VacuumEmissionAnalyzer:
             self.get_signal_on_sph_grid(key="N_xyz", check_total=True, **spherical_params)
             keys.extend("k theta phi N_sph N_sph_total".split())
         if calculate_xyz_background:
-            self.get_background_xyz()
+            # self.get_background_xyz()
             self.background = self.get_background(discernibility=None, bgr_idx=bgr_idx)
             keys.extend("background_xyz background".split())
         if calculate_discernible:
