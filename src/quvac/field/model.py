@@ -42,10 +42,9 @@ class EBInhomogeneity(Field):
                 Amplitude.
             - 'envelope_type' : str
                 Envelope type, by default 'gauss'.
-            - 'envelope_kwargs' : dict
-                Envelope specific arguments.
+            Envelope specific arguments:
                 For 'gauss':
-                    - 'w' : float
+                    - 'w0' : float
                         Waist size.
     grid : quvac.grid.GridXYZ
         Spatial and grid.
@@ -78,15 +77,6 @@ class EBInhomogeneity(Field):
             self.E0 = 1.
             self.check_energy()
 
-        # define field calculation dict
-        # self.field_dict = {
-        #     "E0": self.E0,
-        #     "x": self.x,
-        #     "y": self.y,
-        #     "z": self.z,
-        # }
-        # self.field_dict.update(self.envelope_kwargs)
-
     def get_rotation(self):
         """
         Defines the rotation transforming (0,0,1) -> (kx,ky,kz) 
@@ -115,7 +105,7 @@ class EBInhomogeneity(Field):
     def get_envelope(self):
         match self.envelope_type:
             case "gauss":
-                self.envelope = "exp(-(2*z/w)**2)"
+                self.envelope = "exp(-(2*z/w0)**2)"
             case _:
                 raise NotImplementedError(f"`{self.envelope_type}` envelope type"
                                           "is not supported")
