@@ -18,6 +18,7 @@ from scipy.constants import c, pi
 from scipy.spatial.transform import Rotation
 
 from quvac.field.abc import Field
+from quvac.field.utils import get_field_energy
 from quvac import config
 
 
@@ -67,6 +68,9 @@ class EBInhomogeneity(Field):
         # get envelope
         self.get_envelope()
 
+        if "W" in field_params:
+            self.check_energy()
+
         # define field calculation dict
         self.field_dict = {
             "E0": self.E0,
@@ -113,6 +117,17 @@ class EBInhomogeneity(Field):
             case _:
                 raise NotImplementedError(f"`{self.envelope_type}` envelope type"
                                           "is not supported")
+            
+    def check_energy(self):
+        """
+        Check and adjust the field energy.
+        """
+        E, B = self.calculate_field(t=0)
+        W = get_field_energy(E, B, self.dV)
+
+        if "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
+            self.E0 *= np.sqrt(self.W / W)
+            self.W_num = W * self.E0**2
     
     def calculate_field(self, t, E_out=None, B_out=None):
         E = ne.evaluate(self.E_expr, global_dict=self.field_dict).astype(config.FDTYPE)
