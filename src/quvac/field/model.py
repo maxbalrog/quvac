@@ -75,6 +75,7 @@ class EBInhomogeneity(Field):
             setattr(self, key, 0.)
 
         if "W" in field_params:
+            self.E0 = 1.
             self.check_energy()
 
         # define field calculation dict
