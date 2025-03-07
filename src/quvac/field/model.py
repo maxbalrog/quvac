@@ -46,6 +46,13 @@ class EBInhomogeneity(Field):
                 For 'gauss':
                     - 'w0' : float
                         Waist size.
+                For 'gauss-modulated':
+                    - 'w0' : float
+                        Waist size.
+                    - 'lam': float
+                        Wavelength of modulation.
+                    - 'phase0': float, optional
+                        Initial phase
     grid : quvac.grid.GridXYZ
         Spatial and grid.
     """
@@ -84,7 +91,11 @@ class EBInhomogeneity(Field):
         """
         match self.envelope_type:
             case "gauss":
-                self.envelope = "exp(-(2*z/w0)**2)"
+                self.envelope = "exp(-(z/w0)**2)"
+            case "gauss-modulated":
+                self.phase0 = getattr(self, "phase0", 0.)
+                self.kz_m = 2*pi/self.lam
+                self.envelope = "exp(-(z/w0)**2) * cos(kz_m*z + phase0)"
             case _:
                 raise NotImplementedError(f"`{self.envelope_type}` envelope type"
                                           "is not supported")
