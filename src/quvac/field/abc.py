@@ -61,6 +61,7 @@ class Field(ABC):
         Defines the rotation transforming (0,0,1) -> (kx,ky,kz) 
         for vectors and (1,0,0) -> e(beta) = e1*cos(beta) + e2*sin(beta).
         """
+        self.beta = getattr(self, "beta", 0)
         self.rotation = Rotation.from_euler("ZYZ", (self.phi, self.theta, self.beta))
         self.rotation_m = self.rotation.as_matrix()
         # Inverse rotation: (kx,ky,kz) -> (0,0,1)
