@@ -224,7 +224,7 @@ def rotate_multibeam(params, geometry="xz"):
     return params, key_theta, key_phi
 
 
-def create_multibeam(params, n_beams=6, mode='belt', theta0=0, geometry="xz"):
+def create_multibeam(params, n_beams=6, mode='belt', theta0=0, geometry="xz", idx0=1):
     """
     Create multibeam configuration from several focused pulses to 
     approximate the dipole wave and achieve higher intensity 
@@ -268,11 +268,11 @@ def create_multibeam(params, n_beams=6, mode='belt', theta0=0, geometry="xz"):
         params_beam[key_theta] = i*theta_c + theta0
         match mode:
             case "belt":
-                beams[f"field_{i+1}"] = params_beam
+                beams[f"field_{i+1+idx0}"] = params_beam
             case "sphere":
                 for j,phi in enumerate(phi_arr):
                     idx = i*3 + j
                     params_phi = deepcopy(params_beam)
                     params_phi[key_phi] += phi
-                    beams[f"field_{idx+1}"] = params_phi
+                    beams[f"field_{idx+1+idx0}"] = params_phi
     return beams
