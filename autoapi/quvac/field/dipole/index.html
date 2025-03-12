@@ -310,7 +310,7 @@ PRL 104.22 (2010): 220404.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.field.dipole.create_multibeam" title="quvac.field.dipole.create_multibeam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_multibeam</span></code></a>(params[, n_beams, mode, theta0])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.field.dipole.create_multibeam" title="quvac.field.dipole.create_multibeam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_multibeam</span></code></a>(params[, n_beams, mode, phi0, idx0])</p></td>
 <td><p>Create multibeam configuration from several focused pulses to</p></td>
 </tr>
 </tbody>
@@ -407,7 +407,7 @@ PRL 104.22 (2010): 220404.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.field.dipole.create_multibeam">
-<span class="sig-prename descclassname"><span class="pre">quvac.field.dipole.</span></span><span class="sig-name descname"><span class="pre">create_multibeam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_beams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'belt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/dipole.html#create_multibeam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.dipole.create_multibeam" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.field.dipole.</span></span><span class="sig-name descname"><span class="pre">create_multibeam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_beams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'belt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/dipole.html#create_multibeam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.dipole.create_multibeam" title="Link to this definition">¶</a></dt>
 <dd><p>Create multibeam configuration from several focused pulses to
 approximate the dipole wave and achieve higher intensity
 at focus.</p>
@@ -417,7 +417,8 @@ at focus.</p>
 <li><p><strong>params</strong> (<em>dict</em>) – Dictionary containing the field parameters.</p></li>
 <li><p><strong>n_beams</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of beams, by default 6.</p></li>
 <li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Configuration mode, either ‘belt’ or ‘sphere’, by default ‘belt’.</p></li>
-<li><p><strong>theta0</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial angle for the beams, by default 0.</p></li>
+<li><p><strong>phi0</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial angle for the beams, by default 0.</p></li>
+<li><p><strong>idx0</strong> (<em>int</em><em>, </em><em>optional</em>) – Offset index for <cite>beams</cite> dictionary.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

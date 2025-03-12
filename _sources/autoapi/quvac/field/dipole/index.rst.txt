@@ -94,7 +94,7 @@ Module Contents
 
 
 
-.. py:function:: create_multibeam(params, n_beams=6, mode='belt', theta0=0)
+.. py:function:: create_multibeam(params, n_beams=6, mode='belt', phi0=0, idx0=1)
 
    Create multibeam configuration from several focused pulses to
    approximate the dipole wave and achieve higher intensity
@@ -106,8 +106,10 @@ Module Contents
    :type n_beams: int, optional
    :param mode: Configuration mode, either 'belt' or 'sphere', by default 'belt'.
    :type mode: str, optional
-   :param theta0: Initial angle for the beams, by default 0.
-   :type theta0: float, optional
+   :param phi0: Initial angle for the beams, by default 0.
+   :type phi0: float, optional
+   :param idx0: Offset index for `beams` dictionary.
+   :type idx0: int, optional
 
    :returns: **beams** -- Dictionary containing the parameters for each beam.
    :rtype: dict
