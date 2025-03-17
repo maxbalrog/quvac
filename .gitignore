@@ -2,8 +2,8 @@
 *.npz
 *.npy
 */*.npz
-*/*.npy
-imgs/*
+/*.npy
+imgs-sims/*
 data/*
 experiments/*
 wisdom/*
