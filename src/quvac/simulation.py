@@ -294,6 +294,8 @@ def postprocess_simulation(ini_config, files, fields_params):
     _logger.info(postprocess_print)
 
     modes = postprocess_params.get("modes", ["total", "polarization"])
+    if kwargs["perp_type"] is None:
+         modes = ["total"]
     for mode in modes:
         save_path = files['spectra'].replace(".npz", f"_{mode}.npz")
         analyzer = VacuumEmissionAnalyzer(

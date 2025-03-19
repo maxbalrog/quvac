@@ -58,7 +58,7 @@ def quvac_evaluation(params):
     quvac_simulation(ini_path)
 
     # Load results
-    data = np.load(os.path.join(save_path, "spectra.npz"))
+    data = np.load(os.path.join(save_path, "spectra_total.npz"))
     N_disc = data.get("N_disc", 0)
     N_total = data.get("N_total", 0)
 
@@ -146,7 +146,7 @@ def cluster_optimization(ini_file, optimization_file, save_path=None, wisdom_fil
     cluster_params = optimization_params.get("cluster", {})
 
     # Check that optimization parameters are only field_parameters
-    optimization_keys = optimization_params["parameters"].keys()
+    optimization_keys = list(optimization_params["parameters"].keys())
     err_msg = (
         f"Only field parameters could be optimized but you have {optimization_keys}"
     )
@@ -183,6 +183,8 @@ def cluster_optimization(ini_file, optimization_file, save_path=None, wisdom_fil
     if cluster == "slurm":
         # executor.update_parameters(slurm_array_parallelism=max_parallel_jobs)
         executor.update_parameters(**sbatch_params)
+    elif "timeout_min" in cluster_params:
+        executor.update_parameters(timeout_min=cluster_params["timeout_min"])
 
     n_trials = optimization_params.get("n_trials", 10)
 
