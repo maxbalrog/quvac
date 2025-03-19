@@ -65,6 +65,42 @@ def pi_formatter(x, pos):
     return fractions.get(x, f"${x/np.pi:.2g}\\pi$")
 
 
+def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
+    """
+    Plot a rectangular region of interest (ROI) on a given axis.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis on which to plot the ROI.
+    x0 : float
+        The x-coordinate of the center of the ROI.
+    y0 : float
+        The y-coordinate of the center of the ROI.
+    dx : float
+        Half the width of the ROI.
+    dy : float
+        Half the height of the ROI.
+    line_kwargs : dict
+        Keyword arguments to customize the appearance of the ROI lines (e.g., color, linestyle).
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axis with the plotted ROI.
+
+    Notes
+    -----
+    The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and height 2*dy.
+    """
+    x_left, x_right = x0-dx, x0+dx
+    y_top, y_bottom = y0-dy, y0+dy
+    pts = [(x_right,y_top),(x_left,y_top),(x_left,y_bottom),(x_right,y_bottom),(x_right,y_top)]
+    for pt1,pt2 in zip(pts[:-1],pts[1:]):
+        ax.plot([pt1[0],pt2[0]], [pt1[1],pt2[1]], **line_kwargs)
+    return ax
+
+
 def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
     """
     Plot data on a Mollweide projection.
