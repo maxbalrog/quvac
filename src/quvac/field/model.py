@@ -18,7 +18,6 @@ import numpy as np
 from scipy.constants import c, pi
 
 from quvac.field.abc import Field
-from quvac.field.utils import get_field_energy
 from quvac import config
 
 
@@ -104,12 +103,10 @@ class EBInhomogeneity(Field):
         """
         Check and adjust the field energy.
         """
-        E, B = self.calculate_field(t=0)
-        W = get_field_energy(E, B, self.dV)
+        self._check_energy()
 
-        if "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
-            self.E0 *= np.sqrt(self.W / W)
-            self.W_num = W * self.E0**2
+        if self.modify_energy:
+            self.E0 *= self.W_correction
     
     def calculate_field(self, t, E_out=None, B_out=None):
         E = ne.evaluate(self.E_expr, global_dict=self.__dict__).astype(config.FDTYPE)

@@ -14,7 +14,7 @@ from scipy.constants import pi
 from scipy.spatial.transform import Rotation
 import pyfftw
 
-from quvac.field.utils import get_field_energy_kspace
+from quvac.field.utils import get_field_energy, get_field_energy_kspace
 from quvac import config
 
 ANGLE_KEYS = "theta phi beta phase0".split()
@@ -55,6 +55,18 @@ class Field(ABC):
             if key in ANGLE_KEYS:
                 val *= pi / 180.0
             setattr(self, key, val)
+    
+    def _check_energy(self):
+        """
+        Check and adjust the field energy.
+        """
+        E, B = self.calculate_field(t=0)
+        W = get_field_energy(E, B, self.dV)
+
+        self.modify_energy = "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5)
+        if self.modify_energy:
+            self.W_correction = np.sqrt(self.W / W) if W > 0 else 0
+            self.W_num = self.W
     
     def get_rotation(self):
         """

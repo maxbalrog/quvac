@@ -65,6 +65,42 @@ def pi_formatter(x, pos):
     return fractions.get(x, f"${x/np.pi:.2g}\\pi$")
 
 
+def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
+    """
+    Plot a rectangular region of interest (ROI) on a given axis.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The axis on which to plot the ROI.
+    x0 : float
+        The x-coordinate of the center of the ROI.
+    y0 : float
+        The y-coordinate of the center of the ROI.
+    dx : float
+        Half the width of the ROI.
+    dy : float
+        Half the height of the ROI.
+    line_kwargs : dict
+        Keyword arguments to customize the appearance of the ROI lines (e.g., color, linestyle).
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axis with the plotted ROI.
+
+    Notes
+    -----
+    The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and height 2*dy.
+    """
+    x_left, x_right = x0-dx, x0+dx
+    y_top, y_bottom = y0-dy, y0+dy
+    pts = [(x_right,y_top),(x_left,y_top),(x_left,y_bottom),(x_right,y_bottom),(x_right,y_top)]
+    for pt1,pt2 in zip(pts[:-1],pts[1:]):
+        ax.plot([pt1[0],pt2[0]], [pt1[1],pt2[1]], **line_kwargs)
+    return ax
+
+
 def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
     """
     Plot data on a Mollweide projection.
@@ -93,23 +129,25 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
     """
     _check_matplotlib()
     theta_ = theta - np.pi/2
+    # flip theta axis so mollweide plot shows usual sphere surface
+    theta_ = theta_[::-1]
     phi_ = phi - np.pi
     phi_mesh, theta_mesh = np.meshgrid(phi_, theta_)
     
     im = ax.pcolormesh(phi_mesh, theta_mesh, data, cmap=cmap,
                        shading='gouraud', rasterized=True, norm=norm)
-    fig.colorbar(im, ax=ax, shrink=0.5)
+    cbar = fig.colorbar(im, ax=ax, shrink=0.5)
 
     ax.set_xticks([-2, -1, 0, 1, 2])
     ax.set_yticks([-1.5, -1, -0.5, 0, 0.5, 1, 1.5])
     xtick_labels = np.linspace(60, 360, 5, endpoint=False, dtype=int)
     ax.xaxis.set_ticklabels(r'$%s^{\circ}$' %num for num in xtick_labels)
-    ytick_labels = np.linspace(0, 180, 7, endpoint=True, dtype=int)
+    ytick_labels = np.linspace(0, 180, 7, endpoint=True, dtype=int)[::-1]
     ax.yaxis.set_ticklabels(r'$%s^{\circ}$' %num for num in ytick_labels)
     for item in ax.xaxis.get_ticklabels() + ax.yaxis.get_ticklabels():
         item.set_fontsize(18)
     ax.grid()
-    return ax
+    return ax, cbar
 
 
 def plot_fields(field, t, plot_keys=None, cmap='coolwarm',

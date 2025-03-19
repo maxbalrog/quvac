@@ -20,7 +20,6 @@ import numpy as np
 from scipy.constants import c, pi
 
 from quvac.field.abc import ExplicitField
-from quvac.field.utils import get_field_energy
 
 
 class DipoleAnalytic(ExplicitField):
@@ -118,12 +117,10 @@ class DipoleAnalytic(ExplicitField):
         """
         Checks and adjusts the energy of the field.
         """
-        E, B = self.calculate_field(t=0)
-        W = get_field_energy(E, B, self.dV)
+        self._check_energy()
 
-        if "W" in self.__dict__.keys() and not np.isclose(W, self.W, rtol=1e-5):
-            self.d0 *= np.sqrt(self.W / W)
-            self.W_num = W * self.d0**2
+        if self.modify_energy:
+            self.d0 *= self.W_correction
 
     def _g(self, t):
         return ne.evaluate(self.g_expr, global_dict=self.__dict__)

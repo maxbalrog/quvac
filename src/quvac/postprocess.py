@@ -221,6 +221,75 @@ def integrate_spherical(arr, axs, axs_names=["k", "theta", "phi"],
     return integrand
 
 
+def _get_detector_idx(phi, theta, phi0, theta0, dphi, dtheta):
+    # consider detector regions that lie on the line phi=0 or phi=2*pi
+    if phi0-dphi < 0:
+        idx_phi = (phi <= phi0+dphi) + (phi >= 2*pi-abs(phi0-dphi))
+    elif phi0+dphi > 2*pi:
+        idx_phi = (phi >= phi0-dphi) + (phi <= phi0+dphi-2*pi)
+    else:
+        idx_phi = (phi >= phi0-dphi) * (phi <= phi0+dphi)
+    
+    idx_theta = (theta >= theta0-dtheta) * (theta <= theta0+dtheta)
+    return idx_phi, idx_theta
+
+
+def signal_in_detector(dN, theta, phi, detector, align_to_max=False):
+    """
+    Calculate the signal detected within a specified detector region.
+
+    Parameters
+    ----------
+    dN : numpy.ndarray
+        Differential angular photon spectrum on a spherical grid.
+    theta : numpy.ndarray
+        Array of polar angles (in radians) corresponding to the spherical grid.
+    phi : numpy.ndarray
+        Array of azimuthal angles (in radians) corresponding to the spherical grid.
+    detector : dict
+        Dictionary specifying the detector region. Required keys are:
+        - 'phi0' : float
+            Central azimuthal angle of the detector (in degrees).
+        - 'theta0' : float
+            Central polar angle of the detector (in degrees).
+        - 'dphi' : float
+            Half-width of the azimuthal angle range (in degrees).
+        - 'dtheta' : float
+            Half-width of the polar angle range (in degrees).
+    align_to_max : bool
+        Whether to align detector to the max spot in the detected region, by default False
+
+    Returns
+    -------
+    float
+        The total signal detected within the specified detector region.
+
+    Notes
+    -----
+    The function integrates the signal over the specified detector region in spherical coordinates.
+    """
+    phi0, theta0, dphi, dtheta = [np.radians(detector[key]) for key 
+                                  in "phi0 theta0 dphi dtheta".split()]
+    idx_phi,idx_theta = _get_detector_idx(phi, theta, phi0, theta0, dphi, dtheta)
+    
+    dN_det = dN[idx_theta][:,idx_phi]
+    theta_det, phi_det = theta[idx_theta], phi[idx_phi]
+
+    if align_to_max:
+        max_index = np.argmax(dN_det)
+        theta_max, phi_max = np.unravel_index(max_index, dN_det.shape)
+        phi0_new, theta0_new = phi_det[phi_max], theta_det[theta_max]
+        idx_phi,idx_theta = _get_detector_idx(phi, theta, phi0_new, theta0_new,
+                                              dphi, dtheta)
+        dN_det = dN[idx_theta][:,idx_phi]
+        theta_det, phi_det = theta[idx_theta], phi[idx_phi]
+
+    N_detected = integrate_spherical(dN_det, [theta_det, phi_det],
+                                     axs_names=['theta','phi'],
+                                     axs_integrate=['theta','phi'])
+    return N_detected
+    
+
 def get_simulation_fields(ini_file):
     """
     Get simulation fields from an initialization file.
