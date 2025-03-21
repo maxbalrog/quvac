@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """
-Script to run Bayesian optimization on cluster with Slurm
+Script to run Bayesian optimization on cluster with Slurm.
+
+Optimization parameters (optimized variables, objectives and constraints)
+should be located in `ini.yml` at key `optimization`.
+
+Usage:
+
+.. code-block:: bash
+
+    optimization.py -i <input>.yaml -o <output_dir>
 """
 import argparse
 import os
@@ -19,6 +28,30 @@ from quvac.utils import read_yaml, write_yaml
 
 
 def prepare_params_for_ax(params, ini_file):
+    """
+    Prepare parameters for Ax optimization.
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary containing parameter categories and their bounds.
+    ini_file : str
+        Path to the initial configuration file.
+
+    Returns
+    -------
+    list of dict
+        List of parameter descriptions formatted for Ax optimization.
+
+    Note
+    ----
+    Only field parameters could be optimized. They are given as dictionaries
+    {"field_1": {"param_1": range_1, "param_2": range_2}, ...} which are transformed
+    to ["field_1:param_1", "field_1:param_2", ...] parameter names.
+
+    Also the path to default `ini.yml` is passed. For every optimization trial it is 
+    loaded, optimized parameters are changed and the simulation is submitted.
+    """
     params_ax = []
     for category_key, category in params.items():
         for key, val in category.items():
@@ -35,6 +68,21 @@ def prepare_params_for_ax(params, ini_file):
 
 
 def objective_signal_in_detector(data, obj_params):
+    """
+    Calculate the signal detected within a specified detector region.
+
+    Parameters
+    ----------
+    data : dict
+        Dictionary containing simulation results, including spherical grid data.
+    obj_params : dict
+        Dictionary containing detector parameters.
+
+    Returns
+    -------
+    float
+        The signal detected within the specified detector region.
+    """
     detector = obj_params["detector"]
     k, theta, phi, N_sph = [data[key] for key in "k theta phi N_sph".split()]
     N_angular = integrate_spherical(N_sph, (k,theta,phi), axs_integrate=['k'])
@@ -44,6 +92,26 @@ def objective_signal_in_detector(data, obj_params):
 
 
 def update_energies(ini_data, energy_params):
+    """
+    Update the energy distribution among fields for optimization.
+
+    Parameters
+    ----------
+    ini_data : dict
+        Dictionary containing the initial configuration data.
+    energy_params : dict
+        Dictionary containing the energy parameters to optimize.
+
+    Returns
+    -------
+    dict
+        Updated configuration data with modified energy distribution.
+
+    Raises
+    ------
+    AssertionError
+        If the number of fields does not match the number of optimized parameters plus one.
+    """
     ini = deepcopy(ini_data)
     optimization_params = ini["optimization"]
     energy_fields = optimization_params["energy_fields"]
@@ -71,6 +139,19 @@ def update_energies(ini_data, energy_params):
 
 
 def quvac_evaluation(params):
+    """
+    Evaluate a single trial of the quvac simulation.
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary containing trial parameters.
+
+    Returns
+    -------
+    dict
+        Dictionary containing metrics such as `N_disc`, `N_total`, and optionally `N_detector`.
+    """
     ini_file = params["ini_default"]
     ini_data = read_yaml(ini_file)
     params.pop("ini_default")
@@ -95,6 +176,7 @@ def quvac_evaluation(params):
         else:
             energy_params[param_key] = param
 
+    # treat separately energy distribution parameters
     if energy_params:        
         ini_data = update_energies(ini_data, energy_params)
 
@@ -122,6 +204,26 @@ def quvac_evaluation(params):
 
 
 def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experiment_file):
+    """
+    Run Bayesian optimization using Ax and Submitit.
+
+    Parameters
+    ----------
+    ax_client : ax.service.ax_client.AxClient
+        Ax client for managing the optimization process.
+    executor : submitit.AutoExecutor
+        Submitit executor for running jobs on a cluster.
+    n_trials : int
+        Total number of trials to run.
+    max_parallel_jobs : int
+        Maximum number of parallel jobs to run.
+    experiment_file : str
+        Path to save the Ax experiment data.
+
+    Returns
+    -------
+    None
+    """
     jobs = []
     submitted_jobs = 0
     # Run until all the jobs have finished and our budget is used up.
@@ -147,7 +249,15 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             time.sleep(1)
 
 
-def parse_args():
+def _parse_args():
+    """
+    Parse command-line arguments.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed command-line arguments.
+    """
     description = "Perform optimization of quvac simulations"
     argparser = argparse.ArgumentParser(description=description)
     argparser.add_argument(
@@ -156,38 +266,30 @@ def parse_args():
     argparser.add_argument(
         "--output", "-o", default=None, help="Path to save simulation data to"
     )
-    # argparser.add_argument(
-    #     "--optimization", default=None, help="Yaml file with optimization parameters"
-    # )
     argparser.add_argument(
         "--wisdom", default="wisdom/fftw-wisdom", help="File to save pyfftw-wisdom"
     )
     return argparser.parse_args()
 
 
-# def cluster_optimization(ini_file, optimization_file, save_path=None, wisdom_file=None):
 def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     """
-    Launch optimization of quvac simulation for given default <ini>.yml file
-    and <variables>.yml file
+    Launch optimization of quvac simulation for a given initial configuration file.
 
-    Parameters:
-    -----------
-    ini_file: str (format <path>/<file_name>.yaml)
-        Default initial configuration file containing all simulation parameters.
-        These parameters (apart from variables) would remain the same for the
-        whole gridscan.
-        Note: This file might also contain parameters for cluster computation
-    variables_file: str (format <path>/<file_name>.yaml)
-        File containing all parameters to vary.
-        Note (different from gridscan script): this file should contain only field
-        parameters
-    save_path: str
-        Path to save simulation results to
+    Parameters
+    ----------
+    ini_file : str
+        Path to the initial configuration file (YAML format).
+    save_path : str, optional
+        Path to save simulation results. If not provided, defaults to the directory of `ini_file`.
+    wisdom_file : str, optional
+        Path to save FFTW wisdom. Default is None.
+
+    Returns
+    -------
+    None
     """
     # Check that ini file and save_path exists
-    # err_msg = f"{ini_file} or {optimization_file} is not a file or does not exist"
-    # assert os.path.isfile(ini_file) and os.path.isfile(optimization_file), err_msg
     assert os.path.isfile(ini_file), f"{ini_file} is not a file or does not exist"
     if save_path is None:
         save_path = os.path.dirname(ini_file)
@@ -197,7 +299,6 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
 
     ini_default = read_yaml(ini_file)
     optimization_params = ini_default["optimization"]
-    # optimization_params = read_yaml(optimization_file)
     cluster_params = optimization_params.get("cluster", {})
 
     # Check that optimization parameters are only field_parameters
@@ -248,6 +349,21 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
 
 
 def gather_trials_data(ax_client, metric_names=["N_total", "N_disc"]):
+    """
+    Gather data from completed trials in the Ax experiment.
+
+    Parameters
+    ----------
+    ax_client : ax.service.ax_client.AxClient
+        Ax client managing the optimization process.
+    metric_names : list of str, optional
+        List of metric names to extract from the trials. Default is ["N_total", "N_disc"].
+
+    Returns
+    -------
+    dict
+        Dictionary containing trial parameters and their corresponding metrics.
+    """
     metrics = ax_client.experiment.fetch_data().df
     trials = ax_client.experiment.trials
     trials_params = {key: trial.arm.parameters for key, trial in trials.items()}
@@ -263,5 +379,5 @@ def gather_trials_data(ax_client, metric_names=["N_total", "N_disc"]):
 
 
 if __name__ == "__main__":
-    args = parse_args()
+    args = _parse_args()
     cluster_optimization(args.input, args.output)
