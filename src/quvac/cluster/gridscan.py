@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """
-Script to run gridscan simulations on cluster with Slurm
+Script to run gridscan simulations on cluster with Slurm.
+
+Gridscan parameters (scanned variables and their grids)
+should be located in `ini.yml` at key `variables`.
+
+Usage:
+
+.. code-block:: bash
+
+    gridscan.py -i <input>.yaml -o <output_dir>
 """
 import argparse
 import itertools
@@ -17,6 +26,20 @@ from quvac.utils import read_yaml, write_yaml
 
 
 def _create_grids(variables):
+    """
+    Create parameter grids for each category and parameter.
+
+    Parameters
+    ----------
+    variables : dict
+        Dictionary containing parameter categories and their bounds. Each parameter
+        should be specified as a tuple (start, end, npts).
+
+    Returns
+    -------
+    dict
+        Dictionary containing parameter grids for each category and parameter.
+    """
     variables_grid = {}
     for category_key, category in variables.items():
         variables_grid[category_key] = {}
@@ -30,9 +53,17 @@ def _create_grids(variables):
 def create_parameter_grids(variables):
     """
     Create a grid from (start, end, npts) specified for each parameter.
-    Dictionary key 'fields' is handled separately because it's a 3-level dict
-    (fields: key_1: key_2: value) while other parameters are 2-level dicts
-    (key_1: key_2: value)
+
+    Parameters
+    ----------
+    variables : dict
+        Dictionary containing parameter categories and their bounds. The key 'fields'
+        is handled separately as it is a 3-level dictionary.
+
+    Returns
+    -------
+    dict
+        Dictionary containing parameter grids for all categories and parameters.
     """
     variables_grid = {}
     fields = variables.get("fields", {})
@@ -47,8 +78,21 @@ def create_parameter_grids(variables):
 
 def restructure_variables_grid(variables):
     """
-    Transform nested dict into plane dict by combining nested
-    dict keys
+    Transform a nested dictionary into a flat dictionary by combining nested keys.
+
+    Parameters
+    ----------
+    variables : dict
+        Dictionary containing parameter grids for each category and parameter.
+
+    Returns
+    -------
+    tuple
+        A tuple containing:
+        - param_names : list of list of str
+            List of parameter names split into categories and parameter keys.
+        - param_grids : list of list
+            List of parameter grids corresponding to each parameter.
     """
     variables_grid = {}
     for key, val in variables["fields"].items():
@@ -68,8 +112,23 @@ def restructure_variables_grid(variables):
 
 def create_ini_files_for_gridscan(ini_default, param_names, param_grids, save_path):
     """
-    Creates separate ini.yml file for every combination of params
-    in gridscan
+    Create separate `ini.yml` files for every combination of parameters in the grid scan.
+
+    Parameters
+    ----------
+    ini_default : dict
+        Default initial configuration dictionary containing all simulation parameters.
+    param_names : list of list of str
+        List of parameter names split into categories and parameter keys.
+    param_grids : list of list
+        List of parameter grids corresponding to each parameter.
+    save_path : str
+        Path to save the generated `ini.yml` files.
+
+    Returns
+    -------
+    list of str
+        List of file paths to the generated `ini.yml` files.
     """
     ini_files = []
     for parametrization in itertools.product(*param_grids):
@@ -83,7 +142,7 @@ def create_ini_files_for_gridscan(ini_default, param_names, param_grids, save_pa
                 ini_current[category][param_name] = float(param)
 
             param = int(param) if np.isclose(param, int(param)) else param
-            param_str = str(param) if isinstance(param, int) else f"{param:.2f}"
+            param_str = str(param) if isinstance(param, int) else f"{param:.2e}"
             param_str = f"{category}:{param_name}_{param_str}"
             name_local = "#".join([name_local, param_str])
         save_path_local = os.path.join(save_path, name_local, "ini.yml")
@@ -93,7 +152,15 @@ def create_ini_files_for_gridscan(ini_default, param_names, param_grids, save_pa
     return ini_files
 
 
-def parse_args():
+def _parse_args():
+    """
+    Parse command-line arguments.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed command-line arguments.
+    """
     description = "Perform gridscan of quvac simulations"
     argparser = argparse.ArgumentParser(description=description)
     argparser.add_argument(
@@ -103,41 +170,37 @@ def parse_args():
         "--output", "-o", default=None, help="Path to save simulation data to"
     )
     argparser.add_argument(
-        "--variables", default=None, help="Yaml file with variable parameters"
-    )
-    argparser.add_argument(
         "--wisdom", default="wisdom/fftw-wisdom", help="File to save pyfftw-wisdom"
     )
     return argparser.parse_args()
 
 
-def cluster_gridscan(ini_file, variables_file, save_path=None, wisdom_file=None):
+def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
     """
-    Launch a gridscan of quvac simulation for given default <ini>.yml file
-    and <variables>.yml file
+    Launch a grid scan of quvac simulations for a given default `ini.yml` file.
 
-    Parameters:
-    -----------
-    ini_file: str (format <path>/<file_name>.yaml)
-        Default initial configuration file containing all simulation parameters.
-        These parameters (apart from variables) would remain the same for the
-        whole gridscan.
-        Note: This file might also contain parameters for cluster computation
-    variables_file: str (format <path>/<file_name>.yaml)
-        File containing all parameters to vary
-    save_path: str
-        Path to save simulation results to
+    Parameters
+    ----------
+    ini_file : str
+        Path to the default initial configuration file (YAML format) containing all simulation parameters.
+    save_path : str, optional
+        Path to save simulation results. If not provided, defaults to the directory of `ini_file`.
+    wisdom_file : str, optional
+        Path to save FFTW wisdom. Default is None.
+
+    Returns
+    -------
+    None
     """
     # Check that ini file and save_path exists
-    err_msg = f"{ini_file} or {variables_file} is not a file or does not exist"
-    assert os.path.isfile(ini_file) and os.path.isfile(variables_file), err_msg
+    assert os.path.isfile(ini_file), f"{ini_file} is not a file or does not exist"
     if save_path is None:
         save_path = os.path.dirname(ini_file)
     if not os.path.exists(save_path):
         Path(save_path).mkdir(parents=True, exist_ok=True)
 
     ini_default = read_yaml(ini_file)
-    variables = read_yaml(variables_file)
+    variables = ini_default["variables"]
     cluster_params = variables.get("cluster", {})
     if cluster_params:
         variables.pop("cluster")
@@ -181,5 +244,5 @@ def cluster_gridscan(ini_file, variables_file, save_path=None, wisdom_file=None)
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    cluster_gridscan(args.input, args.variables, args.output)
+    args = _parse_args()
+    cluster_gridscan(args.input, args.output)
