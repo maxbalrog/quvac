@@ -532,6 +532,26 @@
             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ef</span>
         <span class="p">]</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_energy_kspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Fix energy</span>
+        <span class="n">W_upd</span> <span class="o">=</span> <span class="n">get_field_energy_kspace</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;without 1/k&quot;</span>
+        <span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Energy after projection in k-space: </span><span class="si">{</span><span class="n">W_upd</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> J&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">W_upd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">W_upd</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">W_upd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">*=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">*=</span> <span class="mi">0</span>
+
+        <span class="n">W_corrected</span> <span class="o">=</span> <span class="n">get_field_energy_kspace</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;without 1/k&quot;</span>
+        <span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    Energy after &quot;correction&quot;:          </span><span class="si">{</span><span class="n">W_corrected</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> J&#39;</span><span class="p">)</span>
+        
+
 <div class="viewcode-block" id="ExplicitField.get_a12">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/abc/index.html#quvac.field.abc.ExplicitField.get_a12">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_a12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -572,19 +592,7 @@
             <span class="sa">f</span><span class="s2">&quot;dV * (e2x*Efx + e2y*Efy + e2z*Efz)&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
         <span class="p">)</span>
 
-        <span class="c1"># Fix energy</span>
-        <span class="n">W_upd</span> <span class="o">=</span> <span class="n">get_field_energy_kspace</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;without 1/k&quot;</span>
-        <span class="p">)</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Energy after projection in k-space: </span><span class="si">{</span><span class="n">W_upd</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> J&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">W_upd</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">/</span> <span class="n">W_upd</span><span class="p">)</span>
-
-        <span class="n">W_corrected</span> <span class="o">=</span> <span class="n">get_field_energy_kspace</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;without 1/k&quot;</span>
-        <span class="p">)</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    Energy after &quot;correction&quot;:          </span><span class="si">{</span><span class="n">W_corrected</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> J&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_energy_kspace</span><span class="p">()</span>
 
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ef_fftw</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span></div>
