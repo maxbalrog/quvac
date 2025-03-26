@@ -19,7 +19,7 @@ from copy import deepcopy
 
 import numpy as np
 from ax.service.ax_client import AxClient, ObjectiveProperties
-from ax.modelbridge.generation_strategy import GenerationStrategy
+from ax.modelbridge.generation_strategy import GenerationStep, GenerationStrategy
 from ax.modelbridge.registry import Models
 from submitit import AutoExecutor, DebugJob, LocalJob
 
@@ -324,8 +324,8 @@ def setup_generation_strategy(num_random_trials=6):
     '''
     gs = GenerationStrategy(
         steps=[
-            {"model": Models.SOBOL, "num_trials": num_random_trials},  # N random samples before BO
-            {"model": Models.GPEI},  # Gaussian Process-based Bayesian Optimization
+            GenerationStep(model=Models.SOBOL, num_trials=num_random_trials),
+            GenerationStep(model=Models.GPEI),
         ]
     )
     return gs
