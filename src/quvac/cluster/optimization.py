@@ -19,6 +19,8 @@ from copy import deepcopy
 
 import numpy as np
 from ax.service.ax_client import AxClient, ObjectiveProperties
+from ax.modelbridge.generation_strategy import GenerationStrategy
+from ax.modelbridge.registry import Models
 from submitit import AutoExecutor, DebugJob, LocalJob
 
 from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
@@ -306,6 +308,29 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             time.sleep(1)
 
 
+def setup_generation_strategy(num_random_trials=6):
+    '''
+    Setup custom generation strategy.
+
+    Parameters
+    ----------
+    num_random_trials : int, optional
+        Number of random trials to perform before starting Bayesian optimization. Default is 6.
+
+    Returns
+    -------
+    ax.modelbridge.generation_strategy.GenerationStrategy
+        The configured generation strategy.
+    '''
+    gs = GenerationStrategy(
+        steps=[
+            {"model": Models.SOBOL, "num_trials": num_random_trials},  # N random samples before BO
+            {"model": Models.GPEI},  # Gaussian Process-based Bayesian Optimization
+        ]
+    )
+    return gs
+
+
 def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     """
     Launch optimization of quvac simulation for a given initial configuration file.
@@ -347,8 +372,13 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     # Prepare parameters for optimization in ax style
     params_for_ax = prepare_params_for_ax(optimization_params["parameters"], ini_file)
 
+    # custom generation strategy
+    gs_params = optimization_params.get("gs_params", {})
+    num_random_trials = gs_params.get("num_random_trials", 6)
+    gs = setup_generation_strategy(num_random_trials=num_random_trials)
+
     # Set up optimization client
-    ax_client = AxClient()
+    ax_client = AxClient(gs=gs)
     objectives = optimization_params["objectives"]
     track_metrics = optimization_params.get("track_metrics", [])
     # collect metric names to keep track of
