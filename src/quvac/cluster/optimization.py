@@ -378,7 +378,7 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     gs = setup_generation_strategy(num_random_trials=num_random_trials)
 
     # Set up optimization client
-    ax_client = AxClient(gs=gs)
+    ax_client = AxClient(generation_strategy=gs)
     objectives = optimization_params["objectives"]
     track_metrics = optimization_params.get("track_metrics", [])
     # collect metric names to keep track of
