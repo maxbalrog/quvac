@@ -255,7 +255,7 @@ def check_sampled_trials(trial_index_to_param):
         W_total = np.sum(energies)
         eps = 1.0 - W_total
         if eps < 0 and not np.isclose(abs(eps), 0.0, atol=1e-5):
-            warnings.warn("Fixed total energy budget constraint is violated!"
+            warnings.warn("Fixed total energy budget constraint is violated! "
                           "Probably, optimization fails to find new prospective points and"
                           "is stuck in local minima.")
             continue_optimization = False
@@ -289,35 +289,37 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
     """
     jobs = []
     submitted_jobs = 0
+    continue_optimization = True
     # Run until all the jobs have finished and our budget is used up.
-    while submitted_jobs < n_trials or jobs:
+    # while submitted_jobs < n_trials or jobs:
+    while (continue_optimization and submitted_jobs < n_trials) or jobs:
         for job, trial_idx in jobs:
             # Poll if any jobs completed
             # Local and debug jobs don't run until .result() is called.
             if job.done() or type(job) in [LocalJob, DebugJob]:
                 result = job.result()
-                # terminate optimization if some violation is encountered
-                if result is None:
-                    break
                 ax_client.complete_trial(trial_index=trial_idx, raw_data=result)
                 jobs.remove((job, trial_idx))
                 ax_client.save_to_json_file(experiment_file)
 
-        # Schedule new jobs if there is availablity
-        trial_index_to_param, _ = ax_client.get_next_trials(
-            max_trials=min(max_parallel_jobs - len(jobs), n_trials - submitted_jobs)
-        )
-        continue_optimization = check_sampled_trials(trial_index_to_param)
+        # sample new points if optimization is not terminated
         if continue_optimization:
-            for trial_idx, params in trial_index_to_param.items():
-                params["trial_idx"] = trial_idx
-                job = executor.submit(quvac_evaluation, params, metric_names)
-                submitted_jobs += 1
-                jobs.append((job, trial_idx))
-                time.sleep(1)
-        else:
-            warnings.warn("Terminating optimization...")
-            break
+            # Schedule new jobs if there is availablity
+            trial_index_to_param, _ = ax_client.get_next_trials(
+                max_trials=min(max_parallel_jobs - len(jobs), n_trials - submitted_jobs)
+            )
+            # Check sampled trials to satisfy the constraints (currently only total energy constraint)
+            continue_optimization = check_sampled_trials(trial_index_to_param)
+            if continue_optimization:
+                for trial_idx, params in trial_index_to_param.items():
+                    params["trial_idx"] = trial_idx
+                    job = executor.submit(quvac_evaluation, params, metric_names)
+                    submitted_jobs += 1
+                    jobs.append((job, trial_idx))
+                    time.sleep(1)
+            else:
+                warnings.warn("Terminating optimization... Finishing last trials...")
+                
 
 
 def setup_generation_strategy(num_random_trials=6):
