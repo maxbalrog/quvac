@@ -237,13 +237,27 @@ def quvac_evaluation(params, metric_names=["N_total"]):
     return metrics
 
 
-def check_sampled_trials(trial_index_to_param):
-    '''
-    Check if the sampled trials are valid.
+def check_energy_constraint(trial_index_to_param):
+    """
+    Check if the total energy budget constraint is satisfied.
 
-    Currently only checks if the total energy budget constraint is satisfied.
-    '''
-    continue_optimization = True
+    Parameters
+    ----------
+    trial_index_to_param : dict
+        Dictionary mapping trial indices to parameter dictionaries. Each parameter dictionary
+        contains the energy distribution among fields.
+
+    Returns
+    -------
+    bool
+        True if the total energy budget constraint is satisfied for all trials, False otherwise.
+
+    Raises
+    ------
+    Warning
+        If the total energy budget constraint is violated for any trial.
+    """
+    energy_ok = True
     for trial_idx, params in trial_index_to_param.items():
         energies = []
         for param_key, param in params.items():
@@ -258,9 +272,93 @@ def check_sampled_trials(trial_index_to_param):
             warnings.warn("Fixed total energy budget constraint is violated! "
                           "Probably, optimization fails to find new prospective points and"
                           "is stuck in local minima.")
-            continue_optimization = False
+            energy_ok = False
             break
-    return continue_optimization
+    return energy_ok
+
+
+def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patience=3):
+    """
+    Check for repeated samples in the optimization process.
+
+    Parameters
+    ----------
+    trial_index_to_param : dict
+        Dictionary mapping trial indices to parameter dictionaries.
+    last_samples : list of tuple
+        List of parameter tuples from the most recent trials.
+    fail_count : int
+        Counter for the number of consecutive repeated samples.
+    patience : int, optional
+        Maximum number of consecutive repeated samples allowed before stopping. Default is 3.
+
+    Returns
+    -------
+    tuple
+        A tuple containing:
+        - continue_sampling (bool): Whether to continue sampling new trials.
+        - last_samples (list of tuple): Updated list of parameter tuples.
+        - fail_count (int): Updated counter for repeated samples.
+
+    Notes
+    -----
+    If the number of repeated samples exceeds the `patience` value, a warning is issued,
+    and sampling is stopped.
+    """
+    continue_sampling = True
+    trials = deepcopy(trial_index_to_param)
+    for trial_idx, params in trials.items():
+        params.pop("ini_default")
+        params_tuple = tuple(sorted(params.items()))
+
+        if last_samples and params_tuple == last_samples[-1]:
+            fail_count += 1
+            warnings.warn(f"Trial {len(last_samples)-1} is identical to previous: {params}. Fail count: {fail_count}")
+        else:
+            fail_count = 0
+        
+        last_samples.append(params_tuple)
+
+        if fail_count >= patience:
+            warnings.warn(f"Number of repeated samples exceeded patience ({patience} tries)!")
+            continue_sampling = False
+    return continue_sampling, last_samples, fail_count
+
+
+def check_sampled_trials(trial_index_to_param, last_samples, fail_count):
+    """
+    Check if the sampled trials are valid.
+
+    Parameters
+    ----------
+    trial_index_to_param : dict
+        Dictionary mapping trial indices to parameter dictionaries.
+    last_samples : list of tuple
+        List of parameter tuples from the most recent trials.
+    fail_count : int
+        Counter for the number of consecutive repeated samples.
+
+    Returns
+    -------
+    tuple
+        A tuple containing:
+        - continue_optimization (bool): Whether to continue the optimization process.
+        - last_samples (list of tuple): Updated list of parameter tuples.
+        - fail_count (int): Updated counter for repeated samples.
+
+    Notes
+    -----
+    This function checks two conditions:
+    1. Whether the total energy budget constraint is satisfied.
+    2. Whether there are repeated samples in the optimization process.
+    If either condition fails, the optimization process is terminated.
+    """
+    continue_optimization = True
+    energy_ok = check_energy_constraint(trial_index_to_param)
+    continue_sampling, last_samples, fail_count = check_repeated_samples(trial_index_to_param, last_samples, fail_count)
+
+    continue_optimization = energy_ok and continue_sampling
+    return continue_optimization, last_samples, fail_count
 
 
 def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experiment_file,
@@ -289,9 +387,11 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
     """
     jobs = []
     submitted_jobs = 0
+    # variables for early optimization stopping
     continue_optimization = True
+    last_samples = []
+    fail_count = 0
     # Run until all the jobs have finished and our budget is used up.
-    # while submitted_jobs < n_trials or jobs:
     while (continue_optimization and submitted_jobs < n_trials) or jobs:
         for job, trial_idx in jobs:
             # Poll if any jobs completed
@@ -308,8 +408,11 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             trial_index_to_param, _ = ax_client.get_next_trials(
                 max_trials=min(max_parallel_jobs - len(jobs), n_trials - submitted_jobs)
             )
-            # Check sampled trials to satisfy the constraints (currently only total energy constraint)
-            continue_optimization = check_sampled_trials(trial_index_to_param)
+            # Check that sampled trials satisfy the requirements
+            continue_optimization, last_samples, fail_count = check_sampled_trials(trial_index_to_param,
+                                                                                   last_samples,
+                                                                                   fail_count)
+
             if continue_optimization:
                 for trial_idx, params in trial_index_to_param.items():
                     params["trial_idx"] = trial_idx
@@ -321,9 +424,8 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
                 warnings.warn("Terminating optimization... Finishing last trials...")
                 
 
-
 def setup_generation_strategy(num_random_trials=6):
-    '''
+    """
     Setup custom generation strategy.
 
     Parameters
@@ -335,7 +437,7 @@ def setup_generation_strategy(num_random_trials=6):
     -------
     ax.modelbridge.generation_strategy.GenerationStrategy
         The configured generation strategy.
-    '''
+    """
     gs = GenerationStrategy(
         steps=[
             GenerationStep(model=Models.SOBOL, num_trials=num_random_trials),
