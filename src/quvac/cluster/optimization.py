@@ -26,7 +26,7 @@ from submitit import AutoExecutor, DebugJob, LocalJob
 from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
 from quvac.postprocess import signal_in_detector, integrate_spherical
 from quvac.simulation import quvac_simulation, parse_args
-from quvac.utils import read_yaml, write_yaml
+from quvac.utils import read_yaml, write_yaml, round_to_n
 
 
 def prepare_params_for_ax(params, ini_file):
@@ -309,7 +309,14 @@ def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patie
     trials = deepcopy(trial_index_to_param)
     for trial_idx, params in trials.items():
         params.pop("ini_default")
-        params_tuple = tuple(sorted(params.items()))
+        # round-up ints and floats for comparison
+        params_list = []
+        for k,v in tuple(sorted(params.items())):
+            if isinstance(v, int) or isinstance(v, float):
+                # we use 5 significant digits
+                v = round_to_n(v,5)
+            params_list.append((k,v))
+        params_tuple = tuple(params_list)
 
         if last_samples and params_tuple == last_samples[-1]:
             fail_count += 1
@@ -409,12 +416,9 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             )
             # Check that sampled trials satisfy the requirements
             if trial_index_to_param:
-                print("I'm here!")
-                print(trial_index_to_param)
                 continue_optimization, fail_count = check_sampled_trials(trial_index_to_param,
                                                                          last_samples,
                                                                          fail_count)
-                print(last_samples)
 
                 if continue_optimization:
                     for trial_idx, params in trial_index_to_param.items():

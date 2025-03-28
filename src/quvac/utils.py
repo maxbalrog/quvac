@@ -211,3 +211,7 @@ def find_classes_in_package(package_name):
             print(f"Skipping {module_name} due to error: {e}")
 
     return classes
+
+
+def round_to_n(x, n):
+    return round(x, -int(np.floor(np.sign(x) * np.log10(abs(x)))) + n)
