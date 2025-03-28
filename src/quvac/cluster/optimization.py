@@ -312,7 +312,7 @@ def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patie
         # round-up ints and floats for comparison
         params_list = []
         for k,v in tuple(sorted(params.items())):
-            if isinstance(v, int) or isinstance(v, float):
+            if (isinstance(v, int) or isinstance(v, float)) and not np.isclose(v, 0.0):
                 # we use 5 significant digits
                 v = round_to_n(v,5)
             params_list.append((k,v))
