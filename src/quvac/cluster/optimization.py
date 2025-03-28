@@ -353,7 +353,6 @@ def check_sampled_trials(trial_index_to_param, last_samples, fail_count):
     2. Whether there are repeated samples in the optimization process.
     If either condition fails, the optimization process is terminated.
     """
-    continue_optimization = True
     energy_ok = check_energy_constraint(trial_index_to_param)
     continue_sampling, last_samples, fail_count = check_repeated_samples(trial_index_to_param, last_samples, fail_count)
 
@@ -412,6 +411,7 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             continue_optimization, last_samples, fail_count = check_sampled_trials(trial_index_to_param,
                                                                                    last_samples,
                                                                                    fail_count)
+            print(last_samples)
 
             if continue_optimization:
                 for trial_idx, params in trial_index_to_param.items():
