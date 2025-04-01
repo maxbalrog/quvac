@@ -27,8 +27,17 @@ license = {file = "LICENSE"}
 keywords = ["quantum", "vacuum", "qed", "maxwell", "electrodynamics"]
 classifiers = [
   "Development Status :: 3 - Alpha",
-  "Programming Language :: Python"
+  "Programming Language :: Python",
+  "Private :: Do Not Upload"
 ]
+
+
+[project.scripts]
+quvac-simulation = "quvac:main_simulation"
+quvac-simulation-parallel = "quvac:main_simulation_parallel"
+quvac-gridscan = "quvac:main_gridscan"
+quvac-optimization = "quvac:main_optimization"
+
 
 [project.optional-dependencies]
 optimization = [
@@ -37,4 +46,5 @@ optimization = [
 
 
 [project.urls]
+Homepage = "https://github.com/maxbalrog/quvac"
 Repository = "https://github.com/maxbalrog/quvac"

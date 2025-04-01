@@ -225,6 +225,13 @@ def quvac_simulation_parallel(
     _logger.info(end_print)
 
 
-if __name__ == "__main__":
+def main_simulation_parallel():
+    """
+    Main function to run the simulation in parallel.
+    """
     args = parse_args()
     quvac_simulation_parallel(args.input, args.output, args.wisdom)
+
+
+if __name__ == "__main__":
+    main_simulation_parallel()

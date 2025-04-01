@@ -572,6 +572,13 @@ def gather_trials_data(ax_client, metric_names=["N_total", "N_disc"]):
     return trials_params
 
 
-if __name__ == "__main__":
+def main_optimization():
+    """
+    Main function to run the optimization.
+    """
     args = parse_args(description="Perform optimization of quvac simulations")
     cluster_optimization(args.input, args.output)
+
+
+if __name__ == "__main__":
+    main_optimization()

@@ -219,6 +219,13 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
     print("Grid scan is finished!")
 
 
-if __name__ == "__main__":
+def main_gridscan():
+    """
+    Main function to run the gridscan.
+    """
     args = parse_args(description="Perform gridscan of quvac simulations")
     cluster_gridscan(args.input, args.output)
+
+
+if __name__ == "__main__":
+    main_gridscan()

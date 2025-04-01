@@ -7,6 +7,10 @@ import quvac.log
 import quvac.postprocess
 import quvac.utils
 from quvac.utils import find_classes_in_package
+from quvac.simulation import main_simulation
+from quvac.simulation_parallel import main_simulation_parallel
+from quvac.cluster.gridscan import main_gridscan
+from quvac.cluster.optimization import main_optimization
 
 __cls_names__ = None
 if __cls_names__ is None:

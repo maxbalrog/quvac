@@ -391,6 +391,13 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom")
     _logger.info(end_print)
 
 
-if __name__ == "__main__":
+def main_simulation():
+    """
+    Main function to run the simulation script.
+    """
     args = parse_args()
     quvac_simulation(args.input, args.output, args.wisdom)
+
+
+if __name__ == "__main__":
+    main_simulation()
