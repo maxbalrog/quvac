@@ -435,13 +435,14 @@
 <span class="sd">        Formatted string with postprocess parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">calculate_spherical</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_spherical&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">spherical_params</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spherical_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="c1"># spherical_params = postprocess_params.get(&quot;spherical_params&quot;, {})</span>
     <span class="n">calculate_discernible</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_discernible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">perp_type</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_polarization_type&quot;</span><span class="p">,</span> <span class="s2">&quot;optical axis&quot;</span><span class="p">)</span>
     <span class="n">perp_field_idx</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_field_idx&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="n">postprocess_print</span> <span class="o">=</span> <span class="n">postprocess_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">perp_type</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">perp_field_idx</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">calculate_spherical</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">calculate_discernible</span><span class="p">)</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">perp_type</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">perp_field_idx</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">calculate_spherical</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">calculate_discernible</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">postprocess_print</span></div>
 

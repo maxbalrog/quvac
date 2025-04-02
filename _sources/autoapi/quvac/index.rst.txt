@@ -23,3 +23,19 @@ Submodules
    /autoapi/quvac/utils/index
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.main_optimization
+
+
+Package Contents
+----------------
+
+.. py:function:: main_optimization()
+
+   Placeholder function for optimization main function.
+
+

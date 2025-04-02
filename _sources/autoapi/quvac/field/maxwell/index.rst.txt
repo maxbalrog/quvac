@@ -59,7 +59,8 @@ Module Contents
    :type fields: dict or list of dict
    :param grid: Spatial and spectral grid.
    :type grid: quvac.grid.GridXYZ
-   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the number of CPU cores.
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
+                    number of CPU cores.
    :type nthreads: int, optional
 
    .. attribute:: a1

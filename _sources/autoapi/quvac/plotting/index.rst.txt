@@ -61,7 +61,8 @@ Module Contents
    :type dx: float
    :param dy: Half the height of the ROI.
    :type dy: float
-   :param line_kwargs: Keyword arguments to customize the appearance of the ROI lines (e.g., color, linestyle).
+   :param line_kwargs: Keyword arguments to customize the appearance of the ROI lines
+                       (e.g., color, linestyle).
    :type line_kwargs: dict
 
    :returns: The axis with the plotted ROI.
@@ -69,7 +70,8 @@ Module Contents
 
    .. rubric:: Notes
 
-   The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and height 2*dy.
+   The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and
+   height 2*dy.
 
 
 .. py:function:: plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None)

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 8.2.1 and Furo 2024.08.06 -->
-        <title>Overview: module code - quvac 0.1.0 documentation</title>
+        <title>quvac - quvac 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -268,26 +268,42 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>All modules for which code is available</h1>
-<ul><li><a href="quvac.html">quvac</a></li>
-<ul><li><a href="quvac/analytic_scalings.html">quvac.analytic_scalings</a></li>
-<li><a href="quvac/field/abc.html">quvac.field.abc</a></li>
-<li><a href="quvac/field/dipole.html">quvac.field.dipole</a></li>
-<li><a href="quvac/field/external_field.html">quvac.field.external_field</a></li>
-<li><a href="quvac/field/gaussian.html">quvac.field.gaussian</a></li>
-<li><a href="quvac/field/maxwell.html">quvac.field.maxwell</a></li>
-<li><a href="quvac/field/model.html">quvac.field.model</a></li>
-<li><a href="quvac/field/utils.html">quvac.field.utils</a></li>
-<li><a href="quvac/grid.html">quvac.grid</a></li>
-<li><a href="quvac/integrator/abc.html">quvac.integrator.abc</a></li>
-<li><a href="quvac/integrator/vacuum_emission.html">quvac.integrator.vacuum_emission</a></li>
-<li><a href="quvac/log.html">quvac.log</a></li>
-<li><a href="quvac/plotting.html">quvac.plotting</a></li>
-<li><a href="quvac/postprocess.html">quvac.postprocess</a></li>
-<li><a href="quvac/simulation.html">quvac.simulation</a></li>
-<li><a href="quvac/simulation_parallel.html">quvac.simulation_parallel</a></li>
-<li><a href="quvac/utils.html">quvac.utils</a></li>
-</ul></ul>
+          <h1>Source code for quvac</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ruff: noqa: F401</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.analytic_scalings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.cluster.gridscan</span><span class="w"> </span><span class="kn">import</span> <span class="n">main_gridscan</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.config</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.field</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.grid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.integrator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.postprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">main_simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation_parallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">main_simulation_parallel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">quvac.utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_classes_in_package</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.cluster.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">main_optimization</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+<div class="viewcode-block" id="main_optimization">
+<a class="viewcode-back" href="../autoapi/quvac/index.html#quvac.main_optimization">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main_optimization</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placeholder function for optimization main function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimization module not available. Skipping optimization.&quot;</span><span class="p">)</span></div>
+
+
+<span class="n">__cls_names__</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">if</span> <span class="n">__cls_names__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">__cls_names__</span> <span class="o">=</span> <span class="n">find_classes_in_package</span><span class="p">(</span><span class="s2">&quot;quvac&quot;</span><span class="p">)</span>
+
+<span class="n">__doc_const_in_modules__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;field&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
         </article>
       </div>
       <footer>

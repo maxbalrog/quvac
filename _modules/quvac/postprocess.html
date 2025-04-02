@@ -284,7 +284,7 @@
 <span class="sd">3. Discernible signal.</span>
 <span class="sd">4. Background field spectra.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="c1"># ruff: noqa: F841</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -296,8 +296,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">map_coordinates</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.maxwell</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxwellMultiple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.external_field</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExternalField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.maxwell</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxwellMultiple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridXYZ</span><span class="p">,</span> <span class="n">get_pol_basis</span><span class="p">,</span> <span class="n">setup_grids</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">sph_interp_warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_yaml</span>
@@ -379,7 +379,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span>
         <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">idxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">idxs</span></div>
@@ -449,8 +449,8 @@
 
 <div class="viewcode-block" id="integrate_spherical">
 <a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.integrate_spherical">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">integrate_spherical</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axs</span><span class="p">,</span> <span class="n">axs_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">],</span>
-                        <span class="n">axs_integrate</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrate_spherical</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axs</span><span class="p">,</span> <span class="n">axs_names</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">),</span>
+                        <span class="n">axs_integrate</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Integrate an array over spherical coordinates.</span>
 
@@ -486,7 +486,7 @@
     <span class="n">condition</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_names</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_integrate</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">condition</span><span class="p">,</span> <span class="n">err_msg</span>
 
-    <span class="n">axs_names_</span> <span class="o">=</span> <span class="n">axs_names</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">axs_names_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs_names</span><span class="p">)</span>
 
     <span class="n">integrand</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">ax_name</span> <span class="ow">in</span> <span class="n">axs_integrate</span><span class="p">:</span>
@@ -545,7 +545,8 @@
 <span class="sd">        - &#39;dtheta&#39; : float</span>
 <span class="sd">            Half-width of the polar angle range (in degrees).</span>
 <span class="sd">    align_to_max : bool</span>
-<span class="sd">        Whether to align detector to the max spot in the detected region, by default False</span>
+<span class="sd">        Whether to align detector to the max spot in the detected region, </span>
+<span class="sd">        by default False.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -554,7 +555,8 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The function integrates the signal over the specified detector region in spherical coordinates.</span>
+<span class="sd">    The function integrates the signal over the specified detector region in spherical </span>
+<span class="sd">    coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">phi0</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dphi0</span><span class="p">,</span> <span class="n">dtheta0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">detector</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> 
                                   <span class="ow">in</span> <span class="s2">&quot;phi0 theta0 dphi dtheta&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
@@ -574,9 +576,6 @@
         <span class="n">theta_det</span><span class="p">,</span> <span class="n">phi_det</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">idx_theta</span><span class="p">],</span> <span class="n">phi</span><span class="p">[</span><span class="n">idx_phi</span><span class="p">]</span>
 
     <span class="n">N_detected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dN_det</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_det</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span> <span class="o">*</span> <span class="n">dphi</span> <span class="o">*</span> <span class="n">dtheta</span>
-    <span class="c1"># N_detected = integrate_spherical(dN_det, [theta_det, phi_det],</span>
-    <span class="c1">#                                  axs_names=[&#39;theta&#39;,&#39;phi&#39;],</span>
-    <span class="c1">#                                  axs_integrate=[&#39;theta&#39;,&#39;phi&#39;])</span>
     <span class="k">return</span> <span class="n">N_detected</span></div>
 
     
@@ -721,7 +720,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span> <span class="o">=</span> <span class="n">fields_params</span>
         <span class="c1"># Load data</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]))</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">GridXYZ</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">get_k_grid</span><span class="p">()</span>
         <span class="c1"># Update local dict with variables from GridXYZ class</span>
@@ -732,7 +731,8 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">kx</span><span class="p">))</span>
             <span class="c1"># self.__dict__[f&quot;k{ax}&quot;] = np.fft.fftshift(kx)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">),</span>
+                            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
 
@@ -835,7 +835,8 @@
         <span class="k">if</span> <span class="n">stokes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_Stokes_vector_for_ep</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Sp</span> <span class="o">=</span> <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span>
+            <span class="n">Sp</span> <span class="o">=</span> <span class="p">((</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+                  <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
             <span class="n">Sp</span> <span class="o">=</span> <span class="n">Sp</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sp</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">Np_xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">Sp</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
@@ -866,8 +867,10 @@
         <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ef</span>
         <span class="n">epx</span><span class="p">,</span> <span class="n">epy</span><span class="p">,</span> <span class="n">epz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ep</span>
 
-        <span class="n">Sf</span> <span class="o">=</span> <span class="p">(</span><span class="n">efx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> <span class="p">(</span><span class="n">efx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span>
-        <span class="n">Sp</span> <span class="o">=</span> <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span>
+        <span class="n">Sf</span> <span class="o">=</span> <span class="p">((</span><span class="n">efx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+              <span class="p">(</span><span class="n">efx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
+        <span class="n">Sp</span> <span class="o">=</span> <span class="p">((</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+              <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
 
         <span class="n">P1</span> <span class="o">=</span> <span class="n">Sf</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sf</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">Sp</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sp</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">P2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">Sf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Sp</span><span class="p">))</span>
@@ -926,7 +929,7 @@
                 <span class="n">warn_message</span> <span class="o">=</span> <span class="n">sph_interp_warn</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">total_key</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_key</span><span class="p">),</span> <span class="n">N_total</span>
                 <span class="p">)</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
                 <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">spherical_grid</span></div>
@@ -1128,7 +1131,8 @@
         <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;kx ky kz N_xyz N_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">calculate_spherical</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_on_sph_grid</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;N_xyz&quot;</span><span class="p">,</span> <span class="n">check_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_on_sph_grid</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;N_xyz&quot;</span><span class="p">,</span> <span class="n">check_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                                        <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
             <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;k theta phi N_sph N_sph_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">calculate_xyz_background</span><span class="p">:</span>
             <span class="c1"># self.get_background_xyz()</span>

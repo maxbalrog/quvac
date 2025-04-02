@@ -113,7 +113,7 @@ Module Contents
              * **arr_sph** (*numpy.ndarray*) -- Array with data on spherical grid.
 
 
-.. py:function:: integrate_spherical(arr, axs, axs_names=['k', 'theta', 'phi'], axs_integrate=['k', 'theta', 'phi'])
+.. py:function:: integrate_spherical(arr, axs, axs_names=('k', 'theta', 'phi'), axs_integrate=('k', 'theta', 'phi'))
 
    Integrate an array over spherical coordinates.
 
@@ -159,7 +159,8 @@ Module Contents
                     - 'dtheta' : float
                         Half-width of the polar angle range (in degrees).
    :type detector: dict
-   :param align_to_max: Whether to align detector to the max spot in the detected region, by default False
+   :param align_to_max: Whether to align detector to the max spot in the detected region,
+                        by default False.
    :type align_to_max: bool
 
    :returns: The total signal detected within the specified detector region.
@@ -167,7 +168,8 @@ Module Contents
 
    .. rubric:: Notes
 
-   The function integrates the signal over the specified detector region in spherical coordinates.
+   The function integrates the signal over the specified detector region in spherical
+   coordinates.
 
 
 .. py:function:: get_simulation_fields(ini_file)

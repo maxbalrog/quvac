@@ -29,12 +29,13 @@ Functions
    quvac.simulation.run_simulation
    quvac.simulation.postprocess_simulation
    quvac.simulation.quvac_simulation
+   quvac.simulation.main_simulation
 
 
 Module Contents
 ---------------
 
-.. py:function:: parse_args(description='Calculate quantum vacuum signal for given external fields.')
+.. py:function:: parse_args(description='Calculate quantum vacuum signal for external fields.')
 
    Parse command-line arguments.
 
@@ -134,5 +135,10 @@ Module Contents
    :type save_path: str, optional
    :param wisdom_file: Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".
    :type wisdom_file: str, optional
+
+
+.. py:function:: main_simulation()
+
+   Main function to run the simulation script.
 
 

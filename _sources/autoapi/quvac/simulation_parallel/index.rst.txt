@@ -26,6 +26,7 @@ Functions
    quvac.simulation_parallel.create_ini_files_for_parallel
    quvac.simulation_parallel.collect_results
    quvac.simulation_parallel.quvac_simulation_parallel
+   quvac.simulation_parallel.main_simulation_parallel
 
 
 Module Contents
@@ -75,5 +76,10 @@ Module Contents
    :type save_path: str, optional
    :param wisdom_file: Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".
    :type wisdom_file: str, optional
+
+
+.. py:function:: main_simulation_parallel()
+
+   Main function to run the simulation in parallel.
 
 

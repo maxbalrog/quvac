@@ -435,7 +435,7 @@ in the future.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.postprocess.integrate_spherical">
-<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">integrate_spherical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['k',</span> <span class="pre">'theta',</span> <span class="pre">'phi']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_integrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['k',</span> <span class="pre">'theta',</span> <span class="pre">'phi']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#integrate_spherical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.integrate_spherical" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">integrate_spherical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('k',</span> <span class="pre">'theta',</span> <span class="pre">'phi')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_integrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('k',</span> <span class="pre">'theta',</span> <span class="pre">'phi')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#integrate_spherical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.integrate_spherical" title="Link to this definition">¶</a></dt>
 <dd><p>Integrate an array over spherical coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -495,7 +495,8 @@ the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).</p>
 </li>
 </ul>
 </p></li>
-<li><p><strong>align_to_max</strong> (<em>bool</em>) – Whether to align detector to the max spot in the detected region, by default False</p></li>
+<li><p><strong>align_to_max</strong> (<em>bool</em>) – Whether to align detector to the max spot in the detected region,
+by default False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -506,7 +507,8 @@ the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The function integrates the signal over the specified detector region in spherical coordinates.</p>
+<p>The function integrates the signal over the specified detector region in spherical
+coordinates.</p>
 </dd></dl>
 
 <dl class="py function">

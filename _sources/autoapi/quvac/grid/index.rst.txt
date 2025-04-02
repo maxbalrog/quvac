@@ -237,7 +237,8 @@ Module Contents
    :param field_params: Dictionary containing the field parameters.
    :type field_params: dict
 
-   :returns: A tuple containing the perpendicular and longitudinal bandwidths (kbw_perp, kbw_long).
+   :returns: A tuple containing the perpendicular and longitudinal bandwidths
+             (kbw_perp, kbw_long).
    :rtype: tuple of float
 
    :raises NotImplementedError: If the field type is not supported.
@@ -292,7 +293,8 @@ Module Contents
    :type box_size: sequence of float
    :param grid_res: Controls the resolution (default is 1).
    :type grid_res: float, optional
-   :param equal_resolution: Flag indicating if equal resolution in every dimension is needed (default is False).
+   :param equal_resolution: Flag indicating if equal resolution in every dimension is needed
+                            (default is False).
    :type equal_resolution: bool, optional
 
    :returns: List containing the number of grid points along each dimension.
@@ -416,7 +418,8 @@ Module Contents
 
    .. rubric:: Notes
 
-   The spatial and temporal grids are created based on the mode specified in the grid parameters.
-   If 'dynamic' mode is selected, the grids are created dynamically based on the field parameters.
+   The spatial and temporal grids are created based on the mode specified in the grid
+   parameters. If 'dynamic' mode is selected, the grids are created dynamically based
+   on the field parameters.
 
 

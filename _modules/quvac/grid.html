@@ -372,7 +372,7 @@
             <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span> <span class="n">dx</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">kgrid</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kgrid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kgrid_shifted</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">)</span>
         <span class="p">)</span>
@@ -383,8 +383,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">kz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmeshgrid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span> <span class="o">=</span> <span class="n">kabs</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2 + kz**2)&quot;</span><span class="p">)</span>
-        <span class="n">kperp</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span> <span class="o">=</span> <span class="n">kabs</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2 + kz**2)&quot;</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
+        <span class="n">kperp</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2)&quot;</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
 
         <span class="c1"># Polarization vectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e1x</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 1, kx * kz / (kperp*kabs))&quot;</span><span class="p">)</span>
@@ -554,7 +554,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple of float</span>
-<span class="sd">        A tuple containing the perpendicular and longitudinal bandwidths (kbw_perp, kbw_long).</span>
+<span class="sd">        A tuple containing the perpendicular and longitudinal bandwidths </span>
+<span class="sd">        (kbw_perp, kbw_long).</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -675,7 +676,8 @@
 <span class="sd">    grid_res : float, optional</span>
 <span class="sd">        Controls the resolution (default is 1).</span>
 <span class="sd">    equal_resolution : bool, optional</span>
-<span class="sd">        Flag indicating if equal resolution in every dimension is needed (default is False).</span>
+<span class="sd">        Flag indicating if equal resolution in every dimension is needed </span>
+<span class="sd">        (default is False).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -818,7 +820,7 @@
     <span class="n">Nxyz_</span> <span class="o">=</span> <span class="n">get_xyz_size</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">box_size</span><span class="p">)</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;spatial_resolution&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-        <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">res</span> <span class="k">for</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Nxyz_</span><span class="p">,</span> <span class="n">res</span><span class="p">)]</span>
+        <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">res</span> <span class="k">for</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Nxyz_</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
     <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">res</span> <span class="k">for</span> <span class="n">Nx</span> <span class="ow">in</span> <span class="n">Nxyz_</span><span class="p">]</span>
     <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;Nxyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Nxyz</span>
@@ -892,8 +894,9 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The spatial and temporal grids are created based on the mode specified in the grid parameters.</span>
-<span class="sd">    If &#39;dynamic&#39; mode is selected, the grids are created dynamically based on the field parameters.</span>
+<span class="sd">    The spatial and temporal grids are created based on the mode specified in the grid </span>
+<span class="sd">    parameters. If &#39;dynamic&#39; mode is selected, the grids are created dynamically based </span>
+<span class="sd">    on the field parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dynamic&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>

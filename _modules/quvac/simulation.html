@@ -284,8 +284,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyfftw</span>
@@ -294,20 +294,24 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.external_field</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExternalField</span><span class="p">,</span> <span class="n">ProbePumpField</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_grids</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.integrator.vacuum_emission</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumEmission</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_grid_params</span><span class="p">,</span> <span class="n">get_performance_stats</span><span class="p">,</span>
-                       <span class="n">get_postprocess_info</span><span class="p">,</span> <span class="n">simulation_end_str</span><span class="p">,</span>
-                       <span class="n">simulation_start_str</span><span class="p">,</span> <span class="n">get_test_timings</span><span class="p">,</span>
-                       <span class="n">get_postprocess_stats</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_grid_params</span><span class="p">,</span>
+    <span class="n">get_performance_stats</span><span class="p">,</span>
+    <span class="n">get_postprocess_info</span><span class="p">,</span>
+    <span class="n">get_postprocess_stats</span><span class="p">,</span>
+    <span class="n">get_test_timings</span><span class="p">,</span>
+    <span class="n">simulation_end_str</span><span class="p">,</span>
+    <span class="n">simulation_start_str</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumEmissionAnalyzer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">load_wisdom</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">save_wisdom</span><span class="p">,</span>
-                         <span class="n">write_yaml</span><span class="p">,</span> <span class="n">get_maxrss</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_maxrss</span><span class="p">,</span> <span class="n">load_wisdom</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">save_wisdom</span><span class="p">,</span> <span class="n">write_yaml</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="parse_args">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.parse_args">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calculate quantum vacuum signal for given external fields.&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calculate quantum vacuum signal for external fields.&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse command-line arguments.</span>
 
@@ -500,7 +504,6 @@
     <span class="k">if</span> <span class="n">test_run</span><span class="p">:</span>
         <span class="n">expected_timesteps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
         <span class="n">grid_t</span> <span class="o">=</span> <span class="n">grid_t</span><span class="p">[:</span><span class="n">test_timesteps</span><span class="p">]</span>
-        <span class="n">do_postprocess</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing test run for </span><span class="si">{</span><span class="n">test_timesteps</span><span class="si">}</span><span class="s2"> timesteps</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Field setup</span>
@@ -533,12 +536,14 @@
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_message</span><span class="p">)</span>
     <span class="n">vacem</span> <span class="o">=</span> <span class="n">VacuumEmission</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;vacem_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span><span class="n">grid_t</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">])</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span><span class="n">grid_t</span><span class="p">,</span> 
+                                                     <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">])</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">memory</span><span class="p">[</span><span class="s1">&#39;maxrss_amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Amplitudes are calculated&quot;</span><span class="p">)</span>
 
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;per_iteration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
+    <span class="n">Nt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;per_iteration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Nt</span>
 
     <span class="k">if</span> <span class="n">test_run</span><span class="p">:</span>
         <span class="n">test_run_str_print</span> <span class="o">=</span> <span class="n">get_test_timings</span><span class="p">(</span><span class="n">timings</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">),</span> <span class="n">expected_timesteps</span><span class="p">)</span>
@@ -570,7 +575,8 @@
         <span class="s2">&quot;perp_type&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_polarization_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="s2">&quot;perp_field_idx&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_field_idx&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;stokes&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stokes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">,</span>
+                                                           <span class="kc">False</span><span class="p">),</span>
         <span class="s2">&quot;bgr_idx&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bgr_idx&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
         <span class="s2">&quot;calculate_spherical&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_spherical&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
         <span class="s2">&quot;spherical_params&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spherical_params&quot;</span><span class="p">,</span> <span class="p">{}),</span>
@@ -630,7 +636,7 @@
         <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
         <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
         <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;%(message)s&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Start time</span>
@@ -686,9 +692,19 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="main_simulation">
+<a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.main_simulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main_simulation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function to run the simulation script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
-    <span class="n">quvac_simulation</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span>
+    <span class="n">quvac_simulation</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main_simulation</span><span class="p">()</span>
 </pre></div>
         </article>
       </div>

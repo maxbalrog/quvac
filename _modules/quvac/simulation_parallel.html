@@ -282,21 +282,29 @@
 <span class="sd">    python simulation_parallel.py -i &lt;input&gt;.yaml -o &lt;output_dir&gt; </span>
 <span class="sd">    --wisdom &lt;wisdom_file&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">submitit</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBMITIT_PARAMS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_grids</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_parallel_performance_stats</span><span class="p">,</span>
-                       <span class="n">simulation_end_str</span><span class="p">,</span> <span class="n">simulation_start_str</span><span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dirs</span><span class="p">,</span> <span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">parse_args</span><span class="p">,</span> <span class="n">postprocess_simulation</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">write_yaml</span><span class="p">,</span> <span class="n">get_maxrss</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_parallel_performance_stats</span><span class="p">,</span>
+    <span class="n">simulation_end_str</span><span class="p">,</span>
+    <span class="n">simulation_start_str</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_dirs</span><span class="p">,</span>
+    <span class="n">parse_args</span><span class="p">,</span>
+    <span class="n">postprocess_simulation</span><span class="p">,</span>
+    <span class="n">quvac_simulation</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_maxrss</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">write_yaml</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 
@@ -416,7 +424,6 @@
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="c1"># One can choose either to perform just simulation, just postprocess or both</span>
     <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;simulation_postprocess&#39;</span><span class="p">)</span>
-    <span class="n">do_simulation</span> <span class="o">=</span> <span class="s1">&#39;simulation&#39;</span> <span class="ow">in</span> <span class="n">mode</span>
     <span class="n">do_postprocess</span> <span class="o">=</span> <span class="s1">&#39;postprocess&#39;</span> <span class="ow">in</span> <span class="n">mode</span>
 
     <span class="c1"># Setup logger</span>
@@ -425,7 +432,7 @@
         <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
         <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
         <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;%(message)s&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Start time</span>
@@ -468,7 +475,7 @@
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs submitted, waiting for results...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Wait till all jobs end</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs are finished&quot;</span><span class="p">)</span>
 
     <span class="c1"># Collect all results</span>
@@ -505,9 +512,19 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="main_simulation_parallel">
+<a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.main_simulation_parallel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main_simulation_parallel</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function to run the simulation in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
-    <span class="n">quvac_simulation_parallel</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span>
+    <span class="n">quvac_simulation_parallel</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main_simulation_parallel</span><span class="p">()</span>
 </pre></div>
         </article>
       </div>
