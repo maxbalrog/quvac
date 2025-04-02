@@ -39,7 +39,7 @@ quvac-optimization = "quvac:main_optimization"
 
 [project.optional-dependencies]
 optimization = [
-  "ax-platform",
+    "ax-platform",
 ]
 plot = [
     "matplotlib>=3.10.1",

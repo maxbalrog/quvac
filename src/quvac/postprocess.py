@@ -201,7 +201,7 @@ def integrate_spherical(arr, axs, axs_names=("k", "theta", "phi"),
     condition = len(axs) == len(axs_names) and len(axs) >= len(axs_integrate)
     assert condition, err_msg
 
-    axs_names_ = axs_names.copy()
+    axs_names_ = list(axs_names)
 
     integrand = arr.copy()
     for ax_name in axs_integrate:
@@ -288,9 +288,6 @@ def signal_in_detector(dN, theta, phi, detector, align_to_max=False):
         theta_det, phi_det = theta[idx_theta], phi[idx_phi]
 
     N_detected = np.sum(dN_det * np.sin(theta_det)[:,None]) * dphi * dtheta
-    # N_detected = integrate_spherical(dN_det, [theta_det, phi_det],
-    #                                  axs_names=['theta','phi'],
-    #                                  axs_integrate=['theta','phi'])
     return N_detected
     
 
