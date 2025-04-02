@@ -5,11 +5,11 @@ Here we provide a comparison between quvac and vacem results
 import os
 from pathlib import Path
 
+from config_for_tests import DEFAULT_CONFIG_PATH, SIMULATION_SCRIPT
 import numpy as np
 import pytest
 
 from quvac.utils import read_yaml, write_yaml
-from config_for_tests import DEFAULT_CONFIG_PATH, SIMULATION_SCRIPT
 
 REFERENCE_PATH = "tests/references"
 REFERENCE_FILE = "results.yml"

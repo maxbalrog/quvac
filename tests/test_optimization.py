@@ -11,13 +11,14 @@ import pytest
 
 try:
     from ax.service.ax_client import AxClient
-except ModuleNotFoundError:
+except ModuleNotFoundError as exc:
     print("`ax` package should be installed to use optimization")
-    raise ModuleNotFoundError("`ax` package not found")
+    raise ModuleNotFoundError("`ax` package not found") from exc
+
+from config_for_tests import DEFAULT_CONFIG_PATH, OPTIMIZATION_SCRIPT
 
 from quvac.cluster.optimization import gather_trials_data
 from quvac.utils import read_yaml, write_yaml
-from config_for_tests import DEFAULT_CONFIG_PATH, OPTIMIZATION_SCRIPT
 
 
 @pytest.mark.slow

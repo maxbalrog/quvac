@@ -3,24 +3,20 @@ Here we provide a test for maxwell representation of fields:
 for some field configurations we compare analytic and maxwell fields
 """
 
-import os
-from pathlib import Path
-
+from config_for_tests import DEFAULT_CONFIG_PATH
 import numpy as np
-import pytest
 
-from quvac.grid import setup_grids
 from quvac.field.gaussian import GaussianAnalytic
 from quvac.field.maxwell import MaxwellMultiple
-from quvac.utils import read_yaml, write_yaml
-from config_for_tests import DEFAULT_CONFIG_PATH
+from quvac.grid import setup_grids
+from quvac.utils import read_yaml
 
 
 def get_intensity(field, t):
     E, B = field.calculate_field(t=t)
     E, B = [np.real(Ex) for Ex in E], [np.real(Bx) for Bx in B]
-    I = (E[0]**2 + E[1]**2 + E[2]**2 + B[0]**2 + B[1]**2 + B[2]**2)/2
-    return I
+    intensity = (E[0]**2 + E[1]**2 + E[2]**2 + B[0]**2 + B[1]**2 + B[2]**2)/2
+    return intensity
 
 
 def test_maxwell_gauss():
@@ -36,11 +32,11 @@ def test_maxwell_gauss():
     gauss_mw = MaxwellMultiple([field_params], grid_xyz)
 
     t = 0.
-    I = get_intensity(gauss, t)
-    I_mw = get_intensity(gauss_mw, t)
+    intensity = get_intensity(gauss, t)
+    intensity_mw = get_intensity(gauss_mw, t)
 
-    I = np.clip(I, a_min=I.max()*1e-10, a_max=None)
-    I_mw = np.clip(I, a_min=I_mw.max()*1e-10, a_max=None)
+    intensity = np.clip(intensity, a_min=intensity.max()*1e-10, a_max=None)
+    intensity_mw = np.clip(intensity_mw, a_min=intensity_mw.max()*1e-10, a_max=None)
 
     err_msg = "Maxwell field does not match analytic field (up to 10% relative error)"
-    assert np.allclose(I, I_mw, rtol=1e-1), err_msg
+    assert np.allclose(intensity, intensity_mw, rtol=1e-1), err_msg

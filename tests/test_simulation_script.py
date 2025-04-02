@@ -12,12 +12,12 @@ with script in several scenarios:
 import os
 from pathlib import Path
 
+from config_for_tests import DEFAULT_CONFIG_PATH, SIMULATION_SCRIPT
 import numpy as np
 import pytest
 
 from quvac.analytic_scalings import get_two_paraxial_scaling
 from quvac.utils import read_yaml, write_yaml
-from config_for_tests import DEFAULT_CONFIG_PATH, SIMULATION_SCRIPT
 
 
 def run_test_simulation(path, ini_data):
@@ -117,7 +117,7 @@ def test_channels():
     ini_data = read_yaml(DEFAULT_CONFIG_PATH)
 
     results = []
-    for idx, channels in zip([(0, 0), (0, 1), (1, 0)], [False, True, True]):
+    for idx, channels in zip([(0, 0), (0, 1), (1, 0)], [False, True, True]):  # noqa: B905
         integrator_type = "vacuum_emission_channels" if channels else "vacuum_emission"
 
         ini_data["integrator"] = {

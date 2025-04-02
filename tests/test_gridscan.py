@@ -6,10 +6,10 @@ with script
 import os
 from pathlib import Path
 
+from config_for_tests import DEFAULT_CONFIG_PATH, GRIDSCAN_SCRIPT
 import numpy as np
 
 from quvac.utils import read_yaml, write_yaml
-from config_for_tests import DEFAULT_CONFIG_PATH, GRIDSCAN_SCRIPT
 
 
 def test_gridscan():
