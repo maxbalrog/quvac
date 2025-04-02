@@ -52,6 +52,9 @@ Repository = "https://github.com/maxbalrog/quvac"
 [tool.uv]
 default-groups = "all"
 
+[tool.ruff]
+extend-exclude = ["*.ipynb"]
+
 [tool.ruff.lint]
 select = [
     "F", # pyflakes
