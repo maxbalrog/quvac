@@ -16,8 +16,8 @@ and infinite transverse extend in others. Adapted from [1]_.
 import numexpr as ne
 from scipy.constants import pi
 
-from quvac.field.abc import Field
 from quvac import config
+from quvac.field.abc import Field
 
 
 class EBInhomogeneity(Field):

@@ -11,16 +11,16 @@ Usage:
 
     gridscan.py -i <input>.yaml -o <output_dir>
 """
+from copy import deepcopy
 import itertools
 import os
-from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
 import submitit
 
 from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
-from quvac.simulation import quvac_simulation, parse_args
+from quvac.simulation import parse_args, quvac_simulation
 from quvac.utils import read_yaml, write_yaml
 
 
@@ -111,7 +111,8 @@ def restructure_variables_grid(variables):
 
 def create_ini_files_for_gridscan(ini_default, param_names, param_grids, save_path):
     """
-    Create separate `ini.yml` files for every combination of parameters in the grid scan.
+    Create separate `ini.yml` files for every combination of parameters in the 
+    grid scan.
 
     Parameters
     ----------
@@ -158,9 +159,11 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
     Parameters
     ----------
     ini_file : str
-        Path to the default initial configuration file (YAML format) containing all simulation parameters.
+        Path to the default initial configuration file (YAML format) containing all 
+        simulation parameters.
     save_path : str, optional
-        Path to save simulation results. If not provided, defaults to the directory of `ini_file`.
+        Path to save simulation results. If not provided, defaults to the directory of 
+        `ini_file`.
     wisdom_file : str, optional
         Path to save FFTW wisdom. Default is None.
 

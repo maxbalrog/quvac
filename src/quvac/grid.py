@@ -263,7 +263,8 @@ def get_bw(field_params):
     Returns
     -------
     tuple of float
-        A tuple containing the perpendicular and longitudinal bandwidths (kbw_perp, kbw_long).
+        A tuple containing the perpendicular and longitudinal bandwidths 
+        (kbw_perp, kbw_long).
 
     Raises
     ------
@@ -375,7 +376,8 @@ def get_xyz_size(fields, box_size, grid_res=1, equal_resolution=False):
     grid_res : float, optional
         Controls the resolution (default is 1).
     equal_resolution : bool, optional
-        Flag indicating if equal resolution in every dimension is needed (default is False).
+        Flag indicating if equal resolution in every dimension is needed 
+        (default is False).
 
     Returns
     -------
@@ -580,8 +582,9 @@ def setup_grids(fields_params, grid_params):
 
     Notes
     -----
-    The spatial and temporal grids are created based on the mode specified in the grid parameters.
-    If 'dynamic' mode is selected, the grids are created dynamically based on the field parameters.
+    The spatial and temporal grids are created based on the mode specified in the grid 
+    parameters. If 'dynamic' mode is selected, the grids are created dynamically based 
+    on the field parameters.
     """
     if grid_params["mode"] == "dynamic":
         if isinstance(fields_params, dict):

@@ -1,16 +1,16 @@
 # ruff: noqa: F401
-import quvac.field
-import quvac.integrator
 import quvac.analytic_scalings
+from quvac.cluster.gridscan import main_gridscan
 import quvac.config
+import quvac.field
 import quvac.grid
+import quvac.integrator
 import quvac.log
 import quvac.postprocess
-import quvac.utils
-from quvac.utils import find_classes_in_package
 from quvac.simulation import main_simulation
 from quvac.simulation_parallel import main_simulation_parallel
-from quvac.cluster.gridscan import main_gridscan
+import quvac.utils
+from quvac.utils import find_classes_in_package
 
 try:
     from quvac.cluster.optimization import main_optimization

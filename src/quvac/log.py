@@ -165,7 +165,8 @@ def get_postprocess_info(postprocess_params):
     perp_field_idx = postprocess_params.get("perp_field_idx", 1)
 
     postprocess_print = postprocess_str.format(
-        str(perp_type), str(perp_field_idx), str(calculate_spherical), str(calculate_discernible)
+        str(perp_type), str(perp_field_idx), str(calculate_spherical),
+        str(calculate_discernible)
     )
     return postprocess_print
 

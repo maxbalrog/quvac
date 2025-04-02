@@ -14,8 +14,8 @@ probe channel signal.
 """
 
 import os
-import time
 from pathlib import Path
+import time
 
 import numexpr as ne
 import numpy as np

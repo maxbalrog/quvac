@@ -140,7 +140,8 @@ class MaxwellMultiple(MaxwellField):
     grid : quvac.grid.GridXYZ
         Spatial and spectral grid.
     nthreads : int, optional
-        Number of threads to use for calculations. If not provided, defaults to the number of CPU cores.
+        Number of threads to use for calculations. If not provided, defaults to the 
+        number of CPU cores.
 
     Attributes
     ----------

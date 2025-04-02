@@ -13,8 +13,8 @@ Usage:
 import argparse
 import logging
 import os
-import time
 from pathlib import Path
+import time
 
 import numexpr as ne
 import pyfftw
@@ -23,18 +23,22 @@ from quvac import config
 from quvac.field.external_field import ExternalField, ProbePumpField
 from quvac.grid import setup_grids
 from quvac.integrator.vacuum_emission import VacuumEmission
-from quvac.log import (get_grid_params, get_performance_stats,
-                       get_postprocess_info, simulation_end_str,
-                       simulation_start_str, get_test_timings,
-                       get_postprocess_stats)
+from quvac.log import (
+    get_grid_params,
+    get_performance_stats,
+    get_postprocess_info,
+    get_postprocess_stats,
+    get_test_timings,
+    simulation_end_str,
+    simulation_start_str,
+)
 from quvac.postprocess import VacuumEmissionAnalyzer
-from quvac.utils import (load_wisdom, read_yaml, save_wisdom,
-                         write_yaml, get_maxrss)
+from quvac.utils import get_maxrss, load_wisdom, read_yaml, save_wisdom, write_yaml
 
 _logger = logging.getLogger("simulation")
 
 
-def parse_args(description="Calculate quantum vacuum signal for given external fields."):
+def parse_args(description="Calculate quantum vacuum signal for external fields."):
     """
     Parse command-line arguments.
 
@@ -212,7 +216,6 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     if test_run:
         expected_timesteps = len(grid_t)
         grid_t = grid_t[:test_timesteps]
-        do_postprocess = False
         _logger.info(f"Performing test run for {test_timesteps} timesteps\n")
 
     # Field setup
@@ -245,12 +248,14 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     _logger.info(log_message)
     vacem = VacuumEmission(field, grid_xyz, nthreads=pyfftw_threads, channels=channels)
     timings['vacem_setup'] = time.perf_counter()
-    timings['integral'] = vacem.calculate_amplitudes(grid_t, save_path=files['amplitudes'])
+    timings['integral'] = vacem.calculate_amplitudes(grid_t, 
+                                                     save_path=files['amplitudes'])
     timings['amplitudes'] = time.perf_counter()
     memory['maxrss_amplitudes'] = get_maxrss()
     _logger.info("MILESTONE: Amplitudes are calculated")
 
-    timings['per_iteration'] = (timings['amplitudes'] - timings['field_setup']) / len(grid_t)
+    Nt = len(grid_t)
+    timings['per_iteration'] = (timings['amplitudes'] - timings['field_setup']) / Nt
 
     if test_run:
         test_run_str_print = get_test_timings(timings, len(grid_t), expected_timesteps)
@@ -279,7 +284,8 @@ def postprocess_simulation(ini_config, files, fields_params):
         "perp_type": postprocess_params.get("perp_polarization_type", None),
         "perp_field_idx": postprocess_params.get("perp_field_idx", 1),
         "stokes": postprocess_params.get("stokes", False),
-        "calculate_xyz_background": postprocess_params.get("calculate_xyz_background", False),
+        "calculate_xyz_background": postprocess_params.get("calculate_xyz_background",
+                                                           False),
         "bgr_idx": postprocess_params.get("bgr_idx", False),
         "calculate_spherical": postprocess_params.get("calculate_spherical", False),
         "spherical_params": postprocess_params.get("spherical_params", {}),

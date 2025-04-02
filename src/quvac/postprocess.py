@@ -25,8 +25,8 @@ from scipy.integrate import trapezoid
 from scipy.ndimage import map_coordinates
 
 from quvac import config
-from quvac.field.maxwell import MaxwellMultiple
 from quvac.field.external_field import ExternalField
+from quvac.field.maxwell import MaxwellMultiple
 from quvac.grid import GridXYZ, get_pol_basis, setup_grids
 from quvac.log import sph_interp_warn
 from quvac.utils import read_yaml
@@ -257,7 +257,8 @@ def signal_in_detector(dN, theta, phi, detector, align_to_max=False):
         - 'dtheta' : float
             Half-width of the polar angle range (in degrees).
     align_to_max : bool
-        Whether to align detector to the max spot in the detected region, by default False
+        Whether to align detector to the max spot in the detected region, 
+        by default False.
 
     Returns
     -------
@@ -266,7 +267,8 @@ def signal_in_detector(dN, theta, phi, detector, align_to_max=False):
 
     Notes
     -----
-    The function integrates the signal over the specified detector region in spherical coordinates.
+    The function integrates the signal over the specified detector region in spherical 
+    coordinates.
     """
     phi0, theta0, dphi0, dtheta0 = [np.radians(detector[key]) for key 
                                   in "phi0 theta0 dphi dtheta".split()]
@@ -432,7 +434,8 @@ class VacuumEmissionAnalyzer:
             setattr(self, f"k{ax}", np.fft.fftshift(kx))
             # self.__dict__[f"k{ax}"] = np.fft.fftshift(kx)
 
-        self.S1, self.S2 = data["S1"].astype(config.CDTYPE), data["S2"].astype(config.CDTYPE)
+        self.S1, self.S2 = (data["S1"].astype(config.CDTYPE),
+                            data["S2"].astype(config.CDTYPE))
 
         self.save_path = save_path
 
@@ -527,7 +530,8 @@ class VacuumEmissionAnalyzer:
         if stokes:
             self.get_Stokes_vector_for_ep()
         else:
-            Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
+            Sp = ((epx*e1x + epy*e1y + epz*e1z)*self.S1 + 
+                  (epx*e2x + epy*e2y + epz*e2z)*self.S2)
             Sp = Sp.real**2 + Sp.imag**2
 
             self.Np_xyz = np.fft.fftshift(Sp / (2 * pi) ** 3)
@@ -555,8 +559,10 @@ class VacuumEmissionAnalyzer:
         efx, efy, efz = self.ef
         epx, epy, epz = self.ep
 
-        Sf = (efx*e1x + efy*e1y + efz*e1z)*self.S1 + (efx*e2x + efy*e2y + efz*e2z)*self.S2
-        Sp = (epx*e1x + epy*e1y + epz*e1z)*self.S1 + (epx*e2x + epy*e2y + epz*e2z)*self.S2
+        Sf = ((efx*e1x + efy*e1y + efz*e1z)*self.S1 + 
+              (efx*e2x + efy*e2y + efz*e2z)*self.S2)
+        Sp = ((epx*e1x + epy*e1y + epz*e1z)*self.S1 + 
+              (epx*e2x + epy*e2y + epz*e2z)*self.S2)
 
         P1 = Sf.real**2 + Sf.imag**2 - (Sp.real**2 + Sp.imag**2)
         P2 = 2 * np.real(Sf * np.conj(Sp))
@@ -793,7 +799,8 @@ class VacuumEmissionAnalyzer:
         keys = "kx ky kz N_xyz N_total".split()
 
         if calculate_spherical:
-            self.get_signal_on_sph_grid(key="N_xyz", check_total=True, **spherical_params)
+            self.get_signal_on_sph_grid(key="N_xyz", check_total=True, 
+                                        **spherical_params)
             keys.extend("k theta phi N_sph N_sph_total".split())
         if calculate_xyz_background:
             # self.get_background_xyz()

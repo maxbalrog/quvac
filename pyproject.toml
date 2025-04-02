@@ -31,27 +31,40 @@ classifiers = [
   "Private :: Do Not Upload"
 ]
 
-
 [project.scripts]
 quvac-simulation = "quvac:main_simulation"
 quvac-simulation-parallel = "quvac:main_simulation_parallel"
 quvac-gridscan = "quvac:main_gridscan"
 quvac-optimization = "quvac:main_optimization"
 
-
 [project.optional-dependencies]
 optimization = [
   "ax-platform",
 ]
-
+plot = [
+    "matplotlib>=3.10.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/maxbalrog/quvac"
 Repository = "https://github.com/maxbalrog/quvac"
 
-
 [tool.uv]
 default-groups = "all"
+
+[tool.ruff.lint]
+select = [
+    "F", # pyflakes
+    "E", # pycodestyle
+    "I", # isort
+]
+unfixable = [
+    "F401",
+]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+split-on-trailing-comma = false
 
 [dependency-groups]
 dev = [

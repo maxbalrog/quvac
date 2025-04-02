@@ -11,22 +11,25 @@ Usage:
 
     optimization.py -i <input>.yaml -o <output_dir>
 """
+from copy import deepcopy
 import os
+from pathlib import Path
 import time
 import warnings
-from pathlib import Path
-from copy import deepcopy
 
+from ax.modelbridge.generation_strategy import (  # type: ignore
+    GenerationStep,
+    GenerationStrategy,
+)
+from ax.modelbridge.registry import Models  # type: ignore
+from ax.service.ax_client import AxClient, ObjectiveProperties  # type: ignore
 import numpy as np
-from ax.service.ax_client import AxClient, ObjectiveProperties # type: ignore
-from ax.modelbridge.generation_strategy import GenerationStep, GenerationStrategy # type: ignore
-from ax.modelbridge.registry import Models # type: ignore
 from submitit import AutoExecutor, DebugJob, LocalJob
 
 from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
-from quvac.postprocess import signal_in_detector, integrate_spherical
-from quvac.simulation import quvac_simulation, parse_args
-from quvac.utils import read_yaml, write_yaml, round_to_n
+from quvac.postprocess import integrate_spherical, signal_in_detector
+from quvac.simulation import parse_args, quvac_simulation
+from quvac.utils import read_yaml, round_to_n, write_yaml
 
 
 def prepare_params_for_ax(params, ini_file):
@@ -116,7 +119,8 @@ def update_energies(ini_data, energy_params):
     Raises
     ------
     AssertionError
-        If the number of fields does not match the number of optimized parameters plus one.
+        If the number of fields does not match the number of optimized parameters plus 
+        one.
     """
     ini = deepcopy(ini_data)
     optimization_params = ini["optimization"]
@@ -193,7 +197,8 @@ def quvac_evaluation(params, metric_names=["N_total"]):
     Returns
     -------
     dict
-        Dictionary containing metrics such as `N_disc`, `N_total`, and optionally `N_detector`.
+        Dictionary containing metrics such as `N_disc`, `N_total`, and optionally 
+        `N_detector`.
     """
     ini_file = params["ini_default"]
     ini_data = read_yaml(ini_file)
@@ -244,13 +249,14 @@ def check_energy_constraint(trial_index_to_param):
     Parameters
     ----------
     trial_index_to_param : dict
-        Dictionary mapping trial indices to parameter dictionaries. Each parameter dictionary
-        contains the energy distribution among fields.
+        Dictionary mapping trial indices to parameter dictionaries. Each parameter 
+        dictionary contains the energy distribution among fields.
 
     Returns
     -------
     bool
-        True if the total energy budget constraint is satisfied for all trials, False otherwise.
+        True if the total energy budget constraint is satisfied for all trials, False 
+        otherwise.
 
     Raises
     ------
@@ -270,8 +276,8 @@ def check_energy_constraint(trial_index_to_param):
         eps = 1.0 - W_total
         if eps < 0 and not np.isclose(abs(eps), 0.0, atol=1e-5):
             warnings.warn("Fixed total energy budget constraint is violated! "
-                          "Probably, optimization fails to find new prospective points and"
-                          "is stuck in local minima.")
+                          "Probably, optimization fails to find new prospective points "
+                          "and is stuck in local minima.")
             energy_ok = False
             break
     return energy_ok
@@ -290,7 +296,8 @@ def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patie
     fail_count : int
         Counter for the number of consecutive repeated samples.
     patience : int, optional
-        Maximum number of consecutive repeated samples allowed before stopping. Default is 3.
+        Maximum number of consecutive repeated samples allowed before stopping. Default 
+        is 3.
 
     Returns
     -------
@@ -320,14 +327,16 @@ def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patie
 
         if last_samples and params_tuple == last_samples[-1]:
             fail_count += 1
-            warnings.warn(f"Trial {len(last_samples)-1} is identical to previous: {params}. Fail count: {fail_count}")
+            warnings.warn(f"Trial {len(last_samples)-1} is identical to previous: "
+                          f"{params}. Fail count: {fail_count}")
         else:
             fail_count = 0
         
         last_samples.append(params_tuple)
 
         if fail_count >= patience:
-            warnings.warn(f"Number of repeated samples exceeded patience ({patience} tries)!")
+            warnings.warn(f"Number of repeated samples exceeded patience ({patience} "
+                          "tries)!")
             continue_sampling = False
     return continue_sampling, fail_count
 
@@ -361,7 +370,8 @@ def check_sampled_trials(trial_index_to_param, last_samples, fail_count):
     If either condition fails, the optimization process is terminated.
     """
     energy_ok = check_energy_constraint(trial_index_to_param)
-    continue_sampling, fail_count = check_repeated_samples(trial_index_to_param, last_samples, fail_count)
+    continue_sampling, fail_count = check_repeated_samples(trial_index_to_param, 
+                                                           last_samples, fail_count)
 
     continue_optimization = energy_ok and continue_sampling
     return continue_optimization, fail_count
@@ -416,9 +426,9 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
             )
             # Check that sampled trials satisfy the requirements
             if trial_index_to_param:
-                continue_optimization, fail_count = check_sampled_trials(trial_index_to_param,
-                                                                         last_samples,
-                                                                         fail_count)
+                flags = check_sampled_trials(trial_index_to_param,last_samples,
+                                             fail_count)
+                continue_optimization, fail_count = flags
 
                 if continue_optimization:
                     for trial_idx, params in trial_index_to_param.items():
@@ -428,7 +438,8 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
                         jobs.append((job, trial_idx))
                         time.sleep(1)
                 else:
-                    warnings.warn("Terminating optimization... Finishing last trials...")
+                    warnings.warn("Terminating optimization... Finishing last "
+                                  "trials...")
                 
 
 def setup_generation_strategy(num_random_trials=6):
@@ -438,7 +449,8 @@ def setup_generation_strategy(num_random_trials=6):
     Parameters
     ----------
     num_random_trials : int, optional
-        Number of random trials to perform before starting Bayesian optimization. Default is 6.
+        Number of random trials to perform before starting Bayesian optimization. 
+        Default is 6.
 
     Returns
     -------
@@ -463,7 +475,8 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     ini_file : str
         Path to the initial configuration file (YAML format).
     save_path : str, optional
-        Path to save simulation results. If not provided, defaults to the directory of `ini_file`.
+        Path to save simulation results. If not provided, defaults to the directory of 
+        `ini_file`.
     wisdom_file : str, optional
         Path to save FFTW wisdom. Default is None.
 
@@ -550,7 +563,8 @@ def gather_trials_data(ax_client, metric_names=["N_total", "N_disc"]):
     ax_client : ax.service.ax_client.AxClient
         Ax client managing the optimization process.
     metric_names : list of str, optional
-        List of metric names to extract from the trials. Default is ["N_total", "N_disc"].
+        List of metric names to extract from the trials. Default is 
+        ["N_total", "N_disc"].
 
     Returns
     -------

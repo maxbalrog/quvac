@@ -138,13 +138,15 @@ class GaussianAnalytic(ExplicitField):
         self.By_terms = {
             0: "1",
             2: "eps**2 * f2*rho**2 * (1/2 - f1*rho**2/4)",
-            4: "eps**4 * f2 * (-1/8 + f1*rho**2/4 + 5*f2*rho**4/16 - f3*rho**6/4 + f4*rho**8/32)",
+            4: ("eps**4 * f2 * (-1/8 + f1*rho**2/4 + 5*f2*rho**4/16 - f3*rho**6/4 + "
+                "f4*rho**8/32)"),
         }
         self.Bz_terms = {
             0: "0",
             1: "eps * f1",
             3: "eps**3*f2 * (1/2 + f1*rho**2/2 - f2*rho**4/4)",
-            5: "eps**5*f3 * (3/8 + 3*f1*rho**2/8 + 3*f2*rho**4/16 - f3*rho**6/4 + f4*rho**8/32)",
+            5: ("eps**5*f3 * (3/8 + 3*f1*rho**2/8 + 3*f2*rho**4/16 - f3*rho**6/4 + "
+                "f4*rho**8/32)"),
         }
 
     def calculate_ho_orders(self):

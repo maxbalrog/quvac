@@ -53,7 +53,8 @@ def image_fields(ini_file, save_path=None):
         field = ExternalField([field_param], grid_xyz)
         for t0 in [0, grid_t[-1]]:
             save_loc = os.path.join(save_path, f"field_{idx+1}_t0_{t0*1e15:.1f}fs")
-            plot_fields(field, t=t0, plot_keys=plot_keys, norm_lim=1e-10, save_path=save_loc)
+            plot_fields(field, t=t0, plot_keys=plot_keys, norm_lim=1e-10,
+                        save_path=save_loc)
         del field
         gc.collect()
     print("Plotting finished successfully")

@@ -9,8 +9,8 @@ import numpy as np
 from scipy.constants import pi
 
 try:
-    import matplotlib.pyplot as plt
     import matplotlib.colors as mcolors
+    import matplotlib.pyplot as plt
     MATPLOTLIB_AVAILABLE = True
 except ModuleNotFoundError:
     MATPLOTLIB_AVAILABLE = False
@@ -57,8 +57,9 @@ def pi_formatter(x, pos):
     """
     fractions = {0: "0", pi/8: r"$\frac{\pi}{8}$", pi/4: r"$\frac{\pi}{4}$", 
                  3*pi/8: r"$\frac{3\pi}{8}$", pi/2: r"$\frac{\pi}{2}$",
-                 5*pi/8: r"$\frac{5\pi}{8}$", 3*pi/4: r"$\frac{3\pi}{4}$", 7*pi/8: r"$\frac{7\pi}{8}$",
-                 pi: r"$\pi$", 9*pi/8: r"$\frac{9\pi}{8}$", 5*pi/4: r"$\frac{5*\pi}{4}$",
+                 5*pi/8: r"$\frac{5\pi}{8}$", 3*pi/4: r"$\frac{3\pi}{4}$",
+                 7*pi/8: r"$\frac{7\pi}{8}$", pi: r"$\pi$",
+                 9*pi/8: r"$\frac{9\pi}{8}$", 5*pi/4: r"$\frac{5*\pi}{4}$",
                  11*pi/8: r"$\frac{11\pi}{8}$", 3*pi/2: r"$\frac{3\pi}{2}$",
                  13*pi/8: r"$\frac{13\pi}{8}$", 7*pi/4: r"$\frac{7\pi}{4}$",
                  15*pi/8: r"$\frac{15\pi}{8}$", 2*pi: r"$2\pi$"}
@@ -82,7 +83,8 @@ def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
     dy : float
         Half the height of the ROI.
     line_kwargs : dict
-        Keyword arguments to customize the appearance of the ROI lines (e.g., color, linestyle).
+        Keyword arguments to customize the appearance of the ROI lines 
+        (e.g., color, linestyle).
 
     Returns
     -------
@@ -91,11 +93,13 @@ def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
 
     Notes
     -----
-    The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and height 2*dy.
+    The ROI is represented as a rectangle centered at (x0, y0) with width 2*dx and 
+    height 2*dy.
     """
     x_left, x_right = x0-dx, x0+dx
     y_top, y_bottom = y0-dy, y0+dy
-    pts = [(x_right,y_top),(x_left,y_top),(x_left,y_bottom),(x_right,y_bottom),(x_right,y_top)]
+    pts = [(x_right,y_top),(x_left,y_top),(x_left,y_bottom),
+           (x_right,y_bottom),(x_right,y_top)]
     for pt1,pt2 in zip(pts[:-1],pts[1:]):
         ax.plot([pt1[0],pt2[0]], [pt1[1],pt2[1]], **line_kwargs)
     return ax

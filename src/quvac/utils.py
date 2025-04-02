@@ -2,13 +2,13 @@
 Useful generic utilities.
 """
 
-import pkgutil
 import importlib
 import inspect
 import os
+from pathlib import Path
+import pkgutil
 import platform
 import resource
-from pathlib import Path
 import shutil
 
 import numpy as np
@@ -197,7 +197,8 @@ def find_classes_in_package(package_name):
     package = importlib.import_module(package_name)
     
     # Recursively find all modules in the package
-    for _, module_name, _ in pkgutil.walk_packages(package.__path__, package.__name__ + "."):
+    for _, module_name, _ in pkgutil.walk_packages(package.__path__, 
+                                                   package.__name__ + "."):
         try:
             module = importlib.import_module(module_name)
             

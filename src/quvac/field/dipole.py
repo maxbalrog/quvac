@@ -106,7 +106,8 @@ class DipoleAnalytic(ExplicitField):
             env = f"-1j*exp(-t**2*{a2} - 1j*omega*t)"
             self.g_expr = env
             self.gdot_expr = f'{env} * (-2*t*{a2} - 1j*omega)'
-            self.gdotdot_expr = (f'{env} * (4*t**2*{a2}**2 - 2*{a2} - omega**2 + 4j*t*omega*{a2})')
+            self.gdotdot_expr = (f'{env} * (4*t**2*{a2}**2 - 2*{a2} - omega**2 + '
+                                 f'4j*t*omega*{a2})')
             self.E_R0 = (f"{env} * (-2*t*{a2}*(4*t**2*{a2}**2 - 3*omega**2 - 6*{a2})"
                          f" - 1j*omega*(12*t**2*{a2}**2 - omega**2 - 6*{a2}))")
         else:
@@ -144,7 +145,8 @@ class DipoleAnalytic(ExplicitField):
         Nx,Ny,Nz = self.Ex.shape
         self.Ex[Nx//2,Ny//2,Nz//2] = 0.
         self.Ey[Nx//2,Ny//2,Nz//2] = 0.
-        self.Ez[Nx//2,Ny//2,Nz//2] = 4/(3*c**3)*ne.evaluate(self.E_R0, global_dict=self.__dict__)
+        self.Ez[Nx//2,Ny//2,Nz//2] = 4/(3*c**3)*ne.evaluate(self.E_R0,
+                                                            global_dict=self.__dict__)
 
         self.Bx[Nx//2,Ny//2,Nz//2] = 0.
         self.By[Nx//2,Ny//2,Nz//2] = 0.
@@ -159,11 +161,14 @@ class DipoleAnalytic(ExplicitField):
         gdot_m = self._gdot_plusminus(t, sign=-1)
         g_m = self._g_plusminus(t, sign=-1)
 
-        Bt = ne.evaluate("gdotdot_p/(R*c**2) + gdot_m/(R**2*c)", global_dict=self.EB_dict)
+        Bt = ne.evaluate("gdotdot_p/(R*c**2) + gdot_m/(R**2*c)", 
+                         global_dict=self.EB_dict)
         Et = ne.evaluate("gdot_p/(c*R**2) + g_m/R**3", global_dict=self.EB_dict)
         
-        self.Ex = ne.evaluate('nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et', global_dict=self.EB_dict)
-        self.Ey = ne.evaluate('ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et', global_dict=self.EB_dict)
+        self.Ex = ne.evaluate('nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et',
+                              global_dict=self.EB_dict)
+        self.Ey = ne.evaluate('ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et', 
+                              global_dict=self.EB_dict)
         self.Ez = ne.evaluate('-(nx**2+ny**2)*gdotdot_m/(R*c**2) + (3*nz**2-1)*Et',
                                global_dict=self.EB_dict)
 
