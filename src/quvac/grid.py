@@ -19,6 +19,7 @@ grids either dynamically or from given grid sizes.
 """
 
 from collections.abc import Iterable
+from copy import deepcopy
 
 import numexpr as ne
 import numpy as np
@@ -273,6 +274,9 @@ def get_bw(field_params):
     """
     ftype = field_params["field_type"]
     if "gaussian" in ftype:
+        assert "w0" in field_params or "w0x" in field_params, (
+            "Gaussian field parameters must have either 'w0' or 'w0x' key"
+        )
         bws = gaussian_bandwidth(field_params)
     elif "dipole" in ftype:
         bws = dipole_bandwidth(field_params)
@@ -315,7 +319,7 @@ def get_kmax_from_bw(field_params):
     required_keys = "lam tau theta phi".split()
     _check_keys(field_params, required_keys)
 
-    lam, tau, theta, phi = [field_params[k] for k in required_keys]
+    lam, _, theta, phi = [field_params[k] for k in required_keys]
 
     k = 2 * np.pi / lam
     theta *= pi / 180
@@ -396,7 +400,7 @@ def get_xyz_size(fields, box_size, grid_res=1, equal_resolution=False):
     if equal_resolution:
         kmax = np.max(kmax) * np.ones(3)
 
-    N = np.ceil(grid_res * box_size * 3 * kmax / pi)
+    N = grid_res * np.ceil(box_size * 3 * kmax / pi)
     N = [pyfftw.next_fast_len(int(n)) for n in N]
     return N
 
@@ -493,6 +497,7 @@ def create_dynamic_grid(fields_params, grid_params):
         Updated grid parameters including calculated box size, number of spatial points,
         and number of temporal points.
     """
+    grid_params_upd = deepcopy(grid_params)
     # Create spatial box
     collision_geometry = grid_params.get("collision_geometry", "z")
 
@@ -504,26 +509,28 @@ def create_dynamic_grid(fields_params, grid_params):
     box_xyz = [0, 0, 0]
     for i, ax in enumerate("xyz"):
         box_xyz[i] = longitudinal_size if ax in collision_geometry else transverse_size
-    grid_params["box_xyz"] = box_xyz
+    grid_params_upd["box_xyz"] = box_xyz
 
     # Number of spatial pts
     box_size = np.array(box_xyz) / 2
     Nxyz_ = get_xyz_size(fields_params, box_size)
-    res = grid_params["spatial_resolution"]
+    res = grid_params.get("spatial_resolution", 1)
     if isinstance(res, Iterable):
+        assert len(res) == 3, "Spatial resolution must be a list of 3 values or a "
+        "single value"
         Nxyz = [Nx * res for Nx, res in zip(Nxyz_, res, strict=True)]
     elif type(res) in (int, float):
         Nxyz = [Nx * res for Nx in Nxyz_]
-    grid_params["Nxyz"] = Nxyz
+    grid_params_upd["Nxyz"] = Nxyz
 
     # Create temporal box
     t0 = tau_max * grid_params["time_factor"]
     Nt = get_t_size(-t0 / 2, t0 / 2, lam_min)
 
     # Number of temporal pts
-    grid_params["box_t"] = t0
-    grid_params["Nt"] = Nt * grid_params["time_resolution"]
-    return grid_params
+    grid_params_upd["box_t"] = t0
+    grid_params_upd["Nt"] = Nt * grid_params.get("time_resolution", 1)
+    return grid_params_upd
 
 
 def setup_grids(fields_params, grid_params):
@@ -558,10 +565,6 @@ def setup_grids(fields_params, grid_params):
             - box_t : float or tuple of float
                 Time duration or start and end times for the temporal grid.
         Keys for 'dynamic' mode:
-            - spatial_resolution : float or list of float
-                Controls the spatial resolution.
-            - time_resolution : float
-                Controls the temporal resolution.
             - collision_geometry : str
                 Specifies the collision geometry ('x', 'y', 'z').
             - transverse_factor : float
@@ -570,6 +573,12 @@ def setup_grids(fields_params, grid_params):
                 Factor to scale the longitudinal size.
             - time_factor : float
                 Factor to scale the time duration.
+            - spatial_resolution : float or list of float, optional
+                Controls the spatial resolution.
+            - time_resolution : float, optional
+                Controls the temporal resolution.
+            - ignore_idx : list of int, optional
+                Indices of fields to ignore for dynamic grid creation.
 
     Returns
     -------

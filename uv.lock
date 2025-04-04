@@ -1075,6 +1075,10 @@ test = [
 dev = [
     { name = "ruff" },
 ]
+test = [
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1094,6 +1098,10 @@ provides-extras = ["optimization", "plot", "test"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "ruff", specifier = ">=0.11.2" }]
+test = [
+    { name = "pytest", specifier = ">=8.3.5" },
+    { name = "pytest-cov", specifier = ">=6.1.0" },
+]
 
 [[package]]
 name = "ruff"
