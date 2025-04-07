@@ -108,7 +108,7 @@ def convert_tau(tau, mode="1/e^2"):
     The temporal envelope is assumed to have the form exp(-t**2/(tau/2)**2).
     """
     match mode:
-        case "tau":
+        case "1/e^2":
             result = {'1/e^2': tau, 'FWHM': tau*np.sqrt(np.log(2)),
                       'FWHM-Intensity': tau*np.sqrt(np.log(2)/2),
                       'std': tau/(2*np.sqrt(2))}
@@ -122,6 +122,8 @@ def convert_tau(tau, mode="1/e^2"):
         case "std":
             result = {'1/e^2': 2*np.sqrt(2)*tau, 'FWHM': 2*tau*np.sqrt(2*np.log(2)),
                       'FWHM-Intensity': 2*tau*np.sqrt(np.log(2)), 'std': tau}
+        case _:
+            raise NotImplementedError(f"Mode {mode} is not supported.")
     result = {k: float(v) for k, v in result.items()}
     return result
 

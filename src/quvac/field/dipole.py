@@ -15,7 +15,6 @@ configuration by compining several focused fields.
 from copy import deepcopy
 
 import numexpr as ne
-import numpy as np
 from scipy.constants import c, pi
 
 from quvac.field.abc import ExplicitField
@@ -76,9 +75,11 @@ class DipoleAnalytic(ExplicitField):
         # Define variables independent of time
         self.R_expr = 'sqrt(x**2 + y**2 + z**2)' # radius
         self.R =  ne.evaluate(self.R_expr, global_dict=self.__dict__)
+
+        R_inv_expr = "where(R==0, 0, 1/R)"
+        R_inv =  ne.evaluate(R_inv_expr, global_dict=self.__dict__)
         
-        self.nx, self.ny, self.nz = [np.nan_to_num(ax/self.R) for ax 
-                                     in (self.x, self.y, self.z)]
+        self.nx, self.ny, self.nz = [ax*R_inv for ax in (self.x, self.y, self.z)]
 
         self.EB_dict = {"R": self.R,
                         "c": c,
