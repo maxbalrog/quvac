@@ -1,0 +1,53 @@
+fields:
+  field_1:
+    W: 25
+    beta: 0
+    field_type: paraxial_gaussian_maxwell
+    focus_t: 0.0
+    focus_x:
+    - 0.0
+    - 0.0
+    - 0.0
+    lam: 8.0e-07
+    order: 0
+    phase0: 0
+    phi: 0
+    tau: 2.5e-14
+    theta: 0
+    w0: 8.0e-07
+  field_2:
+    W: 25
+    beta: 0
+    field_type: paraxial_gaussian_maxwell
+    focus_t: 0.0
+    focus_x:
+    - 0.0
+    - 0.0
+    - 0.0
+    lam: 8.0e-07
+    order: 0
+    phase0: 0
+    phi: 0
+    tau: 2.5e-14
+    theta: 180
+    w0: 8.0e-07
+grid:
+  collision_geometry: z
+  longitudinal_factor: 8
+  mode: dynamic
+  spatial_resolution: 1
+  time_factor: 2
+  time_resolution: 1
+  transverse_factor: 15
+integrator:
+  type: vacuum_emission
+performance:
+  nthreads: 8
+  pyfftw_threads: 1
+postprocess:
+  calculate_discernible: false
+  calculate_spherical: false
+  perp_field_idx: 1
+  perp_polarization_type: optical axis
+  spherical_params:
+    angular_resolution: 0.017453292519943295

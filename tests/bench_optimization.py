@@ -1,6 +1,5 @@
 """
-Here we provide a test for oftimization of quvac
-simulations
+Test for oftimization of quvac simulations.
 """
 
 import os
@@ -15,15 +14,15 @@ except ModuleNotFoundError as exc:
     print("`ax` package should be installed to use optimization")
     raise ModuleNotFoundError("`ax` package not found") from exc
 
-from config_for_tests import DEFAULT_CONFIG_PATH, OPTIMIZATION_SCRIPT
-
 from quvac.cluster.optimization import gather_trials_data
 from quvac.utils import read_yaml, write_yaml
+from tests.config_for_tests import BENCHMARK_CONFIG_PATH, OPTIMIZATION_SCRIPT
 
 
 @pytest.mark.slow
+@pytest.mark.benchmark
 def test_optimization():
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
 
     path = "data/test/test_optimization"
     Path(path).mkdir(parents=True, exist_ok=True)

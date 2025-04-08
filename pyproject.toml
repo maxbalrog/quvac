@@ -55,6 +55,17 @@ Repository = "https://github.com/maxbalrog/quvac"
 [tool.uv]
 default-groups = "all"
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with `-m 'not slow'`)",
+    "benchmark: marks tests as becnhmarks",
+]
+addopts = "-m 'not slow' -m 'not benchmark'"
+python_files = [
+    "bench_*.py",
+    "test_*.py",
+]
+
 # exclude certain scripts from coverage report
 [tool.coverage.run]
 omit = [

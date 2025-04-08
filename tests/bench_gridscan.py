@@ -1,20 +1,21 @@
 """
-Here we provide a test for quantum vacuum signal calculator
-with script
+Test for quvac gridscan with script.
 """
 
 import os
 from pathlib import Path
 
-from config_for_tests import DEFAULT_CONFIG_PATH, GRIDSCAN_SCRIPT
 import numpy as np
+import pytest
 
 from quvac.utils import read_yaml, write_yaml
+from tests.config_for_tests import BENCHMARK_CONFIG_PATH, GRIDSCAN_SCRIPT
 
 
+@pytest.mark.benchmark
 def test_gridscan():
     # Define field parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
 
     beta_arr = [0, 45, 90]
     variables_data = {

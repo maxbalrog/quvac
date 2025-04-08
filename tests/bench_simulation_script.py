@@ -12,14 +12,15 @@ with script in several scenarios:
 import os
 from pathlib import Path
 
-from config_for_tests import DEFAULT_CONFIG_PATH, SIMULATION_SCRIPT
 import numpy as np
 import pytest
 
 from quvac.analytic_scalings import get_two_paraxial_scaling
 from quvac.utils import read_yaml, write_yaml
+from tests.config_for_tests import BENCHMARK_CONFIG_PATH, SIMULATION_SCRIPT
 
 
+@pytest.mark.benchmark
 def run_test_simulation(path, ini_data):
     Path(path).mkdir(parents=True, exist_ok=True)
 
@@ -31,17 +32,19 @@ def run_test_simulation(path, ini_data):
     assert status == 0, "Script execution did not finish successfully"
 
 
+@pytest.mark.benchmark
 def test_simulation():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
 
     path = "data/test/test_simulation"
     run_test_simulation(path, ini_data)
 
 
+@pytest.mark.benchmark
 def test_compare_with_analytics():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
     field_1_params = {
         "field_type": "paraxial_gaussian_analytic",
         "w0": 2 * 0.8e-6,
@@ -69,18 +72,20 @@ def test_compare_with_analytics():
     assert np.isclose(N_signal_th, N_signal_num, rtol=1e-2), err_msg
 
 
+@pytest.mark.benchmark
 def test_mixed_fields():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
     ini_data["fields"]["field_1"]["field_type"] = "paraxial_gaussian_analytic"
 
     path = "data/test/test_mixed_fields"
     run_test_simulation(path, ini_data)
 
 
+@pytest.mark.benchmark
 def test_spherical_grid():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
     ini_data["postprocess"]["calculate_spherical"] = True
     ini_data["postprocess"]["calculate_discernible"] = False
 
@@ -93,9 +98,10 @@ def test_spherical_grid():
 
 
 @pytest.mark.slow
+@pytest.mark.benchmark
 def test_discernible():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
     # Change field parameters
     field_2_params = {"w0": 4 * 0.8e-6, "theta": 160, "beta": 90}
     ini_data["fields"]["field_2"].update(field_2_params)
@@ -112,9 +118,10 @@ def test_discernible():
     assert np.isclose(N_disc, N_disc_expected, rtol=2e-1), err_msg
 
 
+@pytest.mark.benchmark
 def test_channels():
     # Load default simulation parameters
-    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
 
     results = []
     for idx, channels in zip([(0, 0), (0, 1), (1, 0)], [False, True, True]):  # noqa: B905
