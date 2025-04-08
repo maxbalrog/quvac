@@ -31,10 +31,10 @@ classifiers = [
 ]
 
 [project.scripts]
-quvac-simulation = "quvac:main_simulation"
-quvac-simulation-parallel = "quvac:main_simulation_parallel"
-quvac-gridscan = "quvac:main_gridscan"
-quvac-optimization = "quvac:main_optimization"
+quvac-simulation = "quvac.simulation:main_simulation"
+quvac-simulation-parallel = "quvac.simulation_parallel:main_simulation_parallel"
+quvac-gridscan = "quvac.cluster.gridscan:main_gridscan"
+quvac-optimization = "quvac.cluster.optimization:main_optimization"
 
 [project.optional-dependencies]
 optimization = [
