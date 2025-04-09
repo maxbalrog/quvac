@@ -393,10 +393,6 @@ Module Contents
                            - box_t : float or tuple of float
                                Time duration or start and end times for the temporal grid.
                        Keys for 'dynamic' mode:
-                           - spatial_resolution : float or list of float
-                               Controls the spatial resolution.
-                           - time_resolution : float
-                               Controls the temporal resolution.
                            - collision_geometry : str
                                Specifies the collision geometry ('x', 'y', 'z').
                            - transverse_factor : float
@@ -405,6 +401,12 @@ Module Contents
                                Factor to scale the longitudinal size.
                            - time_factor : float
                                Factor to scale the time duration.
+                           - spatial_resolution : float or list of float, optional
+                               Controls the spatial resolution.
+                           - time_resolution : float, optional
+                               Controls the temporal resolution.
+                           - ignore_idx : list of int, optional
+                               Indices of fields to ignore for dynamic grid creation.
    :type grid_params: dict
 
    :returns:
