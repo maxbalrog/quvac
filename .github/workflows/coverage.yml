@@ -36,30 +36,36 @@ jobs:
       - name: Build coverage file
         run: |
           pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=quvac tests/ | tee pytest-coverage.txt
-          cat pytest-coverage.txt
+          SCORE_STR=$(grep "TOTAL" pytest-coverage.txt | awk '{print $4}')
+          SCORE=${SCORE_STR%\%}
+          echo $SCORE_STR
+          echo $SCORE
+          echo "SCORE_STR=$SCORE_STR" >> $GITHUB_ENV
+          echo "SCORE=$SCORE" >> $GITHUB_ENV
+          
 
-      - name: Pytest coverage comment
-        id: coverageComment
-        uses: MishaKav/pytest-coverage-comment@main
-        with:
-          pytest-coverage-path: ./pytest-coverage.txt
-          junitxml-path: ./pytest.xml
+    #   - name: Pytest coverage comment
+    #     id: coverageComment
+    #     uses: MishaKav/pytest-coverage-comment@main
+    #     with:
+    #       pytest-coverage-path: ./pytest-coverage.txt
+    #       junitxml-path: ./pytest.xml
       
-      - name: Check the output coverage
-        run: |
-          echo "Coverage Percentage - ${{ steps.coverageComment.outputs.coverage }}"
-          echo "Coverage Color - ${{ steps.coverageComment.outputs.color }}"
-          echo "Coverage Html - ${{ steps.coverageComment.outputs.coverageHtml }}"
+    #   - name: Check the output coverage
+    #     run: |
+    #       echo "Coverage Percentage - ${{ steps.coverageComment.outputs.coverage }}"
+    #       echo "Coverage Color - ${{ steps.coverageComment.outputs.color }}"
+    #       echo "Coverage Html - ${{ steps.coverageComment.outputs.coverageHtml }}"
 
-          echo "Coverage Warnings - ${{ steps.coverageComment.outputs.warnings }}"
+    #       echo "Coverage Warnings - ${{ steps.coverageComment.outputs.warnings }}"
 
-          echo "Coverage Errors - ${{ steps.coverageComment.outputs.errors }}"
-          echo "Coverage Failures - ${{ steps.coverageComment.outputs.failures }}"
-          echo "Coverage Skipped - ${{ steps.coverageComment.outputs.skipped }}"
-          echo "Coverage Tests - ${{ steps.coverageComment.outputs.tests }}"
-          echo "Coverage Time - ${{ steps.coverageComment.outputs.time }}"
+    #       echo "Coverage Errors - ${{ steps.coverageComment.outputs.errors }}"
+    #       echo "Coverage Failures - ${{ steps.coverageComment.outputs.failures }}"
+    #       echo "Coverage Skipped - ${{ steps.coverageComment.outputs.skipped }}"
+    #       echo "Coverage Tests - ${{ steps.coverageComment.outputs.tests }}"
+    #       echo "Coverage Time - ${{ steps.coverageComment.outputs.time }}"
 
-          echo "Not Success Test Info - ${{ steps.coverageComment.outputs.notSuccessTestInfo }}"
+    #       echo "Not Success Test Info - ${{ steps.coverageComment.outputs.notSuccessTestInfo }}"
   
       - name: Create the Badge
         uses: schneegans/dynamic-badges-action@v1.7.0
@@ -68,6 +74,10 @@ jobs:
             gistID: d6b0645fa035119a53bb6356d169c98b
             filename: quvac_coverage_badge.json
             label: Coverage Report
-            message: ${{ steps.coverageComment.outputs.coverage }}
-            color: ${{ steps.coverageComment.outputs.color }}
+            message: is ${{ env.SCORE_STR }}
+            valColorRange: ${{ env.SCORE }}
+            maxColorRange: 90
+            minColorRange: 30
+            # message: ${{ steps.coverageComment.outputs.coverage }}
+            # color: ${{ steps.coverageComment.outputs.color }}
             namedLogo: python
