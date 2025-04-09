@@ -1,7 +1,7 @@
 # quvac
 
 ![Tests](https://github.com/maxbalrog/quantum-vacuum/actions/workflows/tests.yml/badge.svg)
-![Coverage](https://github.com/maxbalrog/quantum-vacuum/actions/workflows/coverage.yml/badge.svg)
+![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/maxbalrog/d6b0645fa035119a53bb6356d169c98b/raw/quvac-coverage-badge.json)
 
 <img src="images/logo.jpg" alt="Alt Text" width="250" height="230">
 
