@@ -6,8 +6,10 @@ Analytic expression for Laguerre-Gaussian modes.
 .. [1] L. Allen et al. "Orbital angular momentum of light and the transformation of 
 Laguerre-Gaussian laser modes." PRA 45.11 (1992): 8185.
 """
+from math import factorial
 
 import numexpr as ne
+import numpy as np
 from scipy.constants import c, pi
 from scipy.special import genlaguerre
 
@@ -76,6 +78,7 @@ class LaguerreGaussianAnalytic(ExplicitField):
         self.k = 2.0 * pi / self.lam
         self.omega = c * self.k
         self.zR = pi * self.w0**2 / self.lam
+        self.prefactor = np.sqrt(2*factorial(self.p)/factorial(self.p+self.l)/pi)
 
         # Rotate coordinate grid
         self.rotate_coordinates()
@@ -87,7 +90,7 @@ class LaguerreGaussianAnalytic(ExplicitField):
         self.R_inv = "(z/(z**2 + zR**2))"
         
         self.rw = ne.evaluate(f"({self.r}*sqrt(2)/{self.w})", global_dict=self.__dict__)
-        self.lag_poly = genlaguerre(self.p, self.l)(self.rw**2)
+        self.lag_poly = self.prefactor * genlaguerre(self.p, self.l)(self.rw**2)
 
         self.E_expr = (f"B0 * w0/{self.w} * exp(-{self.r2}/{self.w}**2) * "
                        f"rw**l * lag_poly")
