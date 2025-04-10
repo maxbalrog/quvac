@@ -87,7 +87,7 @@ class LaguerreGaussianAnalytic(ExplicitField):
         self.R_inv = "(z/(z**2 + zR**2))"
         
         self.rw = ne.evaluate(f"({self.r}*sqrt(2)/{self.w})", global_dict=self.__dict__)
-        self.lag_poly = genlaguerre(self.p, self.l)(self.rw)
+        self.lag_poly = genlaguerre(self.p, self.l)(self.rw**2)
 
         self.E_expr = (f"B0 * w0/{self.w} * exp(-{self.r2}/{self.w}**2) * "
                        f"rw**l * lag_poly")
