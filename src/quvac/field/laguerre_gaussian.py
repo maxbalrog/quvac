@@ -82,10 +82,11 @@ class LaguerreGaussianAnalytic(ExplicitField):
 
         # Define variables not depending on time step
         self.w = "(w0 * sqrt(1. + (z/zR)**2))"
+        self.r = "sqrt(x**2 + y**2)"
         self.r2 = "(x**2 + y**2)"
         self.R_inv = "(z/(z**2 + zR**2))"
         
-        self.rw = ne.evaluate(f"(r*sqrt(2)/{self.w})", global_dict=self.__dict__)
+        self.rw = ne.evaluate(f"({self.r}*sqrt(2)/{self.w})", global_dict=self.__dict__)
         self.lag_poly = genlaguerre(self.p, self.l)(self.rw)
 
         self.E_expr = (f"B0 * w0/{self.w} * exp(-{self.r2}/{self.w}**2) * "
