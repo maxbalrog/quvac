@@ -96,7 +96,7 @@ class LaguerreGaussianAnalytic(ExplicitField):
                        f"rw**l * lag_poly")
         self.phase_no_t = ne.evaluate(
             (f"phase0 - k*{self.r2}*{self.R_inv}/2 + (2*p+l+1)*arctan(z/zR) - "
-             "l*arctan2(x,y)"),
+             "l*arctan2(y,x)"),
             global_dict=self.__dict__,
         )
 
