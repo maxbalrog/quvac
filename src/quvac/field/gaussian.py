@@ -195,7 +195,7 @@ class GaussianAnalytic(ExplicitField):
                                           "polarization are not supported")
             else:
                 self.Ex = self.By = 1j * Et.copy()
-                self.Ey = ne.evaluate("1j * Et * exp(-1j*pi/2)")
+                self.Ey = ne.evaluate("1j * Et * exp(-1j*pi/2)", global_dict={'pi': pi})
                 self.Bx = -self.Ey
                 self.Ez = self.Bz = 0.0
         else:
