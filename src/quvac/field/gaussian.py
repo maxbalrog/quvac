@@ -58,6 +58,7 @@ class GaussianAnalytic(ExplicitField):
 
         self.phase0 += pi / 2.0
         self.order = getattr(self, "order", 0)
+        self.polarization = getattr(self, "polarization", "linear")
 
         if "E0" not in field_params:
             err_msg = ("Field params need to have either W (energy) or"
@@ -176,6 +177,31 @@ class GaussianAnalytic(ExplicitField):
             self.B0 = self.E0 / c
             self.E = ne.evaluate(self.E_expr, global_dict=self.__dict__)
 
+    def figure_out_field_components(self, Et):
+        if self.polarization == "linear":
+            if self.order > 0:
+                self.Ex = ne.evaluate("1j*Et * Ex_ho", global_dict=self.__dict__)
+                self.Ey = ne.evaluate("1j*Et * Ey_ho * xi * nu", global_dict=self.__dict__)
+                self.Ez = ne.evaluate("Et * Ez_ho * xi", global_dict=self.__dict__)
+                self.Bx = 0.0
+                self.By = ne.evaluate("1j*Et * By_ho", global_dict=self.__dict__)
+                self.Bz = ne.evaluate("Et * Bz_ho * nu", global_dict=self.__dict__)
+            else:
+                self.Ex = self.By = 1j * Et.copy()
+                self.Ey = self.Ez = self.Bx = self.Bz = 0.0
+        elif self.polarization == "circular":
+            if self.order > 0:
+                raise NotImplementedError("Higher paraxial orders for circular "
+                                          "polarization are not supported")
+            else:
+                self.Ex = self.By = 1j * Et.copy()
+                self.Ey = ne.evaluate("1j * Et * exp(-1j*pi/2)")
+                self.Bx = -self.Ey
+                self.Ez = self.Bz = 0.0
+        else:
+            raise NotImplementedError(f"`{self.polarization}` polarization is not "
+                                      "supported")
+
     def calculate_field(self, t, E_out=None, B_out=None, mode="real"):
         """
         Calculates the electric and magnetic fields at a given time step.
@@ -189,16 +215,7 @@ class GaussianAnalytic(ExplicitField):
             global_dict=self.__dict__,
         )
 
-        if self.order > 0:
-            self.Ex = ne.evaluate("1j*Et * Ex_ho", global_dict=self.__dict__)
-            self.Ey = ne.evaluate("1j*Et * Ey_ho * xi * nu", global_dict=self.__dict__)
-            self.Ez = ne.evaluate("Et * Ez_ho * xi", global_dict=self.__dict__)
-            self.Bx = 0.0
-            self.By = ne.evaluate("1j*Et * By_ho", global_dict=self.__dict__)
-            self.Bz = ne.evaluate("Et * Bz_ho * nu", global_dict=self.__dict__)
-        else:
-            self.Ex = self.By = 1j * Et.copy()
-            self.Ey = self.Ez = self.Bx = self.Bz = 0.0
+        self.figure_out_field_components(Et)
 
         if mode == "real":
             self.convert_fields_to_real()
