@@ -66,6 +66,12 @@ Module Contents
 
    Higher-order paraxial Gaussian orders are from [1]_.
 
+   For circular polarization we abide by the following convention:
+       - `right-circular` correcponds to (ex + i*ey)
+       - `left-circular` to (ex - i*ey)
+   Difference in field amplitudes for linear and circular polarization should
+   be automatically taken care of by energy correction.
+
 
    .. py:method:: define_ho_variables()
 
