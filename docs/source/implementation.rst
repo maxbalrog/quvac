@@ -100,14 +100,14 @@ We define spatial Fourier transforms as follows
 
 .. math::
     \begin{align*}
-    \tilde{ \vec E}(t, \vec k) &= \int d^3 x e^{-i \vec k \vec x} \vec E(t, \vec x)\\
-    \tilde{ \vec E}(t, \vec x) &= \int \frac{d^3 k}{(2\pi)^3} e^{i \vec k \vec x} \vec E(t, \vec k)
+    \hat{ \vec E}(t, \vec k) &= \int d^3 x e^{-i \vec k \vec x} \vec E(t, \vec x)\\
+    {\vec E}(t, \vec x) &= \int \frac{d^3 k}{(2\pi)^3} e^{i \vec k \vec x} \hat {\vec E}(t, \vec k)
     \end{align*}
 
 and define the vector potential to be spanned by two orthogonal polarization modes
 
 .. math::
-    \tilde{ \vec A}(t, \vec k) = e^{-i k t} \sum_{p=1}^2 \vec e_p(\vec k) a_p(\vec k).
+    \hat{ \vec A}(t, \vec k) = e^{-i k t} \sum_{p=1}^2 \vec e_p(\vec k) a_p(\vec k).
 
 Having complex model field :math:`\vec E_m (t_0, \vec k)` (either by defining it in the spectral 
 domain or Fourier transforming spatial fields), we extract spectral coefficients from them.
@@ -117,14 +117,14 @@ domain or Fourier transforming spatial fields), we extract spectral coefficients
     we define orthogonal amplitudes by projection.
 
 .. math::
-    a_p(\vec k) = e^{i k t_0} \frac{1}{i k} \vec e_p(\vec k) \cdot \tilde{\vec E}_m(t_0, \vec k)
+    a_p(\vec k) = e^{i k t_0} \frac{1}{i k} \vec e_p(\vec k) \cdot \hat{\vec E}_m(t_0, \vec k)
 
 From here, fields at other time steps are given by
 
 .. math::
     \begin{align*}
-    \tilde{\vec E}(t, \vec k) &= e^{-i k t} i k [\vec e_1(\vec k) a_1(\vec k) + \vec e_2(\vec k) a_2(\vec k)], \\
-    \tilde{\vec B}(t, \vec k) &= e^{-i k t} i k [\vec e_2(\vec k) a_1(\vec k) - \vec e_1(\vec k) a_2(\vec k)].
+    \hat{\vec E}(t, \vec k) &= e^{-i k t} i k [\vec e_1(\vec k) a_1(\vec k) + \vec e_2(\vec k) a_2(\vec k)], \\
+    \hat{\vec B}(t, \vec k) &= e^{-i k t} i k [\vec e_2(\vec k) a_1(\vec k) - \vec e_1(\vec k) a_2(\vec k)].
     \end{align*}
 
 Fields at the spatial domain at timestep :math:`t` are obtained via inverse Fourier transform.
@@ -136,7 +136,7 @@ From these complex fields, electromagnetic fields that are used in the vacuum em
 
 **Notes about numerical implementation**:
 
-1. We slightly modify the formulas for :math:`a_p(\vec k)` and :math:`\tilde{\vec E}(t, \vec k)` 
+1. We slightly modify the formulas for :math:`a_p(\vec k)` and :math:`\hat{\vec E}(t, \vec k)` 
 to avoid unnecessary computation (remove factors :math:`i k` and combine two time exponents into one).
 
 2. After the model field projection, its energy might change. We compensate this after the projection.
