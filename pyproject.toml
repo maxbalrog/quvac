@@ -96,6 +96,8 @@ split-on-trailing-comma = false
 
 [dependency-groups]
 dev = [
+    "jupyterlab>=4.4.3",
+    "pyvista[all]>=0.45.2",
     "ruff>=0.11.2",
 ]
 test = [

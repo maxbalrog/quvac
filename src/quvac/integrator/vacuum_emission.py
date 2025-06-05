@@ -223,9 +223,7 @@ class VacuumEmission:
         """
         self.dt = t_grid[1] - t_grid[0]
         if integration_method == "trapezoid":
-            # end_pts = (0, len(t_grid) - 1)
             for _, t in enumerate(t_grid):
-                # weight = 0.5 if i in end_pts else 1.
                 weight = 1
                 self.calculate_one_time_step(t, weight=weight)
         else:

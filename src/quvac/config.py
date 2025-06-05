@@ -17,3 +17,5 @@ DEFAULT_SUBMITIT_PARAMS = {
 
 FDTYPE = "float64"
 CDTYPE = "complex128"
+
+RUST_TOML = "/home/maximus/Research/github/quantum-vacuum-rs/Cargo.toml"
