@@ -188,7 +188,10 @@ def quvac_simulation_parallel(
     executor = submitit.AutoExecutor(folder=submitit_folder, cluster=cluster)
     if cluster == "slurm":
         executor.update_parameters(slurm_array_parallelism=max_jobs)
-        executor.update_parameters(**sbatch_params)
+    executor.update_parameters(**sbatch_params)
+    # else:
+    #     timeout_min = sbatch_params.get("timeout_min", 5)
+    #     executor.update_parameters(timeout_min=timeout_min)
 
     # Submit jobs
     _logger.info("MILESTONE: Submitting jobs...")
