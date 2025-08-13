@@ -22,6 +22,11 @@ We use ``.yml`` format for input files which has a dictionary-like structure. It
     - ``postprocess``: dict
             Postprocessing parameters (which observables to calculate from the complex amplitudes).
 
+``quvac-simulation-parallel`` additionally requires section ``cluster_params`` describing
+parameters of parallelization. Similarly, ``quvac-gridscan`` requires a section ``variables`` (parameters
+being scanned and slurm job parameters), ``quvac-optimization`` requires a section ``optimization``
+(parameters to setup optimization experiment: optimized variables, metrics, sampling strategy, ...). 
+
 
 Fields
 --------------
@@ -143,9 +148,9 @@ Keys:
         Whether to use existing wisdom file for ``pyfftw`` planning.
 
 
-Postprocessing
---------------
-Relevant keys for the polarization-insensitive signals:
+Postprocessing (optional)
+-------------------------
+This section is relevant only when ``mode`` is ``postprocess`` or ``simulation_postprocess``. Relevant keys for the polarization-insensitive signals:
     - ``calculate_xyz_background`` : bool, optional
         Whether to calculate the background spectra on Cartesian grid, 
         by default False.
@@ -174,4 +179,69 @@ Relevant keys for the polarization-sensitive signals:
     - ``stokes`` : bool, optional
         Whether to calculate Stokes parameters, by default False.
 
+Cluster_params (for ``quvac-simulation-parallel``)
+--------------------------------------------------
+Keys:
+    - ``n_jobs``: int
+        Number of jobs to parallelize between, by default 2.
+    - ``max_jobs``: int
+        Maximal number of jobs to submit simultaneously, by default equal to ``n_jobs``.
+    - ``cluster``: str,
+        Where perform calculations, ``local`` or ``slurm``.
+    - ``sbatch_params``: dict
+        Submission parameters for a single job. Possible keys: ``slurm_partition``,
+        ``cpus_per_task``, ``slurm_mem``, ``timeout_min``. By default, 
+        ``quvac.config.DEFAULT_SUBMITIT_PARAMS``.
+
+Variables (for ``quvac-gridscan``)
+----------------------------------
+Keys:
+    - ``create_grids``: bool
+        Flag to create grids given [start, end, n_steps].
+    - ``fields``: dict
+        Parameters over which to perform grid scan.
+    - ``cluster``: dict
+        - ``cluster``: str
+            ``local`` or ``slurm``.
+        - ``max_parallel_jobs``: int
+            Maximal number of submitted jobs in parallel.
+        - ``sbatch_params``: dict
+            Submission parameters for a single job.
+
+Optimization (for ``quvac-optimization``)
+-----------------------------------------
+Keys:
+    - ``name``: str
+        Optimization name.
+    - ``parameters``: dict
+        Optimized parameters given as lists [start, end].
+    - ``energy_fields``: dict
+        Fields participating in the energy optimization (to check that the fixed budget is not violated):
+            - ``fields``: list of int
+                Fields for which the fixed energy budget constraint should be satisfied.
+            - ``optimized_fields``: list of int
+                Fields being optimized.
+    - ``scales``: dict
+        Scales for optimized parameters. For instance, parameter could be the duration with bounds 
+        [20,50] and the provided scale 1e-15 corresponding to femtoseconds.
+    - ``cluster``: dict
+        Submission parameters for a single job.
+    - ``n_trials``: int
+        Number of trials to perform.
+    - ``objectives``: list of [str, bool] 
+        Objective functions, for each function specify its name and whether to minimize it.
+        For instance, for the total discernible signal objective funtion corresponds to ``[['N_disc', False]]``.
+    - ``objectives_params``: dict
+        Objective parameters:
+            - ``detectors``: dict or list of dicts
+                Detector parameters (``phi0``, ``theta0`` for the center of detector, ``dphi``, ``dtheta`` for its size).
+    - ``track_metrics``: list of str
+        Additional metrics to track.
+    - ``parameter_constraints``: list of str
+        Optimized parameter constraints, for example ``a + b + c <= 1``.
+    - ``gs_params``: dict
+        Generation strategy parameters:
+            - ``num_random_trials``: int
+                Number of random trials to initialize Gaussian process.
+        
 
