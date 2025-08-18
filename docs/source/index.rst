@@ -1,10 +1,10 @@
 quvac documentation
 ===================
 
-.. image:: ../../images/logo.jpg
-   :alt: Quvac logo
-   :width: 300px
-   :align: center
+.. .. image:: ../../images/logo.jpg
+..    :alt: Quvac logo
+..    :width: 300px
+..    :align: center
 
 Welcome to quvac documentation!
 

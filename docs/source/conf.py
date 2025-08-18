@@ -65,4 +65,9 @@ def setup(app):
 
 html_theme = 'furo'
 html_static_path = ['_static']
+html_logo = "_static/logo.jpg"
+
+html_theme_options = {
+    "sidebar_hide_name": True,   # hides the project name, keeps only the logo
+}
 # html_css_files = ['custom.css']
