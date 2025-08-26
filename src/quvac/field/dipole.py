@@ -105,7 +105,7 @@ class DipoleAnalytic(ExplicitField):
             env = "1j*exp(-1j*omega*t - 1j*phase0)"
             self.g_expr = env
             self.gdot_expr = f"-1j*omega*{env}"
-            self.gdotdot_expr = f"-*omega**2*{env}"
+            self.gdotdot_expr = f"-omega**2*{env}"
             self.E_R0 = "omega**3"
         elif self.envelope == "gauss":
             a2 = "(1/(tau/2)**2)"
