@@ -305,6 +305,83 @@ class ExplicitField(Field):
         return self.a1, self.a2
 
 
+class SpectralField(Field):
+    """
+    For fields with analytic formula to its spectrum. From this
+    formula the spectral coefficients are explicitly defined and
+    the field can be passed to Maxwell solver.
+
+    Parameters
+    ----------
+    grid : quvac.grid.GridXYZ
+        Spatial and spectral grid.
+
+    Attributes
+    ----------
+    grid_xyz : quvac.grid.GridXYZ
+        The spatial and spectral grid.
+    a1 : complex numpy.ndarray
+        The a1 spectral coefficient.
+    a2 : complex numpy.ndarray
+        The a2 spectral coefficient.
+    """
+
+    def __init__(self, field_params, grid):
+        super().__init__(field_params, grid)
+
+    def _check_energy_kspace(self):
+        # Fix energy
+        W_upd = get_field_energy_kspace(
+            self.a1, self.a2, self.kabs, self.dVk, mode="without 1/k"
+        )
+        _logger.info(f"    Energy after projection in k-space: {W_upd:.3f} J")
+
+        if W_upd > 0:
+            self.a1 *= np.sqrt(self.W / W_upd)
+            self.a2 *= np.sqrt(self.W / W_upd)
+        else:
+            self.a1 *= 0
+            self.a2 *= 0
+
+        W_corrected = get_field_energy_kspace(
+            self.a1, self.a2, self.kabs, self.dVk, mode="without 1/k"
+        )
+        _logger.info(f'    Energy after "correction":          {W_corrected:.3f} J')
+
+    def get_a12(self, t0=None):
+        """
+        Calculates the a1 and a2 coefficients at a given time step.
+
+        Parameters
+        ----------
+        t0 : float, optional
+            The time step at which to calculate the coefficients. If None, uses self.t0.
+
+        Returns
+        -------
+        a1 : numpy.ndarray
+            The a1 spectral coefficient.
+        a2 : numpy.ndarray
+            The a2 spectral coefficient.
+
+        Notes
+        -----
+        After the projection of the field on spectral coefficients, its energy
+        is corrected to the desired value.
+        """
+        t0 = t0 if t0 is not None else self.t0
+
+        self.a1 = ne.evaluate(
+            "e1x * vector_potential", global_dict=self.__dict__
+        )
+        self.a2 = ne.evaluate(
+            "e2x * vector_potential", global_dict=self.__dict__
+        )
+
+        self._check_energy_kspace()
+
+        return self.a1, self.a2
+
 class FieldFromFile(Field):
     """
     For fields that are loaded from file.

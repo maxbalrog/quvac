@@ -5,12 +5,14 @@ Analytic expression for paraxial gaussian (0-order and higher-orders).
 
 .. [1] Y. I. Salamin. "Fields of a Gaussian beam beyond the paraxial 
     approximation." Applied Physics B 86 (2007): 319-326.
+.. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities in 
+    generic laser fields." PRD 99.1 (2019): 016006 `(article) <https://arxiv.org/abs/1811.08895>`_.
 """
 
 import numexpr as ne
 from scipy.constants import c, pi
 
-from quvac.field.abc import ExplicitField
+from quvac.field.abc import ExplicitField, SpectralField
 
 
 class GaussianAnalytic(ExplicitField):
@@ -43,6 +45,8 @@ class GaussianAnalytic(ExplicitField):
                 Amplitude (either E0 or W is required).
             - 'W' : float, optional
                 Energy (either E0 or W is required).
+            - 'alpha_chirp' : float, optional
+                Linear chirp in time domain.
 
     grid : quvac.grid.GridXYZ
         Spatial and grid.
@@ -245,3 +249,91 @@ class GaussianAnalytic(ExplicitField):
 
         E_out, B_out = self.rotate_fields_back(E_out, B_out, mode)
         return E_out, B_out
+    
+
+class GaussianSpectral(SpectralField):
+    """
+    Analytic expression for paraxial Gaussian beam.
+
+    Parameters
+    ----------
+    field_params : dict
+        Dictionary containing the field parameters. Required keys are:
+            - 'focus_x' : tuple of float
+                Location of spatial focus (x, y, z).
+            - 'focus_t' : float
+                Location of temporal focus.
+            - 'theta' : float
+                Polar angle of k-vector (in degrees).
+            - 'phi' : float
+                Azimuthal angle of k-vector (in degrees).
+            - 'beta' : float
+                Polarization angle (in degrees).
+            - 'lam' : float
+                Wavelength of the pulse.
+            - 'w0' : float
+                Waist size.
+            - 'tau' : float
+                Duration.
+            - 'phase0' : float
+                Phase delay at focus.
+            - 'E0' : float, optional
+                Amplitude (either E0 or W is required).
+            - 'W' : float, optional
+                Energy (either E0 or W is required).
+            - 'alpha_chirp' : float, optional
+                Linear chirp in frequency domain.
+
+    grid : quvac.grid.GridXYZ
+        Spatial and grid.
+
+    Notes
+    -----
+    All field parameters are in SI units.
+
+    The expression for the spectrum is taken from [2]_ (Eq. 24).
+    """
+
+    def __init__(self, field_params, grid):
+        super().__init__(field_params, grid)
+
+        if "E0" not in field_params:
+            err_msg = ("Field params need to have either W (energy) or"
+                       "E0 (amplitude) as key")
+            assert "W" in field_params, err_msg
+            self.E0 = 1.0e10
+
+        # Define additional field variables
+        self.x0, self.y0, self.z0 = self.focus_x
+        self.t0 = self.focus_t
+        self.B0 = self.E0 / c
+        self.k = 2.0 * pi / self.lam
+        self.omega = c * self.k
+
+        # Rotate coordinate grid
+        self.rotate_coordinates()
+
+        self.kperp2 = "(kx**2 + ky**2)"
+        self.define_vector_potential_expression()
+        self.vector_potential = ne.evaluate(self.vector_potential_expr,
+                                            local_dict=self.vector_potential_dict)
+
+    def define_vector_potential_expression(self):
+        self.vector_potential_expr = (
+            "where(kz > 0, pi**1.5/2 * kz/kabs * E0*tau*w0**2 * "
+            f"exp(-(w0/2)**2*{self.kperp2}) * "
+            "exp(-(tau/4)**2*(c*kabs-omega)*(1-1j*alpha)), 0)"
+        )
+        self.vector_potential_dict = {
+            "pi": pi,
+            "c": c,
+            "kx": self.kmeshgrid[0],
+            "ky": self.kmeshgrid[1],
+            "kz": self.kmeshgrid[2],
+            "kabs": self.kabs,
+            "E0": self.E0,
+            "tau": self.tau,
+            "w0": self.w0,
+            "omega": self.omega,
+            "alpha": self.alpha,
+        }
