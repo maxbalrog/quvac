@@ -335,7 +335,7 @@ class SpectralField(Field):
         """
         self.get_rotation()
         axes = "kx_rotated ky_rotated kz_rotated".split()
-        kx_, ky_, kz_ = self.kgrid
+        kx_, ky_, kz_ = self.kmeshgrid
         for i, ax in enumerate(axes):
             mx, my, mz = self.rotation_bwd_m[i, :]
             new_ax = ne.evaluate(
