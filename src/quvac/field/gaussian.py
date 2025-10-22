@@ -318,6 +318,8 @@ class GaussianSpectral(SpectralField):
         self.define_vector_potential_expression()
         self.vector_potential = ne.evaluate(self.vector_potential_expr,
                                             local_dict=self.vector_potential_dict)
+        
+        self.Ax, self.Ay, self.Az = self.rotate_vector_potential_back()
 
     def define_vector_potential_expression(self):
         self.vector_potential_expr = (

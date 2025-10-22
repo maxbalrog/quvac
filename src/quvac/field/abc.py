@@ -346,6 +346,34 @@ class SpectralField(Field):
             "sqrt(kx_rotated**2 + ky_rotated**2 + kz_rotated**2)",
             global_dict=self.__dict__
         )
+    
+    def rotate_vector_potential_back(self, E_out, B_out, mode):
+        """
+        Rotate the fields back to the original coordinate frame.
+
+        Parameters
+        ----------
+        E_out : array-like, optional
+            Output array for the electric field.
+        B_out : array-like, optional
+            Output array for the magnetic field.
+        mode : str
+            Mode of calculation ('real' or 'complex').
+
+        Returns
+        -------
+        tuple of array-like
+            The rotated electric and magnetic fields.
+        """
+        A = [np.zeros(self.grid_shape, dtype=np.complex128) for _ in range(3)]
+
+        out_dtype = config.CDTYPE
+        # Transform to the original coordinate frame
+        for i,Ai in enumerate(A):
+            mx, my, mz = self.rotation_m[i, :]
+            Ai += ne.evaluate("mx*vector_potential",
+                              global_dict=self.__dict__).astype(out_dtype)
+        return A
 
     def _check_energy_kspace(self):
         # Fix energy
@@ -390,10 +418,10 @@ class SpectralField(Field):
         t0 = t0 if t0 is not None else self.t0
 
         self.a1 = ne.evaluate(
-            "e1x * vector_potential", global_dict=self.__dict__
+            "(e1x*Ax + e1y*Ay + e1z*Az)", global_dict=self.__dict__
         )
         self.a2 = ne.evaluate(
-            "e2x * vector_potential", global_dict=self.__dict__
+            "(e2x*Ax + e2y*Ay + e2z*Az)", global_dict=self.__dict__
         )
 
         self._check_energy_kspace()
