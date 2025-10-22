@@ -341,6 +341,7 @@ class SpectralField(Field):
         """
         self.rotate_coordinates()
         self.grid_rotated = GridXYZ((self.x,self.y,self.z))
+        self.grid_rotated.get_k_grid()
 
     def _check_energy_kspace(self):
         # Fix energy
