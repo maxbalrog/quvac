@@ -16,7 +16,6 @@ from scipy.spatial.transform import Rotation
 
 from quvac import config
 from quvac.field.utils import get_field_energy, get_field_energy_kspace
-from quvac.grid import GridXYZ
 
 ANGLE_KEYS = "theta phi beta phase0".split()
 _logger = logging.getLogger("simulation")
