@@ -337,3 +337,10 @@ class GaussianSpectral(SpectralField):
             "omega": self.omega,
             "alpha": self.alpha,
         }
+    
+    def calculate_field(self, t, E_out=None, B_out=None, mode="real"):
+        """
+        Calculates the electric and magnetic fields at a given time step.
+        """
+        raise NotImplementedError("GaussianSpectral works only as a model field" \
+        "for MaxwellField")
