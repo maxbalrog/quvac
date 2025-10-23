@@ -322,7 +322,7 @@ class GaussianSpectral(SpectralField):
         # self.vector_potential = np.fft.ifftshift(self.vector_potential)
         
         A = self.rotate_vector_potential_back()
-        self.Ax, self.Ay, self.Az = A #[np.fft.ifftshift(Ai) for Ai in A]
+        self.Ax, self.Ay, self.Az = [np.fft.ifftshift(Ai) for Ai in A]
         # self.Ax, self.Ay, self.Az = self.rotate_vector_potential_back()
 
     def define_vector_potential_expression(self):
