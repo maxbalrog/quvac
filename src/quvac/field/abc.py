@@ -335,7 +335,7 @@ class SpectralField(Field):
         """
         self.get_rotation()
         axes = "kx_rotated ky_rotated kz_rotated".split()
-        kx_, ky_, kz_ = self.kmeshgrid
+        kx_, ky_, kz_ = [np.fft.fftshift(k) for k in self.kmeshgrid]
         for i, ax in enumerate(axes):
             mx, my, mz = self.rotation_bwd_m[i, :]
             new_ax = ne.evaluate(
@@ -351,19 +351,10 @@ class SpectralField(Field):
         """
         Rotate the fields back to the original coordinate frame.
 
-        Parameters
-        ----------
-        E_out : array-like, optional
-            Output array for the electric field.
-        B_out : array-like, optional
-            Output array for the magnetic field.
-        mode : str
-            Mode of calculation ('real' or 'complex').
-
         Returns
         -------
         tuple of array-like
-            The rotated electric and magnetic fields.
+            The rotated vector potential.
         """
         A = [np.zeros(self.grid_shape, dtype=np.complex128) for _ in range(3)]
 
