@@ -452,7 +452,7 @@ class GaussianSpectralDirect(SpectralField):
             "alpha": self.alpha_chirp,
         }
 
-        x0, y0, z0 = [ax[0] for ax in self.grid.grid]
+        x0, y0, z0 = [ax[0] for ax in self.grid]
         dft_factor = np.exp(1j*(kx*x0 + ky*y0 +kz*z0))
 
         vector_potential = ne.evaluate(self.vector_potential_expr,
