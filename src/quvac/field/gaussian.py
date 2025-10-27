@@ -332,7 +332,7 @@ class GaussianSpectral(SpectralField):
 
     def define_vector_potential_expression(self):
         self.vector_potential_expr = (
-            "where(kz > 0, pi**1.5/2 * kz/kabs * E0*tau*w0**2 * "
+            "where(kz > 0, pi**1.5/2 * 1/(1j*kabs) * kz/kabs * E0*tau*w0**2 * "
             f"exp(-(w0/2)**2*{self.kperp2}) * "
             "exp(-(tau/4)**2*(c*kabs-omega)**2*(1-1j*alpha)), 0)"
         )
