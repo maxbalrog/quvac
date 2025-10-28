@@ -336,14 +336,13 @@ class SpectralField(Field):
         self.get_rotation()
         axes = "kx_rotated ky_rotated kz_rotated".split()
         kx_, ky_, kz_ = np.meshgrid(*self.kgrid_shifted, indexing='ij')
-        # kx_, ky_, kz_ = [np.fft.fftshift(k) for k in self.kmeshgrid]
         for i, ax in enumerate(axes):
             mx, my, mz = self.rotation_bwd_m[i, :]
             new_ax = ne.evaluate(
                 "mx*kx_ + my*ky_ + mz*kz_", global_dict=self.__dict__
             )
             setattr(self, ax, new_ax)
-            # setattr(self, ax, np.fft.ifftshift(new_ax))
+            
         self.kabs_rotated = ne.evaluate(
             "sqrt(kx_rotated**2 + ky_rotated**2 + kz_rotated**2)",
             global_dict=self.__dict__

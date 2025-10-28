@@ -8,7 +8,7 @@ Various field profiles and interfaces to unite them.
     keywords in the ``ini.yaml`` files and particular field implementations.
 """
 from quvac.field.dipole import DipoleAnalytic
-from quvac.field.gaussian import GaussianAnalytic, GaussianSpectral, GaussianSpectralDirect
+from quvac.field.gaussian import GaussianAnalytic, GaussianSpectral
 from quvac.field.laguerre_gaussian import LaguerreGaussianAnalytic
 from quvac.field.model import EBInhomogeneity
 from quvac.field.planewave import PlaneWave
@@ -25,6 +25,5 @@ SPATIAL_MODEL_FIELDS = {
     "dipole_maxwell": DipoleAnalytic,
     "paraxial_gaussian_maxwell": GaussianAnalytic,
     "paraxial_gaussian_spectral_maxwell": GaussianSpectral,
-    "paraxial_gaussian_spectral_direct_maxwell": GaussianSpectralDirect,
     "laguerre_gaussian_maxwell": LaguerreGaussianAnalytic,
 }
