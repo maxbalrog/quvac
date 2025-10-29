@@ -298,7 +298,8 @@ class GaussianSpectral(SpectralField):
     -----
     All field parameters are in SI units.
 
-    The expression for the spectrum is taken from [2]_ (Eq. 24).
+    The expression for the spectrum is taken from [2]_ (Eq. 24). We write it here
+    assuming the central k-vector is along kz. 
     """
 
     def __init__(self, field_params, grid):
@@ -326,6 +327,9 @@ class GaussianSpectral(SpectralField):
         self.vector_potential = ne.evaluate(self.vector_potential_expr,
                                             local_dict=self.vector_potential_dict)
         self.vector_potential = np.fft.ifftshift(self.vector_potential)
+        # Since the spectrum expression is given for continuous Fourier transform
+        # and in the code I use DFT, there is a phase factor related to the start
+        # of the spatial grid that relates two transforms.
         self.vector_potential *= self.dft_factor
         
         self.Ax, self.Ay, self.Az = self.rotate_vector_potential_back()
