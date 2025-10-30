@@ -340,7 +340,8 @@ class GaussianSpectral(SpectralField):
         self.vector_potential_expr = (
             "where(kz > 0, pi**1.5/2 * 1j/(1j*kabs) * kz/kabs * E0*tau*w0**2 * "
             f"exp(-(w0/2)**2*{self.kperp2}) * "
-            "exp(-(tau/4)**2*(c*kabs-omega)**2*(1-1j*alpha)), 0)"
+            "exp(-(tau/4)**2*(c*kabs-omega)**2*(1-1j*alpha)) * "
+            "exp(-1j*(x0*kx + y0*ky + z0*kz - phase0 - c*kabs*t0)), 0)"
         )
         self.vector_potential_dict = {
             "pi": pi,
@@ -354,6 +355,11 @@ class GaussianSpectral(SpectralField):
             "w0": self.w0,
             "omega": self.omega,
             "alpha": self.alpha_chirp,
+            "x0": self.x0,
+            "y0": self.y0,
+            "z0": self.z0,
+            "phase0": self.phase0,
+            "t0": self.t0,
         }
         x0, y0, z0 = [ax[0] for ax in self.grid]
         kx, ky, kz = self.kmeshgrid

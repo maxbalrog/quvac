@@ -225,6 +225,11 @@ def gaussian_bandwidth(field_params):
     """
     tau = field_params["tau"]
 
+    # spectral chirp increases effective pulse duration
+    if field_params["field_type"] == "paraxial_gaussian_spectral_maxwell":
+        alpha = field_params.get("alpha_chirp", 0)
+        tau *= np.sqrt(1 + alpha**2)
+
     # gaussian might have circular or elliptic cross section
     if "w0" in field_params:
         w0 = field_params["w0"]
