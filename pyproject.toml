@@ -47,6 +47,9 @@ test = [
     "pytest>=8.3.5",
     "pytest-cov>=6.1.0",
 ]
+all = [
+    "quvac[test,plot,optimization]",
+]
 
 [project.urls]
 Homepage = "https://github.com/maxbalrog/quvac"

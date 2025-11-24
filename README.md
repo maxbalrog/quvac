@@ -14,25 +14,32 @@ Documentation is available [here](https://maxbalrog.github.io/quvac/).
 
 ## Installation
 
-Is is recommended to create a separate Python environment for this package, e.g.
+It is recommended to create a separate Python environment for this package, e.g.
 
 ```bash
 micromamba create -n quvac python=3.12
 ```
 
-After cloning the git repository it could be simply installed with
+After cloning the git repository and entering it, choose relevant optional dependencies
+
+- `[test]` allows to run tests
+- `[plot]` installs `matplotlib`
+- `[optimization]` installs Bayesian optimization package
+
+To install all dependencies, run
 
 ```bash
-pip install quvac/
+pip install .[all]
 ```
 
-or after you enter the repository
+> [!NOTE]
+> For example, if you do not require optimization capabilities, run
+> 
+> ```bash
+> pip install .[test,plot]
+> ```
 
-```bash
-pip install .
-```
-
-After successfull installation run ``pytest`` to make sure the installation was
+After successfull installation with `[all]` or `[test]` option, run ``pytest`` to make sure the installation was
 successfull (it takes some time).
 
 ```bash
