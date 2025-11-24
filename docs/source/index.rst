@@ -31,6 +31,14 @@ Acknowledgements
 
 If you use this code and/or consider it useful, please cite our article.
 
+.. code-block:: bibtex
+   
+   @article{valialshchikov2025back,
+   title={Back-reflection in dipole fields and beyond},
+   author={Valialshchikov, Maksim and Karbstein, Felix and Seipt, Daniel and Zepf, Matt},
+   journal={arXiv preprint arXiv:2510.11764},
+   year={2025}
+   }
 
 References
 ^^^^^^^^^^^^^^^^

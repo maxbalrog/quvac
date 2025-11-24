@@ -9,6 +9,9 @@ Quvac (from quantum vacuum, pronounced as qu-ack 🐸) allows to calculate quant
 
 Documentation is available [here](https://maxbalrog.github.io/quantum-vacuum/).
 
+> [!IMPORTANT]
+> This project is still in development!
+
 ## Installation
 
 Is is recommended to create a separate Python environment for this package, e.g.
@@ -33,6 +36,19 @@ successfull (it takes some time).
 ## Contribution
 
 If you noticed a bug or have a feature request, open a new [issue](https://github.com/maxbalrog/quantum-vacuum/issues).
+
+## Acknowledgements
+
+If you use this code and/or consider it useful, please cite our article.
+
+```bibtex
+@article{valialshchikov2025back,
+  title={Back-reflection in dipole fields and beyond},
+  author={Valialshchikov, Maksim and Karbstein, Felix and Seipt, Daniel and Zepf, Matt},
+  journal={arXiv preprint arXiv:2510.11764},
+  year={2025}
+}
+```
 
 ## References
 
