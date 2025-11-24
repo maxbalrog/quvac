@@ -41,7 +41,7 @@ pytest
 
 ## Contribution
 
-If you noticed a bug or have a feature request, open a new [issue](https://github.com/maxbalrog/quantum-vacuum/issues).
+If you noticed a bug or have a feature request, open a new [issue](https://github.com/maxbalrog/quvac/issues).
 
 ## Acknowledgements
 
