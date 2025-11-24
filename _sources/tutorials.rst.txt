@@ -1,7 +1,7 @@
 Tutorials
 ============
 
-Welcome to the tutorials page!
+Some tutorials to help getting started with ``quvac``:
 
 `1. Create external field <https://github.com/maxbalrog/quantum-vacuum/blob/main/tutorials/1.%20Create%20external%20field.ipynb>`_.
 

@@ -1,11 +1,6 @@
 quvac documentation
 ===================
 
-.. .. image:: ../../images/logo.jpg
-..    :alt: Quvac logo
-..    :width: 300px
-..    :align: center
-
 Welcome to quvac documentation!
 
 Quvac (from quantum vacuum, pronounced as qu-ack 🐸) allows to calculate quantum 
