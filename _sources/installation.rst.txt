@@ -11,7 +11,7 @@ After cloning the git repository it could be simply installed with
 
 .. code-block:: bash
 
-    pip install quantum-vacuum
+    pip install quvac/
 
 To make sure the installation was successfull run ``pytest`` (it takes some time).
 
