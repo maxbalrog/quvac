@@ -5,12 +5,15 @@ Analytic expression for paraxial gaussian (0-order and higher-orders).
 
 .. [1] Y. I. Salamin. "Fields of a Gaussian beam beyond the paraxial 
     approximation." Applied Physics B 86 (2007): 319-326.
+.. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities in 
+    generic laser fields." PRD 99.1 (2019): 016006 `(article) <https://arxiv.org/abs/1811.08895>`_.
 """
 
 import numexpr as ne
+import numpy as np
 from scipy.constants import c, pi
 
-from quvac.field.abc import ExplicitField
+from quvac.field.abc import ExplicitField, SpectralField
 
 
 class GaussianAnalytic(ExplicitField):
@@ -43,6 +46,8 @@ class GaussianAnalytic(ExplicitField):
                 Amplitude (either E0 or W is required).
             - 'W' : float, optional
                 Energy (either E0 or W is required).
+            - 'alpha_chirp' : float, optional
+                Linear chirp in time domain.
 
     grid : quvac.grid.GridXYZ
         Spatial and grid.
@@ -87,10 +92,10 @@ class GaussianAnalytic(ExplicitField):
         # Define variables not depending on time step
         self.w = "(w0 * sqrt(1. + (z/zR)**2))"
         self.r2 = "(x**2 + y**2)"
-        self.R = "(z + zR**2/z)"
+        self.R_inv = "z/(z**2 + zR**2)"
         self.E_expr = f"B0 * w0/{self.w} * exp(-{self.r2}/{self.w}**2)"
         self.phase_no_t = ne.evaluate(
-            f"phase0 - k*{self.r2}/(2.*{self.R}) + arctan(z/zR)",
+            f"phase0 - k*{self.r2}*{self.R_inv}/2. + arctan(z/zR)",
             global_dict=self.__dict__,
         )
 
@@ -215,26 +220,34 @@ class GaussianAnalytic(ExplicitField):
         
     def get_plane_wave_phase(self, t):
         alpha_chirp = getattr(self, "alpha_chirp", 0)
-        plane_phase = "(t-t0-z/c)"
+        plane_phase_expr = "(t-t0-z/c)"
+        phase_dict = {
+            'c': c,
+            't': t, 
+            'omega': self.omega,
+            'alpha_chirp': alpha_chirp,
+        }
+        temporal_phase = ne.evaluate(f"(omega*{plane_phase_expr})",
+                                     global_dict=self.__dict__, local_dict=phase_dict)
         if alpha_chirp != 0:
-            psi_plane_expr = f"({plane_phase}*(omega + alpha_chirp*{plane_phase}/tau))"
+            psi_plane_expr = (f"({plane_phase_expr}*omega*"
+                              f"(1 + alpha_chirp*{plane_phase_expr}/(tau/2)))")
+            psi_plane = ne.evaluate(psi_plane_expr, global_dict=self.__dict__,
+                                    local_dict=phase_dict)
         else:
-            psi_plane_expr = f"(omega*{plane_phase})"
-        psi_plane = ne.evaluate(psi_plane_expr, global_dict=self.__dict__,
-                                local_dict={'c': c, 't': t, 'omega': self.omega,
-                                            'alpha_chirp': alpha_chirp})
-        return psi_plane
+            psi_plane = temporal_phase
+        return temporal_phase, psi_plane
 
     def calculate_field(self, t, E_out=None, B_out=None, mode="real"):
         """
         Calculates the electric and magnetic fields at a given time step.
         """
         k = 2.0 * pi / self.lam # noqa: F841
-        self.psi_plane = self.get_plane_wave_phase(t)
+        self.temporal_phase, self.psi_plane = self.get_plane_wave_phase(t)
         self.phase = "(phase_no_t + psi_plane)"
 
         Et = ne.evaluate(
-            f"E * exp(-(2.*psi_plane/(omega*tau))**2) * exp(-1.j*{self.phase})",
+            f"E * exp(-(2.*temporal_phase/(omega*tau))**2) * exp(-1.j*{self.phase})",
             global_dict=self.__dict__,
         )
 
@@ -245,3 +258,117 @@ class GaussianAnalytic(ExplicitField):
 
         E_out, B_out = self.rotate_fields_back(E_out, B_out, mode)
         return E_out, B_out
+    
+
+class GaussianSpectral(SpectralField):
+    """
+    Analytic expression for paraxial Gaussian beam.
+
+    Parameters
+    ----------
+    field_params : dict
+        Dictionary containing the field parameters. Required keys are:
+            - 'focus_x' : tuple of float
+                Location of spatial focus (x, y, z).
+            - 'focus_t' : float
+                Location of temporal focus.
+            - 'theta' : float
+                Polar angle of k-vector (in degrees).
+            - 'phi' : float
+                Azimuthal angle of k-vector (in degrees).
+            - 'beta' : float
+                Polarization angle (in degrees).
+            - 'lam' : float
+                Wavelength of the pulse.
+            - 'w0' : float
+                Waist size.
+            - 'tau' : float
+                Duration.
+            - 'phase0' : float
+                Phase delay at focus.
+            - 'E0' : float, optional
+                Amplitude (either E0 or W is required).
+            - 'W' : float, optional
+                Energy (either E0 or W is required).
+            - 'alpha_chirp' : float, optional
+                Linear chirp in frequency domain.
+
+    grid : quvac.grid.GridXYZ
+        Spatial and grid.
+
+    Notes
+    -----
+    All field parameters are in SI units.
+
+    The expression for the spectrum is taken from [2]_ (Eq. 24). We write it here
+    assuming the central k-vector is along kz. 
+    """
+
+    def __init__(self, field_params, grid):
+        super().__init__(field_params, grid)
+
+        if "E0" not in field_params:
+            err_msg = ("Field params need to have either W (energy) or"
+                       "E0 (amplitude) as key")
+            assert "W" in field_params, err_msg
+            self.E0 = 1.0e10
+
+        # Define additional field variables
+        self.x0, self.y0, self.z0 = self.focus_x
+        self.t0 = self.focus_t
+        self.B0 = self.E0 / c
+        self.k = 2.0 * pi / self.lam
+        self.omega = c * self.k
+        self.alpha_chirp = getattr(self, "alpha_chirp", 0)
+
+        # Rotate k-space grid
+        self.rotate_kgrid()
+
+        self.kperp2 = "(kx**2 + ky**2)"
+        self.define_vector_potential_expression()
+        self.vector_potential = ne.evaluate(self.vector_potential_expr,
+                                            local_dict=self.vector_potential_dict)
+        self.vector_potential = np.fft.ifftshift(self.vector_potential)
+        # Since the spectrum expression is given for continuous Fourier transform
+        # and in the code I use DFT, there is a phase factor related to the start
+        # of the spatial grid that relates two transforms.
+        self.vector_potential *= self.dft_factor
+        
+        self.Ax, self.Ay, self.Az = self.rotate_vector_potential_back()
+
+    def define_vector_potential_expression(self):
+        self.vector_potential_expr = (
+            "where(kz > 0, pi**1.5/2 * 1j/(1j*kabs) * kz/kabs * E0*tau*w0**2 * "
+            f"exp(-(w0/2)**2*{self.kperp2}) * "
+            "exp(-(tau/4)**2*(c*kabs-omega)**2*(1-1j*alpha)) * "
+            "exp(-1j*(x0*kx + y0*ky + z0*kz - phase0 - c*kabs*t0)), 0)"
+        )
+        self.vector_potential_dict = {
+            "pi": pi,
+            "c": c,
+            "kx": self.kx_rotated,
+            "ky": self.ky_rotated,
+            "kz": self.kz_rotated,
+            "kabs": self.kabs_rotated,
+            "E0": self.E0,
+            "tau": self.tau,
+            "w0": self.w0,
+            "omega": self.omega,
+            "alpha": self.alpha_chirp,
+            "x0": self.x0,
+            "y0": self.y0,
+            "z0": self.z0,
+            "phase0": self.phase0,
+            "t0": self.t0,
+        }
+        x0, y0, z0 = [ax[0] for ax in self.grid]
+        kx, ky, kz = self.kmeshgrid
+        self.dft_factor = np.exp(1j*(kx*x0 + ky*y0 + kz*z0))
+    
+    def calculate_field(self, t, E_out=None, B_out=None, mode="real"):
+        """
+        Calculates the electric and magnetic fields at a given time step.
+        """
+        raise NotImplementedError("GaussianSpectral works only as a model field" \
+        "for MaxwellField")
+    

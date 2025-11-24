@@ -112,12 +112,15 @@ class GridXYZ:
         kperp = ne.evaluate("sqrt(kx**2 + ky**2)") # noqa: F841
 
         # Polarization vectors
-        self.e1x = ne.evaluate("where((kx==0) & (ky==0), 1, kx * kz / (kperp*kabs))")
+        self.e1x = ne.evaluate(
+            "where((kx==0) & (ky==0), 2*(kz>0)-1, kx * kz / (kperp*kabs))"
+        )
         self.e1y = ne.evaluate("where((kx==0) & (ky==0), 0, ky * kz / (kperp*kabs))")
         self.e1z = ne.evaluate("where((kx==0) & (ky==0), 0, -kperp / kabs)")
 
         self.e2x = ne.evaluate("where((kx==0) & (ky==0), 0, -ky / kperp)")
-        self.e2y = ne.evaluate("where((kx==0) & (ky==0), 2*(kz>0)-1, kx / kperp)")
+        self.e2y = ne.evaluate("where((kx==0) & (ky==0), 1, kx / kperp)")
+        # self.e2y = ne.evaluate("where((kx==0) & (ky==0), 2*(kz>0)-1, kx / kperp)")
         self.e2z = 0
 
 
@@ -166,6 +169,30 @@ def get_pol_basis(theta, phi):
     )
     e2 = np.array([-np.sin(phi), np.cos(phi), 0], dtype=config.FDTYPE)
     return e1, e2
+
+
+def get_polarization_vector(theta, phi, beta):
+    """
+    Calculate polarization vector for given spherical angles theta and phi
+    and polarization angle beta.
+
+    Parameters
+    ----------
+    theta : float
+        The polar angle in radians.
+    phi : float
+        The azimuthal angle in radians.
+    beta : float
+        The polarization angle in radians.
+
+    Returns
+    -------
+    numpy.ndarray
+        3-element array representing the polarization vector.
+    """
+    e1, e2 = get_pol_basis(theta, phi)
+    ebeta = e1*np.cos(beta) + e2*np.sin(beta)
+    return ebeta
 
 
 def gaussian_bandwidth(field_params):
@@ -429,6 +456,18 @@ def get_t_size(t_start, t_end, lam, grid_res=1):
     return int(np.ceil((t_end - t_start) * fmax * 6 * grid_res))
 
 
+def get_max_duration(fields_params):
+    tau_max = 0
+    for field in fields_params:
+        tau = field.get("tau", 0)
+        # spectral chirp increases effective pulse duration
+        if field["field_type"] == "paraxial_gaussian_spectral_maxwell":
+            alpha = field.get("alpha_chirp", 0)
+            tau *= np.sqrt(1 + alpha**2)
+        tau_max = max([tau_max, tau])
+    return tau_max
+
+
 def get_box_size(fields_params, grid_params):
     """
     Calculate the necessary box size for the spatial grid.
@@ -471,7 +510,8 @@ def get_box_size(fields_params, grid_params):
             length = 0
         perp_max = np.maximum(length, perp_max)
     
-    tau_max = max([field.get("tau", 0) for field in fields_params])
+    # tau_max = max([field.get("tau", 0) for field in fields_params])
+    tau_max = get_max_duration(fields_params)
 
     transverse_size = perp_max * grid_params["transverse_factor"]
     longitudinal_size = tau_max * c * grid_params["longitudinal_factor"]
