@@ -42,6 +42,7 @@ jobs:
         pip install .
         pip install -r ./docs/requirements.txt
         pip install sphinx
+        pwd
         ls
         cd docs
         make html

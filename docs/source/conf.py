@@ -3,7 +3,7 @@ from pathlib import Path
 
 # resolve package root
 ROOT = Path(__file__).resolve().parents[1]
-autoapi_dirs = [str(ROOT / "src")]
+autoapi_dirs = [str(ROOT / "src" / "docs")]
 
 __doc_const_in_modules__ = [
     "config",
