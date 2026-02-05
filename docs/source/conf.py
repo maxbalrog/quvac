@@ -2,8 +2,8 @@
 from pathlib import Path
 
 # resolve package root
-ROOT = Path(__file__).resolve().parents[1]
-# autoapi_dirs = [str(ROOT / "src")]
+ROOT = Path(__file__).resolve().parents[2]
+autoapi_dirs = [str(ROOT / "src")]
 
 __doc_const_in_modules__ = [
     "config",
@@ -26,7 +26,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",]
 
-autoapi_dirs = ["../../src/quvac"]  # Path to your package
+# autoapi_dirs = ["../../src/quvac"]  # Path to your package
+# autoapi_dirs = ["../src/quvac"]
 autoapi_options = [
     "members",
     "undoc-members",
