@@ -1,9 +1,17 @@
 # Configuration file for the Sphinx documentation builder.
+import os
 from pathlib import Path
+import sys
+
+# sys.path.insert(0, os.path.abspath("../src"))
 
 # resolve package root
-ROOT = Path(__file__).resolve().parents[1]
-autoapi_dirs = [str(ROOT / "src")]
+ROOT = Path(__file__).resolve().parents[2]
+# autoapi_dirs = [str(ROOT / "src" / "quvac")]
+SRC_DIR = str(ROOT / "src")
+sys.path.insert(0, SRC_DIR)
+autoapi_dirs = [SRC_DIR]
+print(autoapi_dirs)
 
 __doc_const_in_modules__ = [
     "config",
@@ -27,6 +35,7 @@ extensions = [
     "sphinx.ext.viewcode",]
 
 # autoapi_dirs = ["../../src/quvac"]  # Path to your package
+# autoapi_dirs = ["../src"]
 autoapi_options = [
     "members",
     "undoc-members",
