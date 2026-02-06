@@ -46,6 +46,7 @@ jobs:
         ls
         cd docs
         make html
+      # sphinx-build -b html docs docs/_build
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:

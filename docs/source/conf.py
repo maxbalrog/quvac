@@ -3,7 +3,8 @@ from pathlib import Path
 
 # resolve package root
 ROOT = Path(__file__).resolve().parents[2]
-autoapi_dirs = [str(ROOT / "src")]
+autoapi_dirs = [str(ROOT / "src" / "quvac")]
+print(autoapi_dirs)
 
 __doc_const_in_modules__ = [
     "config",
