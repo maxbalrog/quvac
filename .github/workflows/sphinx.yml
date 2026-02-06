@@ -39,7 +39,7 @@ jobs:
     - name: Upgrade pip, install package, install requirements, build docs
       run: |
         pip install --upgrade pip
-        pip install .
+        pip install .[all]
         pip install -r ./docs/requirements.txt
         pip install sphinx
         pwd
