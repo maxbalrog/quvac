@@ -3,12 +3,14 @@ import os
 from pathlib import Path
 import sys
 
-sys.path.insert(0, os.path.abspath("../src"))
+# sys.path.insert(0, os.path.abspath("../src"))
 
 # resolve package root
 ROOT = Path(__file__).resolve().parents[2]
 # autoapi_dirs = [str(ROOT / "src" / "quvac")]
-autoapi_dirs = [str(ROOT / "src")]
+SRC_DIR = str(ROOT / "src")
+sys.path.insert(0, SRC_DIR)
+autoapi_dirs = [SRC_DIR]
 print(autoapi_dirs)
 
 __doc_const_in_modules__ = [
