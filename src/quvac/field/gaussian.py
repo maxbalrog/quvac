@@ -258,7 +258,103 @@ class GaussianAnalytic(ExplicitField):
 
         E_out, B_out = self.rotate_fields_back(E_out, B_out, mode)
         return E_out, B_out
-    
+
+
+class GaussianEllipticAnalytic(GaussianAnalytic):
+    """
+    Analytic expression for paraxial elliptical Gaussian beam.
+
+    Parameters
+    ----------
+    field_params : dict
+        Dictionary containing the field parameters. Required keys are:
+            - 'focus_x' : tuple of float
+                Location of spatial focus (x, y, z).
+            - 'focus_t' : float
+                Location of temporal focus.
+            - 'theta' : float
+                Polar angle of k-vector (in degrees).
+            - 'phi' : float
+                Azimuthal angle of k-vector (in degrees).
+            - 'beta' : float
+                Polarization angle (in degrees).
+            - 'lam' : float
+                Wavelength of the pulse.
+            - 'w0x', 'w0y' : float
+                Waist sizes in x and y directions.
+            - 'ellipse_rotation_angle' : float
+                Ellipse rotation angle (in degrees).
+            - 'tau' : float
+                Duration.
+            - 'phase0' : float
+                Phase delay at focus.
+            - 'E0' : float, optional
+                Amplitude (either E0 or W is required).
+            - 'W' : float, optional
+                Energy (either E0 or W is required).
+            - 'alpha_chirp' : float, optional
+                Linear chirp in time domain.
+
+    grid : quvac.grid.GridXYZ
+        Spatial and grid.
+    """
+
+    def __init__(self, field_params, grid):
+        ExplicitField.__init__(self, field_params, grid)
+
+        self.order = getattr(self, "order", 0)
+        self.polarization = getattr(self, "polarization", "linear")
+
+        if "E0" not in field_params:
+            err_msg = ("Field params need to have either W (energy) or"
+                       "E0 (amplitude) as key")
+            assert "W" in field_params, err_msg
+            self.E0 = 1.0e10
+
+        # Define additional field variables
+        self.x0, self.y0, self.z0 = self.focus_x
+        self.t0 = self.focus_t
+        self.B0 = self.E0 / c
+        self.k = 2.0 * pi / self.lam
+        self.omega = c * self.k
+        self.zRx = pi * self.w0x**2 / self.lam
+        self.zRy = pi * self.w0y**2 / self.lam
+
+        # Rotate coordinate grid
+        self.rotate_coordinates()
+
+        # Account for possible ellipse rotation
+        self.account_for_ellipse_rotation()
+
+        # Define variables not depending on time step
+        self.wx = "(w0x * sqrt(1. + (z/zRx)**2))"
+        self.wy = "(w0y * sqrt(1. + (z/zRy)**2))"
+        self.Rx_inv = "z/(z**2 + zRx**2)"
+        self.Ry_inv = "z/(z**2 + zRy**2)"
+        self.w_prefactor = "sqrt(zRx*zRy / (sqrt(z**2 + zRx**2) * sqrt(z**2 + zRy**2)))"
+        self.focusing = f"exp(-(xrot/{self.wx})**2 - (yrot/{self.wy})**2)"
+        self.E_expr = f"B0 * {self.w_prefactor} * {self.focusing}"
+        self.phaseg = "(arctan(z/zRx) + arctan(z/zRy))/2"
+        self.phase_curved = f"k/2.*(x_rot**2*{self.Rx_inv} + y_rot**2*{self.Ry_inv})"
+        self.phase_no_t = ne.evaluate(
+            f"phase0 - {self.phase_curved} + {self.phaseg}",
+            global_dict=self.__dict__,
+        )
+
+        self.E = ne.evaluate(self.E_expr, global_dict=self.__dict__)
+
+        # Set up correct field amplitude
+        if "W" in field_params:
+            self.check_energy()
+
+    def account_for_ellipse_rotation(self):
+        if self.ellipse_rotation_angle != 0:
+            ell0 = self.ellipse_rotation_angle
+            self.xrot = self.x*np.cos(ell0) + self.y*np.sin(ell0)
+            self.yrot = -self.x*np.sin(ell0) + self.y*np.cos(ell0)
+        else:
+            self.xrot, self.yrot = self.x, self.y
+
 
 class GaussianSpectral(SpectralField):
     """
