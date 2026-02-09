@@ -1,0 +1,106 @@
+quvac.field.model
+=================
+
+.. py:module:: quvac.field.model
+
+.. autoapi-nested-parse::
+
+   Model fields.
+
+   Currently implements:
+
+   1. Model electric/magnetic field with inhomogeneity in one direction
+   and infinite transverse extend in others. Adapted from [1]_.
+
+   ----
+
+   .. [1] H. Gies, F. Karbstein, and N. Seegert. "Quantum reflection
+      as a new signature of quantum vacuum nonlinearity." NJP 15.8 (2013):
+      083002.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.model.EBInhomogeneity
+
+
+Module Contents
+---------------
+
+.. py:class:: EBInhomogeneity(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.Field`
+
+
+   Model inhomogeneities of electric/magnetic field.
+
+   Field is of type B = B(z) * eB.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'field_inhom': str
+                                Field inhomogeneity, either 'electric' or 'magnetic'.
+                            - 'theta' : float
+                                Polar angle of eB-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of eB-vector (in degrees).
+                            - 'E0' : float
+                                Amplitude.
+                            - 'envelope_type' : str
+                                Envelope type, by default 'gauss'.
+
+                        Envelope specific arguments:
+                            For 'gauss':
+                                - 'w0' : float
+                                    Waist size.
+                            For 'gauss-modulated':
+                                - 'w0' : float
+                                    Waist size.
+                                - 'lam': float
+                                    Wavelength of modulation.
+                                - 'phase0': float, optional
+                                    Initial phase
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+
+   .. py:method:: get_envelope()
+
+      Define the envelope function for the field.
+
+      The envelope function is defined based on the `envelope_type` parameter.
+      Currently, only the Gaussian envelope type is supported.
+
+      :raises NotImplementedError: If the `envelope_type` is not supported.
+
+
+
+   .. py:method:: check_energy()
+
+      Check and adjust the field energy.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None)
+
+      Calculates fields for a given time step.
+
+      :param t: The time step at which to calculate the fields.
+      :type t: float
+      :param E_out: Output array for the electric field.
+      :type E_out: array-like, optional
+      :param B_out: Output array for the magnetic field.
+      :type B_out: array-like, optional
+      :param \*\*kwargs: Additional parameters for field calculation.
+      :type \*\*kwargs: dict
+
+      :returns: **E_out, B_out** -- The electric and magnetic fields at the given time step.
+      :rtype: array-like
+
+
+

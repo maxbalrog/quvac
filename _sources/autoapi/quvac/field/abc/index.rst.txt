@@ -1,0 +1,282 @@
+quvac.field.abc
+===============
+
+.. py:module:: quvac.field.abc
+
+.. autoapi-nested-parse::
+
+   Abstract interfaces for field classes.
+
+   For details about spectral coefficient calculation (a1, a2)
+   refer to :ref:`implementation` section of documentation.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   quvac.field.abc.ANGLE_KEYS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.abc.Field
+   quvac.field.abc.ExplicitField
+   quvac.field.abc.SpectralField
+   quvac.field.abc.FieldFromFile
+
+
+Module Contents
+---------------
+
+.. py:data:: ANGLE_KEYS
+
+.. py:class:: Field(field_params, grid)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for fields.
+
+   This class defines the interface for calculating fields at a given time step.
+   Subclasses must implement the ``calculate_field`` method.
+
+   :param field_params: Dictionary containing the field parameters.
+   :type field_params: dict
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. attribute:: grid_xyz
+
+      The spatial and spectral grid.
+
+      :type: quvac.grid.GridXYZ
+
+   .. attribute:: rotation_m
+
+      Rotation matrix.
+
+      :type: np.array
+
+   .. attribute:: rotation_bwd_m
+
+      Inverse rotation matrix.
+
+      :type: np.array
+
+
+   .. py:method:: get_rotation()
+
+      Defines the rotation transforming (0,0,1) -> (kx,ky,kz)
+      for vectors and (1,0,0) -> e(beta) = e1*cos(beta) + e2*sin(beta).
+
+
+
+   .. py:method:: rotate_coordinates(rotate_grid=True)
+
+      Rotates the coordinate grid.
+
+      :param rotate_grid: Whether to rotate the grid coordinates. Default is True.
+      :type rotate_grid: bool, optional
+
+
+
+   .. py:method:: get_EB_out(E_out, B_out, mode)
+
+      Get the output arrays for the electric and magnetic fields.
+
+      :param E_out: Output array for the electric field.
+      :type E_out: array-like, optional
+      :param B_out: Output array for the magnetic field.
+      :type B_out: array-like, optional
+      :param mode: Mode of calculation ('real' or 'complex').
+      :type mode: str
+
+      :returns: The output arrays for the electric and magnetic fields.
+      :rtype: tuple of array-like
+
+
+
+   .. py:method:: rotate_fields_back(E_out, B_out, mode)
+
+      Rotate the fields back to the original coordinate frame.
+
+      :param E_out: Output array for the electric field.
+      :type E_out: array-like, optional
+      :param B_out: Output array for the magnetic field.
+      :type B_out: array-like, optional
+      :param mode: Mode of calculation ('real' or 'complex').
+      :type mode: str
+
+      :returns: The rotated electric and magnetic fields.
+      :rtype: tuple of array-like
+
+
+
+   .. py:method:: convert_fields_to_real()
+
+      Take real part of field components.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, **kwargs)
+      :abstractmethod:
+
+
+      Calculates fields for a given time step.
+
+      :param t: The time step at which to calculate the fields.
+      :type t: float
+      :param E_out: Output array for the electric field.
+      :type E_out: array-like, optional
+      :param B_out: Output array for the magnetic field.
+      :type B_out: array-like, optional
+      :param \*\*kwargs: Additional parameters for field calculation.
+      :type \*\*kwargs: dict
+
+      :returns: **E_out, B_out** -- The electric and magnetic fields at the given time step.
+      :rtype: array-like
+
+
+
+.. py:class:: ExplicitField(field_params, grid)
+
+   Bases: :py:obj:`Field`
+
+
+   For fields with an analytic formula known in the whole space at
+   least in the focus (t=0).
+
+   One time step (e.g., focus at t=0) can serve as a model field
+   for the calculation of Maxwell coefficients and Maxwell propagation
+   to other time steps.
+
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. attribute:: grid_xyz
+
+      The spatial and spectral grid.
+
+      :type: quvac.grid.GridXYZ
+
+   .. attribute:: Ef
+
+      The electric field in Fourier space.
+
+      :type: list of complex numpy.ndarray
+
+   .. attribute:: Ef_fftw
+
+      The FFTW objects for the electric field.
+
+      :type: list of pyfftw.FFTW
+
+   .. attribute:: a1
+
+      The a1 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+   .. attribute:: a2
+
+      The a2 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+
+   .. py:method:: get_a12(t0=None)
+
+      Calculates the a1 and a2 coefficients at a given time step.
+
+      :param t0: The time step at which to calculate the coefficients. If None, uses self.t0.
+      :type t0: float, optional
+
+      :returns: * **a1** (*numpy.ndarray*) -- The a1 spectral coefficient.
+                * **a2** (*numpy.ndarray*) -- The a2 spectral coefficient.
+
+      .. rubric:: Notes
+
+      After the projection of the field on spectral coefficients, its energy
+      is corrected to the desired value.
+
+
+
+.. py:class:: SpectralField(field_params, grid)
+
+   Bases: :py:obj:`Field`
+
+
+   For fields with analytic formula to its spectrum. From this
+   formula the spectral coefficients are explicitly defined and
+   the field can be passed to Maxwell solver.
+
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. attribute:: grid_xyz
+
+      The spatial and spectral grid.
+
+      :type: quvac.grid.GridXYZ
+
+   .. attribute:: a1
+
+      The a1 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+   .. attribute:: a2
+
+      The a2 spectral coefficient.
+
+      :type: complex numpy.ndarray
+
+
+   .. py:method:: rotate_kgrid()
+
+      Rotates the k-space grid.
+
+
+
+   .. py:method:: rotate_vector_potential_back()
+
+      Rotate the fields back to the original coordinate frame.
+
+      :returns: The rotated vector potential.
+      :rtype: tuple of array-like
+
+
+
+   .. py:method:: get_a12(t0=None)
+
+      Calculates the a1 and a2 coefficients at a given time step.
+
+      :param t0: The time step at which to calculate the coefficients. If None, uses self.t0.
+      :type t0: float, optional
+
+      :returns: * **a1** (*numpy.ndarray*) -- The a1 spectral coefficient.
+                * **a2** (*numpy.ndarray*) -- The a2 spectral coefficient.
+
+      .. rubric:: Notes
+
+      After the projection of the field on spectral coefficients, its energy
+      is corrected to the desired value.
+
+
+
+.. py:class:: FieldFromFile(field_params, grid)
+
+   Bases: :py:obj:`Field`
+
+
+   For fields that are loaded from file.
+
+   Not implemented yet.
+
+

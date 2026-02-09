@@ -1,0 +1,1332 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>quvac.postprocess - quvac 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">quvac 0.1.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../input_file.html">Create input file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../implementation.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../for_developers.html">For developers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../autoapi/quvac/index.html">quvac</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of quvac</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/analytic_scalings/index.html">quvac.analytic_scalings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/config/index.html">quvac.config</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../autoapi/quvac/field/index.html">quvac.field</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of quvac.field</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/abc/index.html">quvac.field.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/dipole/index.html">quvac.field.dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/external_field/index.html">quvac.field.external_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/gaussian/index.html">quvac.field.gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/laguerre_gaussian/index.html">quvac.field.laguerre_gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/maxwell/index.html">quvac.field.maxwell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/model/index.html">quvac.field.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/planewave/index.html">quvac.field.planewave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/field/utils/index.html">quvac.field.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/grid/index.html">quvac.grid</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../autoapi/quvac/integrator/index.html">quvac.integrator</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of quvac.integrator</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/integrator/abc/index.html">quvac.integrator.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/quvac/integrator/vacuum_emission/index.html">quvac.integrator.vacuum_emission</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/log/index.html">quvac.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/utils/index.html">quvac.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for quvac.postprocess</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analyzer class that calculate different observables from amplitudes.</span>
+
+<span class="sd">Currently supports:</span>
+
+<span class="sd">1. Total (polarization insensitive) signal.</span>
+<span class="sd">2. Polarization sensitive signal:</span>
+<span class="sd">    - As a projection to fixed optical axis.</span>
+<span class="sd">    - As a projection to local polarization axis.</span>
+<span class="sd">    - 3 stokes parameters (P1, P2, P3) for arbitrary </span>
+<span class="sd">      linear polarization basis.</span>
+
+<span class="sd">3. Discernible signal.</span>
+<span class="sd">4. Background field spectra.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># ruff: noqa: F841</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">c</span><span class="p">,</span> <span class="n">epsilon_0</span><span class="p">,</span> <span class="n">hbar</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">trapezoid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">map_coordinates</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.external_field</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExternalField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.maxwell</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxwellMultiple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridXYZ</span><span class="p">,</span> <span class="n">get_pol_basis</span><span class="p">,</span> <span class="n">setup_grids</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">sph_interp_warn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_yaml</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_polarization_vector">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.get_polarization_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_polarization_vector</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the polarization vector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    theta : float</span>
+<span class="sd">        Polar angle (in radians).</span>
+<span class="sd">    phi : float</span>
+<span class="sd">        Azimuthal angle (in radians).</span>
+<span class="sd">    beta : float</span>
+<span class="sd">        Polarization angle (in radians).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ep : numpy.ndarray</span>
+<span class="sd">        Polarization vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="o">=</span> <span class="n">get_pol_basis</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="n">ep</span> <span class="o">=</span><span class="p">(</span><span class="n">e1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span> <span class="o">+</span> 
+         <span class="n">e2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ep</span></div>
+
+
+
+<div class="viewcode-block" id="sph2cart">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.sph2cart">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sph2cart</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert spherical coordinates to Cartesian coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r : numpy.ndarray</span>
+<span class="sd">        Radial distance.</span>
+<span class="sd">    theta : numpy.ndarray</span>
+<span class="sd">        Polar angle.</span>
+<span class="sd">    phi : numpy.ndarray</span>
+<span class="sd">        Azimuthal angle.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x, y, z : numpy.ndarray</span>
+<span class="sd">        Cartesian coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
+
+
+
+<div class="viewcode-block" id="xyz2idx">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.xyz2idx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz2idx</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Cartesian coordinates to array indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xyz : tuple of numpy.ndarray</span>
+<span class="sd">        Cartesian coordinates.</span>
+<span class="sd">    xyz_grid : tuple of numpy.ndarray</span>
+<span class="sd">        Cartesian grid.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    idxs : numpy.ndarray</span>
+<span class="sd">        Array indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">idxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idxs</span></div>
+
+
+
+<div class="viewcode-block" id="cartesian_to_spherical_array">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.cartesian_to_spherical_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cartesian_to_spherical_array</span><span class="p">(</span>
+    <span class="n">arr</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="p">,</span> <span class="n">spherical_grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angular_resolution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">interp_kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform an array with data on Cartesian grid to the array with data </span>
+<span class="sd">    on spherical grid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Array with data on Cartesian grid.</span>
+<span class="sd">    xyz_grid : quvac.grid.GridXYZ</span>
+<span class="sd">        Cartesian grid object.</span>
+<span class="sd">    spherical_grid : tuple or str, optional</span>
+<span class="sd">        Spherical grid or path to the file containing the spherical grid, </span>
+<span class="sd">        by default None.</span>
+<span class="sd">    angular_resolution : float, optional</span>
+<span class="sd">        Angular resolution, by default None.</span>
+<span class="sd">    **interp_kwargs : dict</span>
+<span class="sd">        Additional interpolation parameters. Currently not used, implement </span>
+<span class="sd">        in the future.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spherical_grid : tuple</span>
+<span class="sd">        Spherical grid.</span>
+<span class="sd">    arr_sph : numpy.ndarray</span>
+<span class="sd">        Array with data on spherical grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate spherical grid if not given</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spherical_grid</span><span class="p">:</span>
+        <span class="n">dk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">xyz_grid</span><span class="o">.</span><span class="n">dkxkykz</span><span class="p">)</span>
+        <span class="n">kmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">xyz_grid</span><span class="o">.</span><span class="n">kabs</span><span class="p">)</span>
+        <span class="n">dangle</span> <span class="o">=</span> <span class="n">angular_resolution</span> <span class="k">if</span> <span class="n">angular_resolution</span> <span class="k">else</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">kmax</span><span class="p">,</span> <span class="n">dk</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">dangle</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="n">dangle</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
+        <span class="n">spherical_grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spherical_grid</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">spherical_grid</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spherical_grid</span><span class="p">)</span>
+        <span class="n">spherical_grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">])</span>
+    <span class="n">spherical_mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">spherical_grid</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Find corresponding cartesian coordinates of spherical mesh:</span>
+    <span class="c1"># (r,theta,phi) -&gt; (x, y, z)</span>
+    <span class="n">xyz_for_sph</span> <span class="o">=</span> <span class="n">sph2cart</span><span class="p">(</span><span class="o">*</span><span class="n">spherical_mesh</span><span class="p">)</span>
+
+    <span class="c1"># Convert cartesian coordinates to array idx</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">xyz2idx</span><span class="p">(</span><span class="n">xyz_for_sph</span><span class="p">,</span> <span class="n">xyz_grid</span><span class="o">.</span><span class="n">kgrid_shifted</span><span class="p">)</span>
+
+    <span class="c1"># Interpolate data on a desired grid</span>
+    <span class="c1"># interpolation_kwargs should be implemented here</span>
+    <span class="n">arr_sph</span> <span class="o">=</span> <span class="n">map_coordinates</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">idxs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spherical_grid</span><span class="p">,</span> <span class="n">arr_sph</span></div>
+
+
+
+<div class="viewcode-block" id="integrate_spherical">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.integrate_spherical">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrate_spherical</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axs</span><span class="p">,</span> <span class="n">axs_names</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">),</span>
+                        <span class="n">axs_integrate</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;phi&quot;</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Integrate an array over spherical coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Array to be integrated.</span>
+<span class="sd">    axs : list of numpy.ndarray</span>
+<span class="sd">        List of axes.</span>
+<span class="sd">    axs_names : list of str, optional</span>
+<span class="sd">        List of axis names, by default [&quot;k&quot;, &quot;theta&quot;, &quot;phi&quot;].</span>
+<span class="sd">    axs_integrate : list of str, optional</span>
+<span class="sd">        List of axes to integrate over, by default [&quot;k&quot;, &quot;theta&quot;, &quot;phi&quot;].</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    integrand : numpy.ndarray</span>
+<span class="sd">        Integrated array.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        Axes of array and axs names do not match.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    We assume that the array is given on a spherical grid without</span>
+<span class="sd">    the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).</span>
+<span class="sd">    </span>
+<span class="sd">    The function uses trapezoidal rule for integration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Axes of array and axs names do not match&quot;</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_names</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">axs_integrate</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">condition</span><span class="p">,</span> <span class="n">err_msg</span>
+
+    <span class="n">axs_names_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axs_names</span><span class="p">)</span>
+
+    <span class="n">integrand</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ax_name</span> <span class="ow">in</span> <span class="n">axs_integrate</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">axs_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ax_name</span><span class="p">)</span>
+        <span class="n">idx_</span> <span class="o">=</span> <span class="n">axs_names_</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ax_name</span><span class="p">)</span>
+
+        <span class="n">ax_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axs_names_</span><span class="p">))]</span>
+        <span class="n">ax_shape</span><span class="p">[</span><span class="n">idx_</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">idx_</span><span class="p">]</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ax_shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ax_name</span> <span class="o">==</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span>
+            <span class="n">integrand</span> <span class="o">*=</span> <span class="n">ax</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">ax_name</span> <span class="o">==</span> <span class="s2">&quot;theta&quot;</span><span class="p">:</span>
+            <span class="n">integrand</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">integrand</span> <span class="o">=</span> <span class="n">trapezoid</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">idx_</span><span class="p">)</span>
+        <span class="n">axs_names_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">idx_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">integrand</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_detector_idx</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi0</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">dtheta</span><span class="p">):</span>
+    <span class="c1"># consider detector regions that lie on the line phi=0 or phi=2*pi</span>
+    <span class="k">if</span> <span class="n">phi0</span><span class="o">-</span><span class="n">dphi</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">idx_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;=</span> <span class="n">phi0</span><span class="o">+</span><span class="n">dphi</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">phi0</span><span class="o">-</span><span class="n">dphi</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">phi0</span><span class="o">+</span><span class="n">dphi</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">:</span>
+        <span class="n">idx_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;=</span> <span class="n">phi0</span><span class="o">-</span><span class="n">dphi</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;=</span> <span class="n">phi0</span><span class="o">+</span><span class="n">dphi</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">idx_phi</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&gt;=</span> <span class="n">phi0</span><span class="o">-</span><span class="n">dphi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">phi</span> <span class="o">&lt;=</span> <span class="n">phi0</span><span class="o">+</span><span class="n">dphi</span><span class="p">)</span>
+    
+    <span class="n">idx_theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;=</span> <span class="n">theta0</span><span class="o">-</span><span class="n">dtheta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&lt;=</span> <span class="n">theta0</span><span class="o">+</span><span class="n">dtheta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idx_phi</span><span class="p">,</span> <span class="n">idx_theta</span>
+
+
+<div class="viewcode-block" id="signal_in_detector">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.signal_in_detector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">signal_in_detector</span><span class="p">(</span><span class="n">dN</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">detector</span><span class="p">,</span> <span class="n">align_to_max</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the signal detected within a specified detector region.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dN : numpy.ndarray</span>
+<span class="sd">        Differential angular photon spectrum on a spherical grid.</span>
+<span class="sd">    theta : numpy.ndarray</span>
+<span class="sd">        Array of polar angles (in radians) corresponding to the spherical grid.</span>
+<span class="sd">    phi : numpy.ndarray</span>
+<span class="sd">        Array of azimuthal angles (in radians) corresponding to the spherical grid.</span>
+<span class="sd">    detector : dict</span>
+<span class="sd">        Dictionary specifying the detector region. Required keys are:</span>
+<span class="sd">            - &#39;phi0&#39; : float</span>
+<span class="sd">                Central azimuthal angle of the detector (in degrees).</span>
+<span class="sd">            - &#39;theta0&#39; : float</span>
+<span class="sd">                Central polar angle of the detector (in degrees).</span>
+<span class="sd">            - &#39;dphi&#39; : float</span>
+<span class="sd">                Half-width of the azimuthal angle range (in degrees).</span>
+<span class="sd">            - &#39;dtheta&#39; : float</span>
+<span class="sd">                Half-width of the polar angle range (in degrees).</span>
+<span class="sd">    align_to_max : bool</span>
+<span class="sd">        Whether to align detector to the max spot in the detected region, </span>
+<span class="sd">        by default False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The total signal detected within the specified detector region.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function integrates the signal over the specified detector region in spherical </span>
+<span class="sd">    coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phi0</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dphi0</span><span class="p">,</span> <span class="n">dtheta0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">detector</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> 
+                                  <span class="ow">in</span> <span class="s2">&quot;phi0 theta0 dphi dtheta&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">idx_phi</span><span class="p">,</span><span class="n">idx_theta</span> <span class="o">=</span> <span class="n">_get_detector_idx</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi0</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dphi0</span><span class="p">,</span> <span class="n">dtheta0</span><span class="p">)</span>
+    <span class="n">dphi</span><span class="p">,</span> <span class="n">dtheta</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">)]</span>
+    
+    <span class="n">dN_det</span> <span class="o">=</span> <span class="n">dN</span><span class="p">[</span><span class="n">idx_theta</span><span class="p">][:,</span><span class="n">idx_phi</span><span class="p">]</span>
+    <span class="n">theta_det</span><span class="p">,</span> <span class="n">phi_det</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">idx_theta</span><span class="p">],</span> <span class="n">phi</span><span class="p">[</span><span class="n">idx_phi</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">align_to_max</span><span class="p">:</span>
+        <span class="n">max_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dN_det</span><span class="p">)</span>
+        <span class="n">theta_max</span><span class="p">,</span> <span class="n">phi_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">max_index</span><span class="p">,</span> <span class="n">dN_det</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">phi0_new</span><span class="p">,</span> <span class="n">theta0_new</span> <span class="o">=</span> <span class="n">phi_det</span><span class="p">[</span><span class="n">phi_max</span><span class="p">],</span> <span class="n">theta_det</span><span class="p">[</span><span class="n">theta_max</span><span class="p">]</span>
+        <span class="n">idx_phi</span><span class="p">,</span><span class="n">idx_theta</span> <span class="o">=</span> <span class="n">_get_detector_idx</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi0_new</span><span class="p">,</span> <span class="n">theta0_new</span><span class="p">,</span>
+                                              <span class="n">dphi0</span><span class="p">,</span> <span class="n">dtheta0</span><span class="p">)</span>
+        <span class="n">dN_det</span> <span class="o">=</span> <span class="n">dN</span><span class="p">[</span><span class="n">idx_theta</span><span class="p">][:,</span><span class="n">idx_phi</span><span class="p">]</span>
+        <span class="n">theta_det</span><span class="p">,</span> <span class="n">phi_det</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">idx_theta</span><span class="p">],</span> <span class="n">phi</span><span class="p">[</span><span class="n">idx_phi</span><span class="p">]</span>
+
+    <span class="n">N_detected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dN_det</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_det</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span> <span class="o">*</span> <span class="n">dphi</span> <span class="o">*</span> <span class="n">dtheta</span>
+    <span class="k">return</span> <span class="n">N_detected</span></div>
+
+    
+
+<div class="viewcode-block" id="get_simulation_fields">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.get_simulation_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_simulation_fields</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get simulation fields from an initialization file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the initialization file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fields : list of quvac.field.ExternalField</span>
+<span class="sd">        List of field objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ini</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+    <span class="n">grid_params</span> <span class="o">=</span> <span class="n">ini</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span>
+
+    <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span> <span class="o">=</span> <span class="n">setup_grids</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">)</span>
+    <span class="n">grid_xyz</span><span class="o">.</span><span class="n">get_k_grid</span><span class="p">()</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field_params</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">([</span><span class="n">field_params</span><span class="p">],</span> <span class="n">grid_xyz</span><span class="p">)</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fields</span></div>
+
+
+
+<div class="viewcode-block" id="transform_S12_to_a12">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.transform_S12_to_a12">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_S12_to_a12</span><span class="p">(</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate spectral coefficients a1 and a2 from complex signal</span>
+<span class="sd">    amplitudes S1 and S2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    S1 : numpy.ndarray</span>
+<span class="sd">        Complex signal amplitude S1.</span>
+<span class="sd">    S2 : numpy.ndarray</span>
+<span class="sd">        Complex signal amplitude S2.</span>
+<span class="sd">    k : numpy.ndarray</span>
+<span class="sd">        Wave number.</span>
+<span class="sd">    transform : str, optional</span>
+<span class="sd">        Transformation direction, by default &quot;forward&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a1, a2 : numpy.ndarray</span>
+<span class="sd">        Spectral coefficients a1 and a2.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The backward transform corresponds to a12 -&gt; S12.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">hbar</span><span class="o">*</span><span class="n">k</span><span class="o">/</span><span class="p">(</span><span class="n">epsilon_0</span><span class="o">*</span><span class="n">c</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">transform</span> <span class="o">==</span> <span class="s2">&quot;backward&quot;</span><span class="p">:</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">prefactor</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">S1</span> <span class="o">*</span> <span class="n">prefactor</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">S2</span> <span class="o">*</span> <span class="n">prefactor</span>
+    <span class="k">return</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span></div>
+
+
+
+<div class="viewcode-block" id="get_spectra_from_Stokes">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.get_spectra_from_Stokes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spectra_from_Stokes</span><span class="p">(</span><span class="n">P0</span><span class="p">,</span> <span class="n">P1</span><span class="p">,</span> <span class="n">P2</span><span class="p">,</span> <span class="n">P3</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate spectra from Stokes parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P0 : numpy.ndarray</span>
+<span class="sd">        Stokes parameter P0.</span>
+<span class="sd">    P1 : numpy.ndarray</span>
+<span class="sd">        Stokes parameter P1.</span>
+<span class="sd">    P2 : numpy.ndarray</span>
+<span class="sd">        Stokes parameter P2.</span>
+<span class="sd">    P3 : numpy.ndarray</span>
+<span class="sd">        Stokes parameter P3.</span>
+<span class="sd">    basis : str, optional</span>
+<span class="sd">        Polarization basis, by default &quot;linear&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nf, Np : numpy.ndarray</span>
+<span class="sd">        Parallel and perpendicular-polarized spectra.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">match</span> <span class="n">basis</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">P1</span>
+        <span class="k">case</span> <span class="s2">&quot;linear-45&quot;</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">P2</span>
+        <span class="k">case</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">P3</span>
+    <span class="n">Nf</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">P0</span> <span class="o">+</span> <span class="n">P</span><span class="p">)</span>
+    <span class="n">Np</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">P0</span> <span class="o">-</span> <span class="n">P</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Nf</span><span class="p">,</span> <span class="n">Np</span></div>
+
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VacuumEmissionAnalyzer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates spectra and observables from amplitudes.</span>
+
+<span class="sd">    Amplitudes are provided by </span>
+<span class="sd">    ``quvac.integrator.vacuum_emission.VacuumEmission`` class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fields_params : dict</span>
+<span class="sd">        Dictionary containing the field parameters.</span>
+<span class="sd">    data_path : str</span>
+<span class="sd">        Path to the data file.</span>
+<span class="sd">    save_path : str, optional</span>
+<span class="sd">        Path to save the results, by default None.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fields_params : dict</span>
+<span class="sd">        Dictionary containing the field parameters.</span>
+<span class="sd">    grid_xyz : quvac.grid.GridXYZ</span>
+<span class="sd">        The spatial grid object.</span>
+<span class="sd">    S1 : numpy.ndarray</span>
+<span class="sd">        Complex signal amplitude S1.</span>
+<span class="sd">    S2 : numpy.ndarray</span>
+<span class="sd">        Complex signal amplitude S2.</span>
+<span class="sd">    save_path : str</span>
+<span class="sd">        Path to save the results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span> <span class="o">=</span> <span class="n">fields_params</span>
+        <span class="c1"># Load data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">GridXYZ</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">get_k_grid</span><span class="p">()</span>
+        <span class="c1"># Update local dict with variables from GridXYZ class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">&quot;xyz&quot;</span><span class="p">:</span>
+            <span class="n">kx</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">kx</span><span class="p">))</span>
+            <span class="c1"># self.__dict__[f&quot;k{ax}&quot;] = np.fft.fftshift(kx)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">),</span>
+                            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_total_signal">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_total_signal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the total signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">S</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_xyz</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_polarization_from_field">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_polarization_from_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_polarization_from_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the polarization from the field.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing the polarization components (efx, efy, efz).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">perp_field_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">perp_field_idx</span><span class="p">]</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">([</span><span class="n">perp_field_params</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
+        <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">a2</span>
+        <span class="n">Ex</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;e1x*a1 + e2x*a2&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="n">Ey</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;e1y*a1 + e2y*a2&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="n">Ez</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;e1z*a1 + e2z*a2&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(Ex**2 + Ey**2 + Ez**2)&quot;</span><span class="p">)</span>
+        <span class="n">E_inv</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((Ex==0) &amp; (Ey==0) &amp; (Ez==0), 0, 1/E)&quot;</span><span class="p">)</span>
+        <span class="c1"># E_inv = np.nan_to_num(1. / E)</span>
+        <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span> <span class="o">=</span> <span class="n">Ex</span> <span class="o">*</span> <span class="n">E_inv</span><span class="p">,</span> <span class="n">Ey</span> <span class="o">*</span> <span class="n">E_inv</span><span class="p">,</span> <span class="n">Ez</span> <span class="o">*</span> <span class="n">E_inv</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_polarization_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">perp_type</span><span class="o">=</span><span class="s2">&quot;optical axis&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates polarization vectors parallel to chosen axis and </span>
+<span class="sd">        perpendicular to it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angles : tuple</span>
+<span class="sd">            Tuple containing the angles (theta, phi, beta).</span>
+<span class="sd">        perp_type : str, optional</span>
+<span class="sd">            Type of perpendicular polarization, by default &quot;optical axis&quot;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing the parallel and perpendicular polarization </span>
+<span class="sd">            components.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">perp_type</span> <span class="o">==</span> <span class="s2">&quot;optical axis&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">efx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efz</span> <span class="o">=</span> <span class="n">get_polarization_vector</span><span class="p">(</span><span class="o">*</span><span class="n">angles</span><span class="p">)</span>
+            <span class="n">angles</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epz</span> <span class="o">=</span> <span class="n">get_polarization_vector</span><span class="p">(</span><span class="o">*</span><span class="n">angles</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">perp_type</span> <span class="o">==</span> <span class="s2">&quot;local axis&quot;</span><span class="p">:</span>
+            <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_polarization_from_field</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">efx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efz</span> <span class="o">=</span> <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span>
+            <span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">kz</span> <span class="o">=</span> <span class="p">[</span><span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where(kabs==0, 0, k/kabs)&quot;</span><span class="p">,</span> 
+                                      <span class="n">global_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;kabs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="n">k</span><span class="p">})</span>
+                          <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmeshgrid</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epx</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;ky*efz - kz*efy&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epy</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;kz*efx - kx*efz&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;kx*efy - ky*efx&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">perp_type</span><span class="si">}</span><span class="s2"> is not implemented&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">efz</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epz</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_perp_signal">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_perp_signal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_perp_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">perp_type</span><span class="o">=</span><span class="s2">&quot;optical axis&quot;</span><span class="p">,</span>
+                        <span class="n">stokes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the perpendicular signal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angles : tuple</span>
+<span class="sd">            Tuple containing the angles (theta, phi, beta) in degrees.</span>
+<span class="sd">        perp_type : str, optional</span>
+<span class="sd">            Type of perpendicular polarization, by default &quot;optical axis&quot;.</span>
+<span class="sd">        stokes : bool, optional</span>
+<span class="sd">            Whether to calculate Stokes parameters, by default False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span><span class="n">angle</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span> <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">]</span>
+
+        <span class="c1"># get one polarization direction to project on:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_polarization_vector</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">perp_type</span><span class="p">)</span>
+        <span class="n">epx</span><span class="p">,</span> <span class="n">epy</span><span class="p">,</span> <span class="n">epz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ep</span>
+        <span class="n">e1x</span><span class="p">,</span> <span class="n">e1y</span><span class="p">,</span> <span class="n">e1z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1z</span>
+        <span class="n">e2x</span><span class="p">,</span> <span class="n">e2y</span><span class="p">,</span> <span class="n">e2z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2z</span>
+
+        <span class="c1"># Calculate perp signal or stokes parameters</span>
+        <span class="k">if</span> <span class="n">stokes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_Stokes_vector_for_ep</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Sp</span> <span class="o">=</span> <span class="p">((</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+                  <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
+            <span class="n">Sp</span> <span class="o">=</span> <span class="n">Sp</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sp</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">Np_xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">Sp</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Np_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Np_xyz</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_Stokes_vector_for_ep">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_Stokes_vector_for_ep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_Stokes_vector_for_ep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given amplitudes S1,S2 for arbitrary linear polarization</span>
+<span class="sd">        basis e1,e2, calculate Stokes vectors for detector ep.</span>
+
+<span class="sd">        For given ef (||) and ep (perp):</span>
+<span class="sd">            - P0 = N_xyz = (S_||)**2 + (S_perp)**2</span>
+
+<span class="sd">            - P1 = (S_||)**2 - (S_perp)**2</span>
+<span class="sd">            </span>
+<span class="sd">            - P2 = (S_45)**2 - (S_135)**2     - difference of linear </span>
+<span class="sd">              polarizations in 45 basis.</span>
+<span class="sd">            </span>
+<span class="sd">            - P3 = (S_right)**2 - (S_left)**2 - difference of circular </span>
+<span class="sd">              polarizations.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">e1x</span><span class="p">,</span> <span class="n">e1y</span><span class="p">,</span> <span class="n">e1z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1z</span>
+        <span class="n">e2x</span><span class="p">,</span> <span class="n">e2y</span><span class="p">,</span> <span class="n">e2z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2z</span>
+        <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ef</span>
+        <span class="n">epx</span><span class="p">,</span> <span class="n">epy</span><span class="p">,</span> <span class="n">epz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ep</span>
+
+        <span class="n">Sf</span> <span class="o">=</span> <span class="p">((</span><span class="n">efx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+              <span class="p">(</span><span class="n">efx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">efy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">efz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
+        <span class="n">Sp</span> <span class="o">=</span> <span class="p">((</span><span class="n">epx</span><span class="o">*</span><span class="n">e1x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e1y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e1z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">+</span> 
+              <span class="p">(</span><span class="n">epx</span><span class="o">*</span><span class="n">e2x</span> <span class="o">+</span> <span class="n">epy</span><span class="o">*</span><span class="n">e2y</span> <span class="o">+</span> <span class="n">epz</span><span class="o">*</span><span class="n">e2z</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">)</span>
+
+        <span class="n">P1</span> <span class="o">=</span> <span class="n">Sf</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sf</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">Sp</span><span class="o">.</span><span class="n">real</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Sp</span><span class="o">.</span><span class="n">imag</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">P2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">Sf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Sp</span><span class="p">))</span>
+        <span class="n">P3</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Sf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Sp</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">P1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P3</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">P</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+                                     <span class="k">for</span> <span class="n">P</span> <span class="ow">in</span> <span class="p">(</span><span class="n">P1</span><span class="p">,</span><span class="n">P2</span><span class="p">,</span><span class="n">P3</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_signal_on_sph_grid">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_signal_on_sph_grid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signal_on_sph_grid</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;N_xyz&quot;</span><span class="p">,</span> <span class="n">spherical_grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angular_resolution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">check_total</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">interp_kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms an array with data on Cartesian grid to the array with </span>
+<span class="sd">        data on spherical grid.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : str, optional</span>
+<span class="sd">            Key for the data array, by default &quot;N_xyz&quot;.</span>
+<span class="sd">        spherical_grid : tuple or str, optional</span>
+<span class="sd">            Spherical grid or path to the file containing the spherical grid,</span>
+<span class="sd">            by default None.</span>
+<span class="sd">        angular_resolution : float, optional</span>
+<span class="sd">            Angular resolution, by default None.</span>
+<span class="sd">        check_total : bool, optional</span>
+<span class="sd">            Whether to check the total signal, by default False.</span>
+<span class="sd">        **interp_kwargs : dict</span>
+<span class="sd">            Additional interpolation parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">spherical_grid</span><span class="p">,</span> <span class="n">N_sph</span> <span class="o">=</span> <span class="n">cartesian_to_spherical_array</span><span class="p">(</span>
+            <span class="n">arr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">,</span>
+            <span class="n">spherical_grid</span><span class="o">=</span><span class="n">spherical_grid</span><span class="p">,</span>
+            <span class="n">angular_resolution</span><span class="o">=</span><span class="n">angular_resolution</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">interp_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;xyz&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">sph_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="s2">&quot;sph&quot;</span><span class="p">)</span>
+            <span class="n">total_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sph_key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_sph&#39;</span>
+            <span class="n">total_key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_total&quot;</span>
+        <span class="n">sph_total_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sph_key</span><span class="si">}</span><span class="s2">_total&quot;</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sph_key</span><span class="p">,</span> <span class="n">N_sph</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">check_total</span><span class="p">:</span>
+            <span class="n">N_total</span> <span class="o">=</span> <span class="n">integrate_spherical</span><span class="p">(</span><span class="n">N_sph</span><span class="p">,</span> <span class="n">spherical_grid</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sph_total_key</span><span class="p">,</span> <span class="n">N_total</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_key</span><span class="p">),</span> <span class="n">N_total</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">):</span>
+                <span class="n">warn_message</span> <span class="o">=</span> <span class="n">sph_interp_warn</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">total_key</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_key</span><span class="p">),</span> <span class="n">N_total</span>
+                <span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">spherical_grid</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_photon_spectrum_from_a12">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_photon_spectrum_from_a12">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the photon spectrum from spectral coefficients a1 and a2.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a1 : numpy.ndarray</span>
+<span class="sd">            Spectral coefficient a1.</span>
+<span class="sd">        a2 : numpy.ndarray</span>
+<span class="sd">            Spectral coefficient a2.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Photon spectrum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">hbar</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span>
+        <span class="n">N_xyz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="s2">&quot;prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k&quot;</span>
+        <span class="p">)</span>
+        <span class="n">N_xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">N_xyz</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_background_xyz">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_background_xyz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_background_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_to_cls_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bgr_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the background field spectra on Cartesian grid.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        add_to_cls_dict : bool, optional</span>
+<span class="sd">            Whether to add the background spectra to the class dictionary, </span>
+<span class="sd">            by default True.</span>
+<span class="sd">        bgr_idx : int, optional</span>
+<span class="sd">            Index of the background field, by default None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Background field spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bgr_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bgr_field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">[</span><span class="n">bgr_idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bgr_field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
+        <span class="n">bgr_N_xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="n">bgr_field</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="n">bgr_field</span><span class="o">.</span><span class="n">a2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_to_cls_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_xyz</span> <span class="o">=</span> <span class="n">bgr_N_xyz</span>
+        <span class="k">return</span> <span class="n">bgr_N_xyz</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_background">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_background">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discernibility</span><span class="o">=</span><span class="s2">&quot;angular&quot;</span><span class="p">,</span> <span class="n">bgr_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">interp_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the background field spectra.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        discernibility : str, optional</span>
+<span class="sd">            Type of discernibility, by default &quot;angular&quot;.</span>
+<span class="sd">        bgr_idx : int, optional</span>
+<span class="sd">            Index of the background field, by default None.</span>
+<span class="sd">        **interp_kwargs : dict</span>
+<span class="sd">            Additional interpolation parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Background field spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bgr_N_xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_background_xyz</span><span class="p">(</span><span class="n">add_to_cls_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bgr_idx</span><span class="o">=</span><span class="n">bgr_idx</span><span class="p">)</span>
+
+        <span class="c1"># Interpolate on spherical grid</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">bgr_N_sph</span> <span class="o">=</span> <span class="n">cartesian_to_spherical_array</span><span class="p">(</span>
+            <span class="n">bgr_N_xyz</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">,</span>
+            <span class="n">spherical_grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spherical_grid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">interp_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Integrate over k if needed</span>
+        <span class="k">if</span> <span class="n">discernibility</span> <span class="o">==</span> <span class="s2">&quot;angular&quot;</span><span class="p">:</span>
+            <span class="n">bgr_N_sph</span> <span class="o">=</span> <span class="n">integrate_spherical</span><span class="p">(</span>
+                <span class="n">bgr_N_sph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span><span class="p">,</span> <span class="n">axs_integrate</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">bgr_N_sph</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_discernible_signal">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_discernible_signal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_discernible_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discernibility</span><span class="o">=</span><span class="s2">&quot;angular&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the discernible signal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        discernibility : str, optional</span>
+<span class="sd">            Type of discernibility, by default &quot;angular&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate numerical background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_background</span><span class="p">(</span><span class="n">discernibility</span><span class="o">=</span><span class="n">discernibility</span><span class="p">)</span>
+
+        <span class="c1"># Integrate signal spectrum if required and determine discernible regions</span>
+        <span class="k">if</span> <span class="n">discernibility</span> <span class="o">==</span> <span class="s2">&quot;angular&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_angular</span> <span class="o">=</span> <span class="n">integrate_spherical</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">N_sph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span><span class="p">,</span> <span class="n">axs_integrate</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discernible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_angular</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discernible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_sph</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span>
+
+        <span class="c1"># Integrate over discernible regions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_disc</span> <span class="o">=</span> <span class="n">integrate_spherical</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N_sph</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">discernible</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_signal_a12">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_signal_a12">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signal_a12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_signal_bg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the spectral coefficients a1 and a2 from signal amplitudes S1 and S2.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        add_signal_bg : bool, optional</span>
+<span class="sd">            Whether to add the background signal, by default False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a1_sig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2_sig</span> <span class="o">=</span> <span class="n">transform_S12_to_a12</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_signal_bg</span><span class="p">:</span>
+            <span class="n">bgr_field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
+            <span class="n">a1_bgr</span><span class="p">,</span> <span class="n">a2_bgr</span> <span class="o">=</span> <span class="n">bgr_field</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="n">bgr_field</span><span class="o">.</span><span class="n">a2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1_mix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2_mix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1_sig</span> <span class="o">+</span> <span class="n">a1_bgr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2_sig</span> <span class="o">+</span> <span class="n">a2_bgr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a1_mix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2_mix</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> 
+                                        <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a1_mix</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a2_mix</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a1_sig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2_sig</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> 
+                                    <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a1_sig</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a2_sig</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.write_data">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.write_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the data to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        keys : list of str</span>
+<span class="sd">            List of keys for the data to be written.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_total_spectra">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_total_spectra">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_spectra</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">calculate_xyz_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">bgr_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">calculate_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">spherical_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">calculate_discernible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">discernibility</span><span class="o">=</span><span class="s2">&quot;angular&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the total spectra.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        calculate_xyz_background : bool, optional</span>
+<span class="sd">            Whether to calculate the background spectra on Cartesian grid, </span>
+<span class="sd">            by default False.</span>
+<span class="sd">        bgr_idx : int, optional</span>
+<span class="sd">            Index of the background field, by default None.</span>
+<span class="sd">        calculate_spherical : bool, optional</span>
+<span class="sd">            Whether to calculate the spectra on spherical grid,</span>
+<span class="sd">            by default False.</span>
+<span class="sd">        spherical_params : dict, optional</span>
+<span class="sd">            Parameters for the spherical grid, by default None.</span>
+<span class="sd">        calculate_discernible : bool, optional</span>
+<span class="sd">            Whether to calculate the discernible signal, by default False.</span>
+<span class="sd">        discernibility : str, optional</span>
+<span class="sd">            Type of discernibility, by default &quot;angular&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_total_signal</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;kx ky kz N_xyz N_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">calculate_spherical</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_on_sph_grid</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;N_xyz&quot;</span><span class="p">,</span> <span class="n">check_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                                        <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;k theta phi N_sph N_sph_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">calculate_xyz_background</span><span class="p">:</span>
+            <span class="c1"># self.get_background_xyz()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_background</span><span class="p">(</span><span class="n">discernibility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bgr_idx</span><span class="o">=</span><span class="n">bgr_idx</span><span class="p">)</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;background_xyz background&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">calculate_discernible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_discernible_signal</span><span class="p">(</span><span class="n">discernibility</span><span class="p">)</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;background discernible N_disc&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_data</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_polarization_spectra">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_polarization_spectra">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_polarization_spectra</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">perp_field_idx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">perp_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">calculate_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">spherical_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stokes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the polarization spectra.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        perp_field_idx : int, optional</span>
+<span class="sd">            Index of the perpendicular field, by default 1.</span>
+<span class="sd">        perp_type : str, optional</span>
+<span class="sd">            Type of perpendicular polarization, by default None.</span>
+<span class="sd">        calculate_spherical : bool, optional</span>
+<span class="sd">            Whether to calculate the spectra on spherical grid,</span>
+<span class="sd">            by default False.</span>
+<span class="sd">        spherical_params : dict, optional</span>
+<span class="sd">            Parameters for the spherical grid, by default None.</span>
+<span class="sd">        stokes : bool, optional</span>
+<span class="sd">            Whether to calculate Stokes parameters, by default False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perp_field_idx</span> <span class="o">=</span> <span class="n">perp_field_idx</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">angle_keys</span> <span class="o">=</span> <span class="s2">&quot;theta phi beta&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">perp_field_idx</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">angle_keys</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_perp_signal</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">perp_type</span><span class="o">=</span><span class="n">perp_type</span><span class="p">,</span> <span class="n">stokes</span><span class="o">=</span><span class="n">stokes</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;kx ky kz epx epy epz efx efy efz&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stokes</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;Np_xyz Np_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">calculate_spherical</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_on_sph_grid</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;Np_xyz&quot;</span><span class="p">,</span> <span class="n">check_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;k theta phi Np_sph Np_sph_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stokes_keys</span> <span class="o">=</span> <span class="s2">&quot;P1 P2 P3&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">stokes_keys</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">calculate_spherical</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;k theta phi&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                <span class="k">for</span> <span class="n">stokes_key</span> <span class="ow">in</span> <span class="n">stokes_keys</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_on_sph_grid</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">stokes_key</span><span class="p">,</span> <span class="n">check_total</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stokes_key</span><span class="si">}</span><span class="s2">_sph&quot;</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_data</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_mix_signal_bg">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_mix_signal_bg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mix_signal_bg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_signal_bg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the mixed signal and background.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        add_signal_bg : bool, optional</span>
+<span class="sd">            Whether to add the background signal, by default False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_signal_a12</span><span class="p">(</span><span class="n">add_signal_bg</span><span class="p">)</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;a1_sig a2_sig&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">add_signal_bg</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;a1_mix a2_mix&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_data</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_spectra">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_spectra">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_spectra</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;total&quot;</span><span class="p">,</span>
+        <span class="n">perp_field_idx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">perp_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">calculate_xyz_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">bgr_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stokes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">calculate_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">spherical_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">calculate_discernible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">discernibility</span><span class="o">=</span><span class="s2">&quot;angular&quot;</span><span class="p">,</span>
+        <span class="n">add_signal_bg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the spectra based on the specified mode.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode : str, optional</span>
+<span class="sd">            Mode of the calculation, by default &quot;total&quot;.</span>
+<span class="sd">        perp_field_idx : int, optional</span>
+<span class="sd">            Index of the perpendicular field, by default 1.</span>
+<span class="sd">        perp_type : str, optional</span>
+<span class="sd">            Type of perpendicular polarization, by default None.</span>
+<span class="sd">        calculate_xyz_background : bool, optional</span>
+<span class="sd">            Whether to calculate the background spectra on Cartesian grid,</span>
+<span class="sd">            by default False.</span>
+<span class="sd">        bgr_idx : int, optional</span>
+<span class="sd">            Index of the background field, by default None.</span>
+<span class="sd">        stokes : bool, optional</span>
+<span class="sd">            Whether to calculate Stokes parameters, by default False.</span>
+<span class="sd">        calculate_spherical : bool, optional</span>
+<span class="sd">            Whether to calculate the spectra on spherical grid,</span>
+<span class="sd">            by default False.</span>
+<span class="sd">        spherical_params : dict, optional</span>
+<span class="sd">            Parameters for the spherical grid, by default None.</span>
+<span class="sd">        calculate_discernible : bool, optional</span>
+<span class="sd">            Whether to calculate the discernible signal, by default False.</span>
+<span class="sd">        discernibility : str, optional</span>
+<span class="sd">            Type of discernibility, by default &quot;angular&quot;.</span>
+<span class="sd">        add_signal_bg : bool, optional</span>
+<span class="sd">            Whether to add the background signal, by default False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_total_spectra</span><span class="p">(</span>
+                <span class="n">calculate_xyz_background</span><span class="o">=</span><span class="n">calculate_xyz_background</span><span class="p">,</span>
+                <span class="n">bgr_idx</span><span class="o">=</span><span class="n">bgr_idx</span><span class="p">,</span>
+                <span class="n">calculate_spherical</span><span class="o">=</span><span class="n">calculate_spherical</span><span class="p">,</span>
+                <span class="n">spherical_params</span><span class="o">=</span><span class="n">spherical_params</span><span class="p">,</span>
+                <span class="n">calculate_discernible</span><span class="o">=</span><span class="n">calculate_discernible</span><span class="p">,</span>
+                <span class="n">discernibility</span><span class="o">=</span><span class="n">discernibility</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;polarization&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_polarization_spectra</span><span class="p">(</span>
+                <span class="n">perp_field_idx</span><span class="o">=</span><span class="n">perp_field_idx</span><span class="p">,</span>
+                <span class="n">perp_type</span><span class="o">=</span><span class="n">perp_type</span><span class="p">,</span>
+                <span class="n">calculate_spherical</span><span class="o">=</span><span class="n">calculate_spherical</span><span class="p">,</span>
+                <span class="n">spherical_params</span><span class="o">=</span><span class="n">spherical_params</span><span class="p">,</span>
+                <span class="n">stokes</span><span class="o">=</span><span class="n">stokes</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;mix_signal_bg&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_mix_signal_bg</span><span class="p">(</span><span class="n">add_signal_bg</span><span class="o">=</span><span class="n">add_signal_bg</span><span class="p">)</span></div>
+</div>
+
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, maxbalrog
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

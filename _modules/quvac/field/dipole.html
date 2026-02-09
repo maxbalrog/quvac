@@ -1,0 +1,586 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>quvac.field.dipole - quvac 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">quvac 0.1.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../input_file.html">Create input file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../implementation.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../for_developers.html">For developers</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../autoapi/quvac/index.html">quvac</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of quvac</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/analytic_scalings/index.html">quvac.analytic_scalings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/config/index.html">quvac.config</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quvac/field/index.html">quvac.field</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of quvac.field</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/abc/index.html">quvac.field.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/dipole/index.html">quvac.field.dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/external_field/index.html">quvac.field.external_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/gaussian/index.html">quvac.field.gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/laguerre_gaussian/index.html">quvac.field.laguerre_gaussian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/maxwell/index.html">quvac.field.maxwell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/model/index.html">quvac.field.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/planewave/index.html">quvac.field.planewave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/field/utils/index.html">quvac.field.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/grid/index.html">quvac.grid</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quvac/integrator/index.html">quvac.integrator</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of quvac.integrator</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/integrator/abc/index.html">quvac.integrator.abc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quvac/integrator/vacuum_emission/index.html">quvac.integrator.vacuum_emission</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/log/index.html">quvac.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/utils/index.html">quvac.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for quvac.field.dipole</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analytic expression for dipole wave and function to create multibeam</span>
+<span class="sd">configuration by compining several focused fields.</span>
+
+<span class="sd">----</span>
+
+<span class="sd">.. [1] I. Gonoskov et al. &quot;Dipole pulse theory: Maximizing the field</span>
+<span class="sd">    amplitude from 4 π focused laser pulses.&quot; PRA 86.5 (2012): 053836.</span>
+
+<span class="sd">.. [2] S. S. Bulanov et al. &quot;Multiple Colliding Electromagnetic Pulses: </span>
+<span class="sd">    A Way to Lower the Threshold of e+ e-Pair Production from Vacuum.&quot; </span>
+<span class="sd">    PRL 104.22 (2010): 220404.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># ruff: noqa: F841</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">c</span><span class="p">,</span> <span class="n">pi</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExplicitField</span>
+
+
+<div class="viewcode-block" id="DipoleAnalytic">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DipoleAnalytic</span><span class="p">(</span><span class="n">ExplicitField</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analytic expression for dipole wave.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    field_params : dict</span>
+<span class="sd">        Dictionary containing the field parameters.</span>
+<span class="sd">            - focus_x : tuple of float</span>
+<span class="sd">                Location of spatial focus (x, y, z).</span>
+<span class="sd">            - focus_t : float</span>
+<span class="sd">                Location of temporal focus.</span>
+<span class="sd">            - theta : float</span>
+<span class="sd">                Spherical angle of dipole moment d0 with z-axis (in degrees).</span>
+<span class="sd">            - phi : float</span>
+<span class="sd">                Spherical angle of dipole moment d0 with x-axis (in degrees).</span>
+<span class="sd">            - lam : float</span>
+<span class="sd">                Pulse wavelength.</span>
+<span class="sd">            - tau : float</span>
+<span class="sd">                Duration.</span>
+<span class="sd">            - phase0 : float</span>
+<span class="sd">                Phase delay at focus.</span>
+<span class="sd">            - W : float, optional</span>
+<span class="sd">                Energy.</span>
+<span class="sd">            - envelope : str</span>
+<span class="sd">                Envelope type, either &quot;plane&quot; or &quot;gauss&quot;.</span>
+<span class="sd">            - dipole_type : str</span>
+<span class="sd">                Type of dipole, either &quot;electric&quot; or &quot;magnetic&quot;.</span>
+<span class="sd">    grid : quvac.grid.GridXYZ</span>
+<span class="sd">        Spatial and spectral grid.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Dipole wave expression is from [1]_.</span>
+
+<span class="sd">    d0 is along ez by default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;envelope&quot;</span><span class="p">,</span> <span class="s2">&quot;plane&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dipole_type&quot;</span><span class="p">,</span> <span class="s2">&quot;electric&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;phase0&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Define additional field variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d0</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="c1"># Rotate coordinate grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_coordinates</span><span class="p">()</span>
+
+        <span class="c1"># Define variables independent of time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_expr</span> <span class="o">=</span> <span class="s1">&#39;sqrt(x**2 + y**2 + z**2)&#39;</span> <span class="c1"># radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span>  <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="n">R_inv_expr</span> <span class="o">=</span> <span class="s2">&quot;where(R==0, 0, 1/R)&quot;</span>
+        <span class="n">R_inv</span> <span class="o">=</span>  <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">R_inv_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">*</span><span class="n">R_inv</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                        <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
+                        <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                        <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span>
+                        <span class="s2">&quot;phase0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span><span class="p">,</span>
+                        <span class="s2">&quot;d0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">d0</span><span class="p">,</span>
+                        <span class="s2">&quot;nx&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
+                        <span class="s2">&quot;ny&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
+                        <span class="s2">&quot;nz&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_envelope_expressions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_energy</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DipoleAnalytic.set_envelope_expressions">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.set_envelope_expressions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_envelope_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines envelope expressions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">&quot;plane&quot;</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="s2">&quot;1j*exp(-1j*omega*t - 1j*phase0)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g_expr</span> <span class="o">=</span> <span class="n">env</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-1j*omega*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-omega**2*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="s2">&quot;omega**3&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">&quot;gauss&quot;</span><span class="p">:</span>
+            <span class="n">a2</span> <span class="o">=</span> <span class="s2">&quot;(1/(tau/2)**2)&quot;</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-1j*exp(-t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2"> - 1j*omega*t - 1j*phase0)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g_expr</span> <span class="o">=</span> <span class="n">env</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - 1j*omega)&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">**2 - 2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - omega**2 + &#39;</span>
+                                 <span class="sa">f</span><span class="s1">&#39;4j*t*omega*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">*(4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - 3*omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">)&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot; - 1j*omega*(12*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">))&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Envelope </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="si">}</span><span class="s2"> not implemented&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DipoleAnalytic.check_energy">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.check_energy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks and adjusts the energy of the field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_energy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modify_energy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d0</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_correction</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gdot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gdotdot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_g_plusminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">sign</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gdot_plusminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdot</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">sign</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_gdot</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gdotdot_plusminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">sign</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">/</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fix_singularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="c1"># fix divergence at R=0</span>
+        <span class="n">Nx</span><span class="p">,</span><span class="n">Ny</span><span class="p">,</span><span class="n">Nz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span><span class="p">[</span><span class="n">Nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Ny</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Nz</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span><span class="p">[</span><span class="n">Nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Ny</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Nz</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span><span class="p">[</span><span class="n">Nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Ny</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Nz</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">c</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span><span class="p">,</span>
+                                                            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">[</span><span class="n">Nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Ny</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Nz</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">By</span><span class="p">[</span><span class="n">Nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Ny</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span><span class="n">Nz</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    
+<div class="viewcode-block" id="DipoleAnalytic.calculate_field">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.calculate_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;real&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gdotdot_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">gdotdot_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">gdot_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">gdot_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">g_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">Bt</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;gdotdot_p/(R*c**2) + gdot_m/(R**2*c)&quot;</span><span class="p">,</span> 
+                         <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="n">Et</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;gdot_p/(c*R**2) + g_m/R**3&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et&#39;</span><span class="p">,</span>
+                              <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et&#39;</span><span class="p">,</span> 
+                              <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;-(nx**2+ny**2)*gdotdot_m/(R*c**2) + (3*nz**2-1)*Et&#39;</span><span class="p">,</span>
+                               <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;-ny*Bt&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;nx*Bt&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="mf">0.</span>
+        
+        <span class="c1"># fix divergence at R=0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fix_singularity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="c1"># h-dipole (magnetic) transformation</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">==</span> <span class="s2">&quot;magnetic&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">By</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">Bz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span>
+
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="s2">&quot;Ex Ey Ez Bx By Bz&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d0</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">convert_fields_to_real</span><span class="p">()</span>
+
+        <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_fields_back</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_multibeam">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.create_multibeam">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_multibeam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">n_beams</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;belt&#39;</span><span class="p">,</span> <span class="n">phi0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx0</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create multibeam configuration from several focused pulses to </span>
+<span class="sd">    approximate the dipole wave and achieve higher intensity </span>
+<span class="sd">    at focus.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        Dictionary containing the field parameters.</span>
+<span class="sd">    n_beams : int, optional</span>
+<span class="sd">        Number of beams, by default 6.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        Configuration mode, either &#39;belt&#39; or &#39;sphere&#39;, by default &#39;belt&#39;.</span>
+<span class="sd">    phi0 : float, optional</span>
+<span class="sd">        Initial angle for the beams, by default 0.</span>
+<span class="sd">    idx0 : int, optional</span>
+<span class="sd">        Offset index for `beams` dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    beams : dict</span>
+<span class="sd">        Dictionary containing the parameters for each beam.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Configuration follows from [2]_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># distribute the energy</span>
+    <span class="n">W_per_beam</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;W&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_beams</span>
+    <span class="n">beams</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sphere&quot;</span><span class="p">:</span>
+        <span class="n">n_beams</span> <span class="o">=</span> <span class="n">n_beams</span> <span class="o">//</span> <span class="mi">3</span>
+        <span class="n">theta_arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">]</span>
+    <span class="n">phi_c</span> <span class="o">=</span> <span class="mi">360</span><span class="o">/</span><span class="n">n_beams</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams</span><span class="p">):</span>
+        <span class="n">params_beam</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;W&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_per_beam</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">phi_c</span> <span class="o">+</span> <span class="n">phi0</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+        <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;belt&quot;</span><span class="p">:</span>
+                <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;field_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_beam</span>
+            <span class="k">case</span> <span class="s2">&quot;sphere&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">theta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">theta_arr</span><span class="p">):</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="n">j</span>
+                    <span class="n">params_phi</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params_beam</span><span class="p">)</span>
+                    <span class="n">params_phi</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">theta</span>
+                    <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;field_</span><span class="si">{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_phi</span>
+    <span class="k">return</span> <span class="n">beams</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, maxbalrog
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+quvac.log
+=========
+
+.. py:module:: quvac.log
+
+.. autoapi-nested-parse::
+
+   Usefult functions and default strings for logs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.log.get_grid_params
+   quvac.log.get_postprocess_info
+   quvac.log.get_performance_stats
+   quvac.log.get_postprocess_stats
+   quvac.log.get_parallel_performance_stats
+   quvac.log.get_test_timings
+
+
+Module Contents
+---------------
+
+.. py:function:: get_grid_params(grid_xyz, grid_t)
+
+   Get formatted grid parameters for logging.
+
+   :param grid_xyz: The spatial grid object.
+   :type grid_xyz: quvac.grid.GridXYZ
+   :param grid_t: The temporal grid array.
+   :type grid_t: numpy.ndarray
+
+   :returns: **grid_print** -- Formatted string with grid parameters.
+   :rtype: str
+
+
+.. py:function:: get_postprocess_info(postprocess_params)
+
+   Get formatted postprocess parameters for logging.
+
+   :param postprocess_params: Dictionary containing postprocess parameters.
+   :type postprocess_params: dict
+
+   :returns: **postprocess_print** -- Formatted string with postprocess parameters.
+   :rtype: str
+
+
+.. py:function:: get_performance_stats(perf_stats)
+
+   Get formatted performance statistics for logging.
+
+   :param perf_stats: Dictionary containing performance statistics.
+   :type perf_stats: dict
+
+   :returns: **perf_print** -- Formatted string with performance statistics.
+   :rtype: str
+
+
+.. py:function:: get_postprocess_stats(perf_stats)
+
+   Get formatted postprocess performance statistics for logging.
+
+   :param perf_stats: Dictionary containing postprocess performance statistics.
+   :type perf_stats: dict
+
+   :returns: **perf_print** -- Formatted string with postprocess performance statistics.
+   :rtype: str
+
+
+.. py:function:: get_parallel_performance_stats(perf_stats)
+
+   Get formatted parallel performance statistics for logging.
+
+   :param perf_stats: Dictionary containing parallel performance statistics.
+   :type perf_stats: dict
+
+   :returns: **perf_print** -- Formatted string with parallel performance statistics.
+   :rtype: str
+
+
+.. py:function:: get_test_timings(timings, Nt, expected_timesteps)
+
+   Get formatted test run timings for logging.
+
+   :param timings: Dictionary containing timing information.
+   :type timings: dict
+   :param Nt: Number of iterations.
+   :type Nt: int
+   :param expected_timesteps: Expected number of timesteps.
+   :type expected_timesteps: int
+
+   :returns: **test_run_str_print** -- Formatted string with test run timings.
+   :rtype: str
+
+

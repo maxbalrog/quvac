@@ -1,0 +1,144 @@
+quvac.field.external_field
+==========================
+
+.. py:module:: quvac.field.external_field
+
+.. autoapi-nested-parse::
+
+   Common interfaces for external field and pump-probe fields to unify
+   various field types.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.external_field.ExternalField
+   quvac.field.external_field.ProbePumpField
+
+
+Module Contents
+---------------
+
+.. py:class:: ExternalField(fields_params, grid, nthreads=None)
+
+   Bases: :py:obj:`quvac.field.abc.Field`
+
+
+   Class to unite several participating external fields under one interface.
+
+   :param fields_params: List of dictionaries containing the parameters for each external field.
+   :type fields_params: list of dict
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
+                    number of CPU cores.
+   :type nthreads: int, optional
+
+   .. attribute:: fields
+
+      List of field objects.
+
+      :type: list
+
+   .. attribute:: grid_xyz
+
+      The spatial grid.
+
+      :type: tuple of np.array
+
+   .. attribute:: nthreads
+
+      Number of threads to use for calculations.
+
+      :type: int
+
+
+   .. py:method:: setup_field(field_params)
+
+      Set up a field based on the provided parameters.
+
+      :param field_params: Dictionary or list of dictionaries containing the parameters for the field.
+      :type field_params: dict or list of dict
+
+      :raises NotImplementedError: If the field type is not supported.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None)
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+
+.. py:class:: ProbePumpField(fields_params, grid, probe_pump_idx=None, nthreads=None)
+
+   Bases: :py:obj:`quvac.field.abc.Field`
+
+
+   Class for splitting fields into probe and pump.
+
+   :param fields_params: List of dictionaries containing the parameters for each external field.
+   :type fields_params: list of dict
+   :param grid: Spatial and spectral grid.
+   :type grid: quvac.grid.GridXYZ
+   :param probe_pump_idx:
+                          Dictionary specifying which fields are probe and pump. Required keys are:
+                              - 'probe' : list of int
+                                  Indices of the fields to be used as probe.
+                              - 'pump' : list of int
+                                  Indices of the fields to be used as pump.
+
+                          If not provided, defaults to {"probe": [0], "pump": [1]}.
+   :type probe_pump_idx: dict, optional
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
+                    number of CPU cores.
+   :type nthreads: int, optional
+
+   .. attribute:: probe_pump_idx
+
+      Dictionary specifying which fields are probe and pump.
+
+      :type: dict
+
+   .. attribute:: nthreads
+
+      Number of threads to use for calculations.
+
+      :type: int
+
+   .. attribute:: probe_field
+
+      ExternalField object for the probe fields.
+
+      :type: ExternalField
+
+   .. attribute:: pump_field
+
+      ExternalField object for the pump fields.
+
+      :type: ExternalField
+
+
+   .. py:method:: calculate_field(t, E_probe=None, B_probe=None, E_pump=None, B_pump=None)
+
+      Calculate the probe and pump fields at a given time t.
+
+      :param t: The time at which to calculate the fields.
+      :type t: float
+      :param E_probe: Array to store the electric field output for the probe.
+      :type E_probe: np.array, optional
+      :param B_probe: Array to store the magnetic field output for the probe.
+      :type B_probe: np.array, optional
+      :param E_pump: Array to store the electric field output for the pump.
+      :type E_pump: np.array, optional
+      :param B_pump: Array to store the magnetic field output for the pump.
+      :type B_pump: np.array, optional
+
+      :returns: The calculated electric and magnetic fields for the probe and pump.
+      :rtype: tuple of tuple of np.array
+
+
+

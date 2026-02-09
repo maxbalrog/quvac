@@ -1,0 +1,167 @@
+quvac.field.gaussian
+====================
+
+.. py:module:: quvac.field.gaussian
+
+.. autoapi-nested-parse::
+
+   Analytic expression for paraxial gaussian (0-order and higher-orders).
+
+   ----
+
+   .. [1] Y. I. Salamin. "Fields of a Gaussian beam beyond the paraxial
+       approximation." Applied Physics B 86 (2007): 319-326.
+   .. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities in
+       generic laser fields." PRD 99.1 (2019): 016006 `(article) <https://arxiv.org/abs/1811.08895>`_.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.gaussian.GaussianAnalytic
+   quvac.field.gaussian.GaussianSpectral
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianAnalytic(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.ExplicitField`
+
+
+   Analytic expression for paraxial Gaussian beam.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'focus_x' : tuple of float
+                                Location of spatial focus (x, y, z).
+                            - 'focus_t' : float
+                                Location of temporal focus.
+                            - 'theta' : float
+                                Polar angle of k-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of k-vector (in degrees).
+                            - 'beta' : float
+                                Polarization angle (in degrees).
+                            - 'lam' : float
+                                Wavelength of the pulse.
+                            - 'w0' : float
+                                Waist size.
+                            - 'tau' : float
+                                Duration.
+                            - 'phase0' : float
+                                Phase delay at focus.
+                            - 'E0' : float, optional
+                                Amplitude (either E0 or W is required).
+                            - 'W' : float, optional
+                                Energy (either E0 or W is required).
+                            - 'alpha_chirp' : float, optional
+                                Linear chirp in time domain.
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. rubric:: Notes
+
+   All field parameters are in SI units.
+
+   Higher-order paraxial Gaussian orders are from [1]_.
+
+   For circular polarization we abide by the following convention:
+       - `right-circular` corresponds to (ex + i*ey)
+       - `left-circular` to (ex - i*ey)
+
+   Difference in field amplitudes for linear and circular polarization should
+   be automatically taken care of by energy correction.
+
+
+   .. py:method:: define_ho_variables()
+
+      Define higher order variables.
+
+
+
+   .. py:method:: calculate_ho_orders()
+
+      Calculate higher order terms for the fields.
+
+
+
+   .. py:method:: check_energy()
+
+      Check and adjust the field energy.
+
+
+
+   .. py:method:: figure_out_field_components(Et)
+
+
+   .. py:method:: get_plane_wave_phase(t)
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, mode='real')
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+
+.. py:class:: GaussianSpectral(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.SpectralField`
+
+
+   Analytic expression for paraxial Gaussian beam.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'focus_x' : tuple of float
+                                Location of spatial focus (x, y, z).
+                            - 'focus_t' : float
+                                Location of temporal focus.
+                            - 'theta' : float
+                                Polar angle of k-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of k-vector (in degrees).
+                            - 'beta' : float
+                                Polarization angle (in degrees).
+                            - 'lam' : float
+                                Wavelength of the pulse.
+                            - 'w0' : float
+                                Waist size.
+                            - 'tau' : float
+                                Duration.
+                            - 'phase0' : float
+                                Phase delay at focus.
+                            - 'E0' : float, optional
+                                Amplitude (either E0 or W is required).
+                            - 'W' : float, optional
+                                Energy (either E0 or W is required).
+                            - 'alpha_chirp' : float, optional
+                                Linear chirp in frequency domain.
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. rubric:: Notes
+
+   All field parameters are in SI units.
+
+   The expression for the spectrum is taken from [2]_ (Eq. 24). We write it here
+   assuming the central k-vector is along kz.
+
+
+   .. py:method:: define_vector_potential_expression()
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, mode='real')
+      :abstractmethod:
+
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+

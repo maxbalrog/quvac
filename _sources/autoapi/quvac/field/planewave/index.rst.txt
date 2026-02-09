@@ -1,0 +1,70 @@
+quvac.field.planewave
+=====================
+
+.. py:module:: quvac.field.planewave
+
+.. autoapi-nested-parse::
+
+   Analytic expression for plane wave.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.field.planewave.PlaneWave
+
+
+Module Contents
+---------------
+
+.. py:class:: PlaneWave(field_params, grid)
+
+   Bases: :py:obj:`quvac.field.abc.ExplicitField`
+
+
+   Analytic expression for paraxial Gaussian beam.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'theta' : float
+                                Polar angle of k-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of k-vector (in degrees).
+                            - 'beta' : float
+                                Polarization angle (in degrees).
+                            - 'lam' : float
+                                Wavelength of the pulse.
+                            - 'tau' : float
+                                Duration.
+                            - 'phase0' : float
+                                Phase delay at focus.
+                            - 'E0' : float, optional
+                                Amplitude (either E0 or W is required).
+                            - 'W' : float, optional
+                                Energy (either E0 or W is required).
+                            - 'l': int, optional
+                                Azimuthal index of the Laguerre-Gaussian mode.
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+   .. rubric:: Notes
+
+   It is possible to add OAM term to plane-wave: exp(-i*l*phi)
+
+
+   .. py:method:: check_energy()
+
+      Check and adjust the field energy.
+
+
+
+   .. py:method:: calculate_field(t, E_out=None, B_out=None, mode='real')
+
+      Calculates the electric and magnetic fields at a given time step.
+
+
+
