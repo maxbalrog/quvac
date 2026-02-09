@@ -180,7 +180,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -275,7 +275,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -290,8 +290,10 @@
 <p>After cloning the git repository and entering it, choose relevant optional dependencies</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">[test]</span></code> allows to run tests</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[plot]</span></code> installs <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[plot]</span></code> installs <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> and <code class="docutils literal notranslate"><span class="pre">jupyterlab</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[docs]</span></code> installs <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> and everything necessary for documentation generation</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">[optimization]</span></code> installs Bayesian optimization package</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[light]</span></code> is a shorthand for <code class="docutils literal notranslate"><span class="pre">[test,plot,docs]</span></code></p></li>
 </ul>
 <p>To install all dependencies, run</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>all<span class="o">]</span>
@@ -304,7 +306,7 @@
 </pre></div>
 </div>
 </div>
-<p>After successfull installation with <code class="docutils literal notranslate"><span class="pre">[all]</span></code> or <code class="docutils literal notranslate"><span class="pre">[test]</span></code> option, run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to make sure the installation was
+<p>After successfull installation with <code class="docutils literal notranslate"><span class="pre">[all]</span></code>, <code class="docutils literal notranslate"><span class="pre">[light]</span></code> or <code class="docutils literal notranslate"><span class="pre">[test]</span></code> options, run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to make sure the installation was
 successfull (it takes some time).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
 </pre></div>
@@ -315,6 +317,27 @@ successfull (it takes some time).</p>
 <p>For minimal physics benchmarking run <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">-m</span> <span class="pre">'not</span> <span class="pre">slow'</span> <span class="pre">-m</span> <span class="pre">'benchmark'</span></code> (files <code class="docutils literal notranslate"><span class="pre">tests/bench_*.py</span></code>).</p>
 <p>Benchmarks have a couple of time-demanding tests, they could be launched with <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">-m</span> <span class="pre">'slow'</span> <span class="pre">-m</span> <span class="pre">'benchmark'</span></code>.</p>
 </div>
+<section id="using-uv">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">uv</span></code><a class="headerlink" href="#using-uv" title="Link to this heading">¶</a></h2>
+<p>If you prefer using <code class="docutils literal notranslate"><span class="pre">uv</span></code> package manager then the installation follows similar steps. After cloning the git repository and entering
+it, create the environment and install <code class="docutils literal notranslate"><span class="pre">quvac</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>venv
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>light<span class="o">]</span>
+</pre></div>
+</div>
+<p>You can test the installation with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>pytest
+</pre></div>
+</div>
+<p>Launch the jupyterlab (e.g. tutorial notebooks) with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>jupyter<span class="w"> </span>lab
+</pre></div>
+</div>
+<p>Generate the documentation with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>sphinx<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs/source<span class="w"> </span>docs/build/html
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -360,8 +383,27 @@ successfull (it takes some time).</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#using-uv">Using <code class="docutils literal notranslate"><span class="pre">uv</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
