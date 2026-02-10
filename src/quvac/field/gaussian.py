@@ -335,7 +335,7 @@ class GaussianEllipticAnalytic(GaussianAnalytic):
         self.focusing = f"exp(-(xrot/{self.wx})**2 - (yrot/{self.wy})**2)"
         self.E_expr = f"B0 * {self.w_prefactor} * {self.focusing}"
         self.phaseg = "(arctan(z/zRx) + arctan(z/zRy))/2"
-        self.phase_curved = f"k/2.*(x_rot**2*{self.Rx_inv} + y_rot**2*{self.Ry_inv})"
+        self.phase_curved = f"k/2.*(xrot**2*{self.Rx_inv} + yrot**2*{self.Ry_inv})"
         self.phase_no_t = ne.evaluate(
             f"phase0 - {self.phase_curved} + {self.phaseg}",
             global_dict=self.__dict__,
