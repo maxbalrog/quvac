@@ -556,7 +556,110 @@
         <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
 </div>
 
-    
+
+
+<div class="viewcode-block" id="GaussianEllipticAnalytic">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianEllipticAnalytic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianEllipticAnalytic</span><span class="p">(</span><span class="n">GaussianAnalytic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analytic expression for paraxial elliptical Gaussian beam.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    field_params : dict</span>
+<span class="sd">        Dictionary containing the field parameters. Required keys are:</span>
+<span class="sd">            - &#39;focus_x&#39; : tuple of float</span>
+<span class="sd">                Location of spatial focus (x, y, z).</span>
+<span class="sd">            - &#39;focus_t&#39; : float</span>
+<span class="sd">                Location of temporal focus.</span>
+<span class="sd">            - &#39;theta&#39; : float</span>
+<span class="sd">                Polar angle of k-vector (in degrees).</span>
+<span class="sd">            - &#39;phi&#39; : float</span>
+<span class="sd">                Azimuthal angle of k-vector (in degrees).</span>
+<span class="sd">            - &#39;beta&#39; : float</span>
+<span class="sd">                Polarization angle (in degrees).</span>
+<span class="sd">            - &#39;lam&#39; : float</span>
+<span class="sd">                Wavelength of the pulse.</span>
+<span class="sd">            - &#39;w0x&#39;, &#39;w0y&#39; : float</span>
+<span class="sd">                Waist sizes in x and y directions.</span>
+<span class="sd">            - &#39;ellipse_rotation_angle&#39; : float, optional</span>
+<span class="sd">                Ellipse rotation angle (in degrees).</span>
+<span class="sd">            - &#39;tau&#39; : float</span>
+<span class="sd">                Duration.</span>
+<span class="sd">            - &#39;phase0&#39; : float</span>
+<span class="sd">                Phase delay at focus.</span>
+<span class="sd">            - &#39;E0&#39; : float, optional</span>
+<span class="sd">                Amplitude (either E0 or W is required).</span>
+<span class="sd">            - &#39;W&#39; : float, optional</span>
+<span class="sd">                Energy (either E0 or W is required).</span>
+<span class="sd">            - &#39;alpha_chirp&#39; : float, optional</span>
+<span class="sd">                Linear chirp in time domain.</span>
+
+<span class="sd">    grid : quvac.grid.GridXYZ</span>
+<span class="sd">        Spatial and grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+        <span class="n">ExplicitField</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polarization</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;polarization&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;E0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Field params need to have either W (energy) or&quot;</span>
+                       <span class="s2">&quot;E0 (amplitude) as key&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">err_msg</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E0</span> <span class="o">=</span> <span class="mf">1.0e10</span>
+
+        <span class="c1"># Define additional field variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">E0</span> <span class="o">/</span> <span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zRx</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w0x</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zRy</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w0y</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span>
+
+        <span class="c1"># Rotate coordinate grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_coordinates</span><span class="p">()</span>
+
+        <span class="c1"># Account for possible ellipse rotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">account_for_ellipse_rotation</span><span class="p">()</span>
+
+        <span class="c1"># Define variables not depending on time step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wx</span> <span class="o">=</span> <span class="s2">&quot;(w0x * sqrt(1. + (z/zRx)**2))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wy</span> <span class="o">=</span> <span class="s2">&quot;(w0y * sqrt(1. + (z/zRy)**2))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rx_inv</span> <span class="o">=</span> <span class="s2">&quot;z/(z**2 + zRx**2)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ry_inv</span> <span class="o">=</span> <span class="s2">&quot;z/(z**2 + zRy**2)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_prefactor</span> <span class="o">=</span> <span class="s2">&quot;sqrt(zRx*zRy / (sqrt(z**2 + zRx**2) * sqrt(z**2 + zRy**2)))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">focusing</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;exp(-(xrot/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wx</span><span class="si">}</span><span class="s2">)**2 - (yrot/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wy</span><span class="si">}</span><span class="s2">)**2)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;B0 * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w_prefactor</span><span class="si">}</span><span class="s2"> * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focusing</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phaseg</span> <span class="o">=</span> <span class="s2">&quot;(arctan(z/zRx) + arctan(z/zRy))/2&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_curved</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;k/2.*(xrot**2*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Rx_inv</span><span class="si">}</span><span class="s2"> + yrot**2*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Ry_inv</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_no_t</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;phase0 - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_curved</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phaseg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+
+        <span class="c1"># Set up correct field amplitude</span>
+        <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_energy</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GaussianEllipticAnalytic.account_for_ellipse_rotation">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianEllipticAnalytic.account_for_ellipse_rotation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">account_for_ellipse_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ellipse_rotation_angle</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ellipse_rotation_angle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ellipse_rotation_angle</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ell0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ellipse_rotation_angle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xrot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ell0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ell0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yrot</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ell0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ell0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xrot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yrot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span></div>
+</div>
+
+
 
 <div class="viewcode-block" id="GaussianSpectral">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianSpectral">[docs]</a>

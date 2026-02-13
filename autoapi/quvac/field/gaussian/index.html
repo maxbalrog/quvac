@@ -305,7 +305,10 @@ generic laser fields.” PRD 99.1 (2019): 016006 <a class="reference external" h
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.field.gaussian.GaussianAnalytic" title="quvac.field.gaussian.GaussianAnalytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianAnalytic</span></code></a></p></td>
 <td><p>Analytic expression for paraxial Gaussian beam.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.field.gaussian.GaussianSpectral" title="quvac.field.gaussian.GaussianSpectral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianSpectral</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.field.gaussian.GaussianEllipticAnalytic" title="quvac.field.gaussian.GaussianEllipticAnalytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianEllipticAnalytic</span></code></a></p></td>
+<td><p>Analytic expression for paraxial elliptical Gaussian beam.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.field.gaussian.GaussianSpectral" title="quvac.field.gaussian.GaussianSpectral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianSpectral</span></code></a></p></td>
 <td><p>Analytic expression for paraxial Gaussian beam.</p></td>
 </tr>
 </tbody>
@@ -437,6 +440,96 @@ be automatically taken care of by energy correction.</p>
 <span class="sig-name descname"><span class="pre">calculate_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'real'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/gaussian.html#GaussianAnalytic.calculate_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.gaussian.GaussianAnalytic.calculate_field" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the electric and magnetic fields at a given time step.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="quvac.field.gaussian.GaussianEllipticAnalytic">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.gaussian.</span></span><span class="sig-name descname"><span class="pre">GaussianEllipticAnalytic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/gaussian.html#GaussianEllipticAnalytic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.gaussian.GaussianEllipticAnalytic" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#quvac.field.gaussian.GaussianAnalytic" title="quvac.field.gaussian.GaussianAnalytic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianAnalytic</span></code></a></p>
+<p>Analytic expression for paraxial elliptical Gaussian beam.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_params</strong> (<em>dict</em>) – <dl class="simple">
+<dt>Dictionary containing the field parameters. Required keys are:</dt><dd><ul>
+<li><dl class="simple">
+<dt>’focus_x’<span class="classifier">tuple of float</span></dt><dd><p>Location of spatial focus (x, y, z).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’focus_t’<span class="classifier">float</span></dt><dd><p>Location of temporal focus.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’theta’<span class="classifier">float</span></dt><dd><p>Polar angle of k-vector (in degrees).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’phi’<span class="classifier">float</span></dt><dd><p>Azimuthal angle of k-vector (in degrees).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’beta’<span class="classifier">float</span></dt><dd><p>Polarization angle (in degrees).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’lam’<span class="classifier">float</span></dt><dd><p>Wavelength of the pulse.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’w0x’, ‘w0y’<span class="classifier">float</span></dt><dd><p>Waist sizes in x and y directions.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’ellipse_rotation_angle’<span class="classifier">float, optional</span></dt><dd><p>Ellipse rotation angle (in degrees).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’tau’<span class="classifier">float</span></dt><dd><p>Duration.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’phase0’<span class="classifier">float</span></dt><dd><p>Phase delay at focus.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’E0’<span class="classifier">float, optional</span></dt><dd><p>Amplitude (either E0 or W is required).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’W’<span class="classifier">float, optional</span></dt><dd><p>Energy (either E0 or W is required).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’alpha_chirp’<span class="classifier">float, optional</span></dt><dd><p>Linear chirp in time domain.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="../../grid/index.html#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><em>quvac.grid.GridXYZ</em></a>) – Spatial and grid.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="quvac.field.gaussian.GaussianEllipticAnalytic.account_for_ellipse_rotation">
+<span class="sig-name descname"><span class="pre">account_for_ellipse_rotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/gaussian.html#GaussianEllipticAnalytic.account_for_ellipse_rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.gaussian.GaussianEllipticAnalytic.account_for_ellipse_rotation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -603,6 +696,10 @@ assuming the central k-vector is along kz.</p>
 <li><a class="reference internal" href="#quvac.field.gaussian.GaussianAnalytic.figure_out_field_components"><code class="docutils literal notranslate"><span class="pre">GaussianAnalytic.figure_out_field_components()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.gaussian.GaussianAnalytic.get_plane_wave_phase"><code class="docutils literal notranslate"><span class="pre">GaussianAnalytic.get_plane_wave_phase()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.gaussian.GaussianAnalytic.calculate_field"><code class="docutils literal notranslate"><span class="pre">GaussianAnalytic.calculate_field()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quvac.field.gaussian.GaussianEllipticAnalytic"><code class="docutils literal notranslate"><span class="pre">GaussianEllipticAnalytic</span></code></a><ul>
+<li><a class="reference internal" href="#quvac.field.gaussian.GaussianEllipticAnalytic.account_for_ellipse_rotation"><code class="docutils literal notranslate"><span class="pre">GaussianEllipticAnalytic.account_for_ellipse_rotation()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#quvac.field.gaussian.GaussianSpectral"><code class="docutils literal notranslate"><span class="pre">GaussianSpectral</span></code></a><ul>

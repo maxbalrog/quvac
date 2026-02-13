@@ -35,6 +35,8 @@ Module Contents
 ---------------
 
 .. py:data:: ANGLE_KEYS
+   :value: ['theta', 'phi', 'beta', 'phase0', 'ellipse_rotation_angle']
+
 
 .. py:class:: Field(field_params, grid)
 

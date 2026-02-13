@@ -22,6 +22,7 @@ Classes
 .. autoapisummary::
 
    quvac.field.gaussian.GaussianAnalytic
+   quvac.field.gaussian.GaussianEllipticAnalytic
    quvac.field.gaussian.GaussianSpectral
 
 
@@ -107,6 +108,49 @@ Module Contents
 
       Calculates the electric and magnetic fields at a given time step.
 
+
+
+.. py:class:: GaussianEllipticAnalytic(field_params, grid)
+
+   Bases: :py:obj:`GaussianAnalytic`
+
+
+   Analytic expression for paraxial elliptical Gaussian beam.
+
+   :param field_params:
+                        Dictionary containing the field parameters. Required keys are:
+                            - 'focus_x' : tuple of float
+                                Location of spatial focus (x, y, z).
+                            - 'focus_t' : float
+                                Location of temporal focus.
+                            - 'theta' : float
+                                Polar angle of k-vector (in degrees).
+                            - 'phi' : float
+                                Azimuthal angle of k-vector (in degrees).
+                            - 'beta' : float
+                                Polarization angle (in degrees).
+                            - 'lam' : float
+                                Wavelength of the pulse.
+                            - 'w0x', 'w0y' : float
+                                Waist sizes in x and y directions.
+                            - 'ellipse_rotation_angle' : float, optional
+                                Ellipse rotation angle (in degrees).
+                            - 'tau' : float
+                                Duration.
+                            - 'phase0' : float
+                                Phase delay at focus.
+                            - 'E0' : float, optional
+                                Amplitude (either E0 or W is required).
+                            - 'W' : float, optional
+                                Energy (either E0 or W is required).
+                            - 'alpha_chirp' : float, optional
+                                Linear chirp in time domain.
+   :type field_params: dict
+   :param grid: Spatial and grid.
+   :type grid: quvac.grid.GridXYZ
+
+
+   .. py:method:: account_for_ellipse_rotation()
 
 
 .. py:class:: GaussianSpectral(field_params, grid)
