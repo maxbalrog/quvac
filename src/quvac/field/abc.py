@@ -17,7 +17,13 @@ from scipy.spatial.transform import Rotation
 from quvac import config
 from quvac.field.utils import get_field_energy, get_field_energy_kspace
 
-ANGLE_KEYS = "theta phi beta phase0".split()
+ANGLE_KEYS = [
+    "theta",
+    "phi", 
+    "beta", 
+    "phase0", 
+    "ellipse_rotation_angle",
+]
 _logger = logging.getLogger("simulation")
 
 
