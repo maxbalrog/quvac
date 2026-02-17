@@ -345,6 +345,9 @@ linear polarization basis.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.get_spectra_from_Stokes" title="quvac.postprocess.get_spectra_from_Stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_spectra_from_Stokes</span></code></a>(P0, P1, P2, P3[, basis])</p></td>
 <td><p>Calculate spectra from Stokes parameters.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.get_photon_spectrum_from_a12" title="quvac.postprocess.get_photon_spectrum_from_a12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_photon_spectrum_from_a12</span></code></a>(a1, a2, k)</p></td>
+<td><p>Calculates the photon spectrum from spectral coefficients a1 and a2.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -586,6 +589,27 @@ amplitudes S1 and S2.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.postprocess.get_photon_spectrum_from_a12">
+<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">get_photon_spectrum_from_a12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#get_photon_spectrum_from_a12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.get_photon_spectrum_from_a12" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the photon spectrum from spectral coefficients a1 and a2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a1</strong> (<em>numpy.ndarray</em>) – Spectral coefficient a1.</p></li>
+<li><p><strong>a2</strong> (<em>numpy.ndarray</em>) – Spectral coefficient a2.</p></li>
+<li><p><strong>k</strong> (<em>numpy.ndarray</em>) – Wavevector</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Photon spectrum.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="quvac.postprocess.VacuumEmissionAnalyzer">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">VacuumEmissionAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#VacuumEmissionAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.VacuumEmissionAnalyzer" title="Link to this definition">¶</a></dt>
@@ -724,26 +748,6 @@ by default None.</p></li>
 <li><p><strong>check_total</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to check the total signal, by default False.</p></li>
 <li><p><strong>**interp_kwargs</strong> (<em>dict</em>) – Additional interpolation parameters.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="quvac.postprocess.VacuumEmissionAnalyzer.get_photon_spectrum_from_a12">
-<span class="sig-name descname"><span class="pre">get_photon_spectrum_from_a12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#VacuumEmissionAnalyzer.get_photon_spectrum_from_a12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_photon_spectrum_from_a12" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates the photon spectrum from spectral coefficients a1 and a2.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a1</strong> (<em>numpy.ndarray</em>) – Spectral coefficient a1.</p></li>
-<li><p><strong>a2</strong> (<em>numpy.ndarray</em>) – Spectral coefficient a2.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Photon spectrum.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -970,6 +974,7 @@ by default False.</p></li>
 <li><a class="reference internal" href="#quvac.postprocess.get_simulation_fields"><code class="docutils literal notranslate"><span class="pre">get_simulation_fields()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.transform_S12_to_a12"><code class="docutils literal notranslate"><span class="pre">transform_S12_to_a12()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.get_spectra_from_Stokes"><code class="docutils literal notranslate"><span class="pre">get_spectra_from_Stokes()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.postprocess.get_photon_spectrum_from_a12"><code class="docutils literal notranslate"><span class="pre">get_photon_spectrum_from_a12()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer</span></code></a><ul>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.fields_params"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.fields_params</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.grid_xyz"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.grid_xyz</span></code></a></li>
@@ -981,7 +986,6 @@ by default False.</p></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_perp_signal"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_perp_signal()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_Stokes_vector_for_ep"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_Stokes_vector_for_ep()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_signal_on_sph_grid"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_signal_on_sph_grid()</span></code></a></li>
-<li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_photon_spectrum_from_a12"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_photon_spectrum_from_a12()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_background_xyz"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_background_xyz()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_background"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_background()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.VacuumEmissionAnalyzer.get_discernible_signal"><code class="docutils literal notranslate"><span class="pre">VacuumEmissionAnalyzer.get_discernible_signal()</span></code></a></li>

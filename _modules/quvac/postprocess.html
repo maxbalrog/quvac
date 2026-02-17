@@ -691,6 +691,35 @@
 
 
 
+<div class="viewcode-block" id="get_photon_spectrum_from_a12">
+<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.get_photon_spectrum_from_a12">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the photon spectrum from spectral coefficients a1 and a2.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a1 : numpy.ndarray</span>
+<span class="sd">            Spectral coefficient a1.</span>
+<span class="sd">        a2 : numpy.ndarray</span>
+<span class="sd">            Spectral coefficient a2.</span>
+<span class="sd">        k : numpy.ndarray</span>
+<span class="sd">            Wavevector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Photon spectrum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">hbar</span>
+        <span class="n">N_xyz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="s2">&quot;prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k&quot;</span>
+        <span class="p">)</span>
+        <span class="n">N_xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">N_xyz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="VacuumEmissionAnalyzer">
 <a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VacuumEmissionAnalyzer</span><span class="p">:</span>
@@ -736,7 +765,6 @@
         <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">&quot;xyz&quot;</span><span class="p">:</span>
             <span class="n">kx</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">kx</span><span class="p">))</span>
-            <span class="c1"># self.__dict__[f&quot;k{ax}&quot;] = np.fft.fftshift(kx)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">S1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">),</span>
                             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">))</span>
@@ -774,7 +802,6 @@
         <span class="n">Ez</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;e1z*a1 + e2z*a2&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(Ex**2 + Ey**2 + Ez**2)&quot;</span><span class="p">)</span>
         <span class="n">E_inv</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((Ex==0) &amp; (Ey==0) &amp; (Ez==0), 0, 1/E)&quot;</span><span class="p">)</span>
-        <span class="c1"># E_inv = np.nan_to_num(1. / E)</span>
         <span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span> <span class="o">=</span> <span class="n">Ex</span> <span class="o">*</span> <span class="n">E_inv</span><span class="p">,</span> <span class="n">Ey</span> <span class="o">*</span> <span class="n">E_inv</span><span class="p">,</span> <span class="n">Ez</span> <span class="o">*</span> <span class="n">E_inv</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">efx</span><span class="p">,</span> <span class="n">efy</span><span class="p">,</span> <span class="n">efz</span><span class="p">)</span></div>
 
@@ -941,33 +968,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spherical_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">spherical_grid</span></div>
 
-
-<div class="viewcode-block" id="VacuumEmissionAnalyzer.get_photon_spectrum_from_a12">
-<a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_photon_spectrum_from_a12">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the photon spectrum from spectral coefficients a1 and a2.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        a1 : numpy.ndarray</span>
-<span class="sd">            Spectral coefficient a1.</span>
-<span class="sd">        a2 : numpy.ndarray</span>
-<span class="sd">            Spectral coefficient a2.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            Photon spectrum.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">hbar</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span>
-        <span class="n">N_xyz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k&quot;</span>
-        <span class="p">)</span>
-        <span class="n">N_xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">N_xyz</span><span class="p">)</span></div>
-
     
 <div class="viewcode-block" id="VacuumEmissionAnalyzer.get_background_xyz">
 <a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.get_background_xyz">[docs]</a>
@@ -992,7 +992,9 @@
             <span class="n">bgr_field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">[</span><span class="n">bgr_idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bgr_field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
-        <span class="n">bgr_N_xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="n">bgr_field</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="n">bgr_field</span><span class="o">.</span><span class="n">a2</span><span class="p">)</span>
+        <span class="n">bgr_N_xyz</span> <span class="o">=</span> <span class="n">get_photon_spectrum_from_a12</span><span class="p">(</span>
+            <span class="n">bgr_field</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="n">bgr_field</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">add_to_cls_dict</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">background_xyz</span> <span class="o">=</span> <span class="n">bgr_N_xyz</span>
         <span class="k">return</span> <span class="n">bgr_N_xyz</span></div>
@@ -1142,7 +1144,6 @@
                                         <span class="o">**</span><span class="n">spherical_params</span><span class="p">)</span>
             <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;k theta phi N_sph N_sph_total&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">calculate_xyz_background</span><span class="p">:</span>
-            <span class="c1"># self.get_background_xyz()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_background</span><span class="p">(</span><span class="n">discernibility</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bgr_idx</span><span class="o">=</span><span class="n">bgr_idx</span><span class="p">)</span>
             <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;background_xyz background&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">calculate_discernible</span><span class="p">:</span>

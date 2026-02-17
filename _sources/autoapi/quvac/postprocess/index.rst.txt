@@ -43,6 +43,7 @@ Functions
    quvac.postprocess.get_simulation_fields
    quvac.postprocess.transform_S12_to_a12
    quvac.postprocess.get_spectra_from_Stokes
+   quvac.postprocess.get_photon_spectrum_from_a12
 
 
 Module Contents
@@ -225,6 +226,21 @@ Module Contents
    :rtype: numpy.ndarray
 
 
+.. py:function:: get_photon_spectrum_from_a12(a1, a2, k)
+
+   Calculates the photon spectrum from spectral coefficients a1 and a2.
+
+   :param a1: Spectral coefficient a1.
+   :type a1: numpy.ndarray
+   :param a2: Spectral coefficient a2.
+   :type a2: numpy.ndarray
+   :param k: Wavevector
+   :type k: numpy.ndarray
+
+   :returns: Photon spectrum.
+   :rtype: numpy.ndarray
+
+
 .. py:class:: VacuumEmissionAnalyzer(fields_params, data_path, save_path=None)
 
    Calculates spectra and observables from amplitudes.
@@ -333,20 +349,6 @@ Module Contents
       :type check_total: bool, optional
       :param \*\*interp_kwargs: Additional interpolation parameters.
       :type \*\*interp_kwargs: dict
-
-
-
-   .. py:method:: get_photon_spectrum_from_a12(a1, a2)
-
-      Calculates the photon spectrum from spectral coefficients a1 and a2.
-
-      :param a1: Spectral coefficient a1.
-      :type a1: numpy.ndarray
-      :param a2: Spectral coefficient a2.
-      :type a2: numpy.ndarray
-
-      :returns: Photon spectrum.
-      :rtype: numpy.ndarray
 
 
 
