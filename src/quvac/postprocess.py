@@ -642,7 +642,7 @@ class VacuumEmissionAnalyzer:
             "prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k"
         )
         N_xyz[0, 0, 0] = 0.0
-        return np.fft.fftshift(N_xyz)
+        return np.fft.fftshift(N_xyz / (2*pi)**3)
     
     def get_background_xyz(self, add_to_cls_dict=True, bgr_idx=None):
         """
