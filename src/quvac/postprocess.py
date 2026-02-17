@@ -386,6 +386,32 @@ def get_spectra_from_Stokes(P0, P1, P2, P3, basis="linear"):
     return Nf, Np
 
 
+def get_photon_spectrum_from_a12(a1, a2, k):
+        """
+        Calculates the photon spectrum from spectral coefficients a1 and a2.
+
+        Parameters
+        ----------
+        a1 : numpy.ndarray
+            Spectral coefficient a1.
+        a2 : numpy.ndarray
+            Spectral coefficient a2.
+        k : numpy.ndarray
+            Wavevector
+
+        Returns
+        -------
+        numpy.ndarray
+            Photon spectrum.
+        """
+        prefactor = 0.5 * epsilon_0 * c / hbar
+        N_xyz = ne.evaluate(
+            "prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k"
+        )
+        N_xyz[0, 0, 0] = 0.0
+        return np.fft.fftshift(N_xyz / (2*pi)**3)
+
+
 class VacuumEmissionAnalyzer:
     """
     Calculates spectra and observables from amplitudes.
@@ -429,7 +455,6 @@ class VacuumEmissionAnalyzer:
         for ax in "xyz":
             kx = getattr(self, f"k{ax}")
             setattr(self, f"k{ax}", np.fft.fftshift(kx))
-            # self.__dict__[f"k{ax}"] = np.fft.fftshift(kx)
 
         self.S1, self.S2 = (data["S1"].astype(config.CDTYPE),
                             data["S2"].astype(config.CDTYPE))
@@ -462,7 +487,6 @@ class VacuumEmissionAnalyzer:
         Ez = ne.evaluate("e1z*a1 + e2z*a2", global_dict=self.__dict__)
         E = ne.evaluate("sqrt(Ex**2 + Ey**2 + Ez**2)")
         E_inv = ne.evaluate("where((Ex==0) & (Ey==0) & (Ez==0), 0, 1/E)")
-        # E_inv = np.nan_to_num(1. / E)
         efx, efy, efz = Ex * E_inv, Ey * E_inv, Ez * E_inv
         return (efx, efy, efz)
 
@@ -619,30 +643,6 @@ class VacuumEmissionAnalyzer:
                 _logger.warning(warn_message)
 
         self.spherical_grid = self.k, self.theta, self.phi = spherical_grid
-
-    def get_photon_spectrum_from_a12(self, a1, a2):
-        """
-        Calculates the photon spectrum from spectral coefficients a1 and a2.
-
-        Parameters
-        ----------
-        a1 : numpy.ndarray
-            Spectral coefficient a1.
-        a2 : numpy.ndarray
-            Spectral coefficient a2.
-
-        Returns
-        -------
-        numpy.ndarray
-            Photon spectrum.
-        """
-        prefactor = 0.5 * epsilon_0 * c / hbar
-        k = self.kabs
-        N_xyz = ne.evaluate(
-            "prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k"
-        )
-        N_xyz[0, 0, 0] = 0.0
-        return np.fft.fftshift(N_xyz)
     
     def get_background_xyz(self, add_to_cls_dict=True, bgr_idx=None):
         """
@@ -665,7 +665,9 @@ class VacuumEmissionAnalyzer:
             bgr_field = MaxwellMultiple(self.fields_params[bgr_idx], self.grid_xyz)
         else:
             bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
-        bgr_N_xyz = self.get_photon_spectrum_from_a12(bgr_field.a1, bgr_field.a2)
+        bgr_N_xyz = get_photon_spectrum_from_a12(
+            bgr_field.a1, bgr_field.a2, self.kabs
+        )
         if add_to_cls_dict:
             self.background_xyz = bgr_N_xyz
         return bgr_N_xyz
@@ -800,7 +802,6 @@ class VacuumEmissionAnalyzer:
                                         **spherical_params)
             keys.extend("k theta phi N_sph N_sph_total".split())
         if calculate_xyz_background:
-            # self.get_background_xyz()
             self.background = self.get_background(discernibility=None, bgr_idx=bgr_idx)
             keys.extend("background_xyz background".split())
         if calculate_discernible:

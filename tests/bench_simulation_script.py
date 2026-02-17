@@ -103,7 +103,9 @@ def test_discernible():
     # Load default simulation parameters
     ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
     # Change field parameters
-    field_2_params = {"w0": 4 * 0.8e-6, "theta": 160, "beta": 90}
+    field_1_params = {"w0": 3 * 0.8e-6, "theta": 0, "beta": 0}
+    field_2_params = {"w0": 1 * 0.8e-6, "theta": 160, "beta": 90}
+    ini_data["fields"]["field_1"].update(field_1_params)
     ini_data["fields"]["field_2"].update(field_2_params)
     ini_data["postprocess"]["calculate_spherical"] = True
     ini_data["postprocess"]["calculate_discernible"] = True
@@ -113,7 +115,7 @@ def test_discernible():
 
     data = np.load(os.path.join(path, "spectra_total.npz"))
     N_disc = data["N_disc"]
-    N_disc_expected = 2.5
+    N_disc_expected = 0.9
     err_msg = "Calculated discernible signal differs from expected by more than 20%"
     assert np.isclose(N_disc, N_disc_expected, rtol=2e-1), err_msg
 
