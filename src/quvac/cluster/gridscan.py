@@ -17,10 +17,9 @@ import os
 from pathlib import Path
 
 import numpy as np
-import submitit
 
-from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
-from quvac.simulation import parse_args, quvac_simulation
+from quvac.parallel import run_simulations_with_job_executor
+from quvac.simulation import parse_args
 from quvac.utils import read_yaml, write_yaml
 
 
@@ -180,9 +179,9 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
 
     ini_default = read_yaml(ini_file)
     variables = ini_default["variables"]
-    cluster_params = variables.get("cluster", {})
+    cluster_params = variables.get("cluster_params", {})
     if cluster_params:
-        variables.pop("cluster")
+        variables.pop("cluster_params")
 
     create_grids = variables.get("create_grids", False)
     if "create_grids" in variables:
@@ -202,23 +201,12 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
         ini_default, param_names, param_grids, save_path
     )
 
-    # Set up scheduler
-    cluster = cluster_params.get("cluster", "local")
-    log_folder = os.path.join(save_path, "submitit_logs")
-    sbatch_params = cluster_params.get("sbatch_params", DEFAULT_SUBMITIT_PARAMS)
-    max_jobs = cluster_params.get("max_parallel_jobs", 5)
-    executor = submitit.AutoExecutor(folder=log_folder, cluster=cluster)
-    if cluster == "slurm":
-        executor.update_parameters(slurm_array_parallelism=max_jobs)
-        executor.update_parameters(**sbatch_params)
-    else:
-        executor.update_parameters(timeout_min=30)
-    print("Submitting jobs...")
-    jobs = executor.map_array(quvac_simulation, ini_files)
-    print("Jobs submitted, waiting for results...")
-
-    # Wait till all jobs end
-    _ = [job.result() for job in jobs]
+    run_simulations_with_job_executor(
+        ini_files, 
+        cluster_params, 
+        save_path,
+        max_parallel_jobs_default=5,
+    )
     print("Grid scan is finished!")
 
 

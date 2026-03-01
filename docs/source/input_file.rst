@@ -182,16 +182,16 @@ Relevant keys for the polarization-sensitive signals:
 Cluster_params (for ``quvac-simulation-parallel``)
 --------------------------------------------------
 Keys:
-    - ``n_jobs``: int
-        Number of jobs to parallelize between, by default 2.
-    - ``max_jobs``: int
-        Maximal number of jobs to submit simultaneously, by default equal to ``n_jobs``.
-    - ``cluster``: str,
+    - ``cluster_type``: str,
         Where perform calculations, ``local`` or ``slurm``.
+    - ``number_of_time_intervals``: int
+        Number of time intervals to split the amplitude, by default 2.
+    - ``max_parallel_jobs``: int
+        Maximal number of jobs to submit simultaneously, by default equal to ``number_of_time_intervals``.
     - ``sbatch_params``: dict
         Submission parameters for a single job. Possible keys: ``slurm_partition``,
-        ``cpus_per_task``, ``slurm_mem``, ``timeout_min``. By default, 
-        ``quvac.config.DEFAULT_SUBMITIT_PARAMS``.
+        ``cpus_per_task``, ``memory``, ``walltime``. By default, 
+        ``quvac.config.DEFAULT_SLURM_PARAMS``.
 
 Variables (for ``quvac-gridscan``)
 ----------------------------------
@@ -200,9 +200,9 @@ Keys:
         Flag to create grids given [start, end, n_steps].
     - ``fields``: dict
         Parameters over which to perform grid scan.
-    - ``cluster``: dict
-        - ``cluster``: str
-            ``local`` or ``slurm``.
+    - ``cluster_params``: dict
+        - ``cluster_type``: str
+            Where perform calculations, ``local`` or ``slurm``.
         - ``max_parallel_jobs``: int
             Maximal number of submitted jobs in parallel.
         - ``sbatch_params``: dict
@@ -223,8 +223,8 @@ Keys:
                 Fields being optimized.
     - ``scales``: dict
         Scales for optimized parameters. For instance, parameter could be the duration with bounds 
-        [20,50] and the provided scale 1e-15 corresponding to femtoseconds.
-    - ``cluster``: dict
+        ``[20,50]`` and the provided scale ``1e-15`` corresponds to femtoseconds.
+    - ``cluster_params``: dict
         Submission parameters for a single job.
     - ``n_trials``: int
         Number of trials to perform.
