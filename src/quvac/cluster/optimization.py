@@ -625,10 +625,10 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
                                               max_parallel_jobs)
     metric_names = tuple([objective] + metrics_to_track)
 
-    max_trials = optimization_params.get("max_trials", 10)
+    n_trials = optimization_params.get("n_trials", 10)
 
     run_optimization(ax_client, executor, ini_file, 
-                     max_trials, max_parallel_jobs, 
+                     n_trials, max_parallel_jobs, 
                      experiment_file, metric_names)
 
     print("Optimization finished!")

@@ -48,8 +48,11 @@ def slurm_to_submitit_params(sbatch_params):
     dict
         Parameters for sbatch script in submitit format.
     """
-    keys_to_copy = ["slurm_partition", "cpus_per_task"]
-    submitit_params = {key: sbatch_params[key] for key in keys_to_copy}
+    keys_to_copy = {"slurm_partition": "cpu", "cpus_per_task": 4}
+    submitit_params = {
+        key: sbatch_params.get(key, default_val) 
+        for key,default_val in keys_to_copy.items()
+    }
     submitit_params["slurm_mem"] = sbatch_params["memory"]
     submitit_params["timeout_min"] = slurm_time_to_mins(sbatch_params["walltime"])
     return submitit_params
