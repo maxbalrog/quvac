@@ -23,12 +23,12 @@ We use ``.yml`` format for input files which has a dictionary-like structure. It
             Postprocessing parameters (which observables to calculate from the complex amplitudes).
 
 ``quvac-simulation-parallel`` additionally requires section ``cluster_params`` describing
-parameters of parallelization. Similarly, ``quvac-gridscan`` requires a section ``variables`` (parameters
+parameters of parallelization. Similarly, ``quvac-gridscan`` requires a section ``gridscan`` (parameters
 being scanned and slurm job parameters), ``quvac-optimization`` requires a section ``optimization``
 (parameters to setup optimization experiment: optimized variables, metrics, sampling strategy, ...). 
 
 
-Fields
+``fields``
 --------------
 This section of ``.yml`` file is constructed as ``{'field_1': {...}, 'field_2': {...}, ...}`` where each dictionary of field parameters has the ``field_type`` parameter and 
 other parameters specific to the chosen field type. 
@@ -77,7 +77,7 @@ For the full list of available keywords, refer to ``quvac.field.ANALYTIC_FIELDS`
 |   ``envelope``    |  Temporal envelope type (``plane`` or ``gauss``)   |                                                   --                                                    |
 +-------------------+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
 
-Grid
+``grid``
 --------------
 Required keys are:
     -  ``mode`` : str
@@ -119,7 +119,7 @@ Keys for ``dynamic`` mode:
         Indices of fields to ignore for dynamic grid creation.
 
 
-Integrator (optional)
+``integrator`` (optional)
 ---------------------
 Keys:
     - ``type``: str
@@ -131,7 +131,7 @@ Keys:
             - ``pump``: list of int
                 Indices of the pump field, by default [1].
 
-Performance (optional)
+``performance`` (optional)
 ----------------------
 Keys:
     - ``precision``: str
@@ -148,7 +148,7 @@ Keys:
         Whether to use existing wisdom file for ``pyfftw`` planning.
 
 
-Postprocessing (optional)
+``postprocessing`` (optional)
 -------------------------
 This section is relevant only when ``mode`` is ``postprocess`` or ``simulation_postprocess``. Relevant keys for the polarization-insensitive signals:
     - ``calculate_xyz_background`` : bool, optional
@@ -179,7 +179,7 @@ Relevant keys for the polarization-sensitive signals:
     - ``stokes`` : bool, optional
         Whether to calculate Stokes parameters, by default False.
 
-Cluster_params (for ``quvac-simulation-parallel``)
+``cluster_params`` (for ``quvac-simulation-parallel``)
 --------------------------------------------------
 Keys:
     - ``cluster_type``: str,
@@ -193,7 +193,7 @@ Keys:
         ``cpus_per_task``, ``memory``, ``walltime``. By default, 
         ``quvac.config.DEFAULT_SLURM_PARAMS``.
 
-Variables (for ``quvac-gridscan``)
+``gridscan`` (for ``quvac-gridscan``)
 ----------------------------------
 Keys:
     - ``create_grids``: bool
@@ -208,7 +208,7 @@ Keys:
         - ``sbatch_params``: dict
             Submission parameters for a single job.
 
-Optimization (for ``quvac-optimization``)
+``optimization`` (for ``quvac-optimization``)
 -----------------------------------------
 Keys:
     - ``name``: str

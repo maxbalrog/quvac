@@ -3,7 +3,7 @@
 Script to run gridscan simulations on cluster with Slurm.
 
 Gridscan parameters (scanned variables and their grids)
-should be located in `ini.yml` at key `variables`.
+should be located in `ini.yml` at key `gridscan`.
 
 Usage:
 
@@ -178,20 +178,20 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
         Path(save_path).mkdir(parents=True, exist_ok=True)
 
     ini_default = read_yaml(ini_file)
-    variables = ini_default["variables"]
-    cluster_params = variables.get("cluster_params", {})
+    gridscan_params = ini_default["gridscan"]
+    cluster_params = gridscan_params.get("cluster_params", {})
     if cluster_params:
-        variables.pop("cluster_params")
+        gridscan_params.pop("cluster_params")
 
-    create_grids = variables.get("create_grids", False)
-    if "create_grids" in variables:
-        variables.pop("create_grids")
+    create_grids = gridscan_params.get("create_grids", False)
+    if "create_grids" in gridscan_params:
+        gridscan_params.pop("create_grids")
 
     # Create parameter grids if required
     if create_grids:
-        variables_grid = create_parameter_grids(variables)
+        variables_grid = create_parameter_grids(gridscan_params)
     else:
-        variables_grid = variables
+        variables_grid = gridscan_params
 
     # Restructure variables dict
     param_names, param_grids = restructure_variables_grid(variables_grid)

@@ -18,7 +18,7 @@ def test_gridscan():
     ini_data = read_yaml(BENCHMARK_CONFIG_PATH)
 
     beta_arr = [0, 45, 90]
-    variables_data = {
+    gridscan_data = {
         "create_grids": True,
         "fields": {"field_2": {"beta": [0, 90, 3]}},
         "cluster_params": {
@@ -31,7 +31,7 @@ def test_gridscan():
     Path(path).mkdir(parents=True, exist_ok=True)
 
     ini_file = os.path.join(path, "ini.yaml")
-    ini_data["variables"] = variables_data
+    ini_data["gridscan"] = gridscan_data
     write_yaml(ini_file, ini_data)
 
     # Launch simulation
