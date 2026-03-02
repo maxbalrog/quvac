@@ -21,8 +21,8 @@ def test_gridscan():
     variables_data = {
         "create_grids": True,
         "fields": {"field_2": {"beta": [0, 90, 3]}},
-        "cluster": {
-            "cluster": "local",
+        "cluster_params": {
+            "cluster_type": "local",
             "max_parallel_jobs": 10,
         },
     }

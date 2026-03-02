@@ -18,21 +18,15 @@ from pathlib import Path
 import time
 
 import numpy as np
-import submitit
 
-from quvac.config import DEFAULT_SUBMITIT_PARAMS
 from quvac.grid import setup_grids
 from quvac.log import (
     get_parallel_performance_stats,
     simulation_end_str,
     simulation_start_str,
 )
-from quvac.simulation import (
-    get_dirs,
-    parse_args,
-    postprocess_simulation,
-    quvac_simulation,
-)
+from quvac.parallel import run_simulations_with_job_executor
+from quvac.simulation import get_dirs, parse_args, postprocess_simulation
 from quvac.utils import get_maxrss, read_yaml, write_yaml
 
 _logger = logging.getLogger("simulation")
@@ -171,36 +165,21 @@ def quvac_simulation_parallel(
     cluster_params = ini_config.get("cluster_params", {})
 
     # Get parallelization params
-    n_jobs = cluster_params.get("n_jobs", 2)
-    max_jobs = cluster_params.get("max_jobs", n_jobs)
-    cluster = cluster_params.get("cluster", "local")
-    sbatch_params = cluster_params.get("sbatch_params", DEFAULT_SUBMITIT_PARAMS)
+    number_of_time_intervals = cluster_params.get("number_of_time_intervals", 2)
 
     # Get grids
     grid_xyz, grid_t = setup_grids(fields_params, grid_params)
 
     ini_files = create_ini_files_for_parallel(
-        ini_config, grid_xyz, grid_t, n_jobs, files['save_path']
+        ini_config, grid_xyz, grid_t, number_of_time_intervals, files['save_path']
     )
 
-    # Create a cluster
-    submitit_folder = os.path.join(files['save_path'], "submitit_logs")
-    executor = submitit.AutoExecutor(folder=submitit_folder, cluster=cluster)
-    if cluster == "slurm":
-        executor.update_parameters(slurm_array_parallelism=max_jobs)
-    executor.update_parameters(**sbatch_params)
-    # else:
-    #     timeout_min = sbatch_params.get("timeout_min", 5)
-    #     executor.update_parameters(timeout_min=timeout_min)
-
-    # Submit jobs
-    _logger.info("MILESTONE: Submitting jobs...")
-    jobs = executor.map_array(quvac_simulation, ini_files)
-    _logger.info("MILESTONE: Jobs submitted, waiting for results...")
-
-    # Wait till all jobs end
-    _ = [job.result() for job in jobs]
-    _logger.info("MILESTONE: Jobs are finished")
+    run_simulations_with_job_executor(
+        ini_files, 
+        cluster_params, 
+        files['save_path'],
+        max_parallel_jobs_default=number_of_time_intervals,
+    )
 
     # Collect all results
     collect_results(ini_files, files['amplitudes'])

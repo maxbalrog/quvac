@@ -11,19 +11,26 @@ Usage:
 
     optimization.py -i <input>.yaml -o <output_dir>
 """
+from collections.abc import Iterable
 from copy import deepcopy
+import itertools
 import os
 from pathlib import Path
 import time
 import warnings
 
-from ax.modelbridge.generation_strategy import GenerationStep, GenerationStrategy
-from ax.modelbridge.registry import Models
-from ax.service.ax_client import AxClient, ObjectiveProperties
+from ax.adapter.registry import Generators
+from ax.api.client import Client
+from ax.api.configs import RangeParameterConfig
+from ax.core.observation import ObservationFeatures
+from ax.generation_strategy.generation_node import GenerationNode
+from ax.generation_strategy.generation_strategy import GenerationStrategy
+from ax.generation_strategy.generator_spec import GeneratorSpec
+from ax.generation_strategy.transition_criterion import MinTrials
 import numpy as np
-from submitit import AutoExecutor, DebugJob, LocalJob
+from submitit import DebugJob, LocalJob
 
-from quvac.cluster.config import DEFAULT_SUBMITIT_PARAMS
+from quvac.parallel import setup_job_executor_from_params
 from quvac.postprocess import integrate_spherical, signal_in_detector
 from quvac.simulation import parse_args, quvac_simulation
 from quvac.utils import read_yaml, round_to_n, write_yaml
@@ -60,16 +67,14 @@ def prepare_params_for_ax(params, ini_file):
             loc_name = f"{category_key}:{key}"
             param_descr = {
                 "name": loc_name,
-                "type": "range",
+                "parameter_type": "float",
                 "bounds": val,
-                "value_type": "float",
             }
-            params_ax.append(param_descr)
-    params_ax.append({"name": "ini_default", "type": "fixed", "value": ini_file})
+            params_ax.append(RangeParameterConfig(**param_descr))
     return params_ax
 
 
-def objective_signal_in_detector(data, obj_params):
+def objective_signal_in_detector(data, obj_params, discernible=False):
     """
     Calculate the signal detected within a specified detector region.
 
@@ -94,37 +99,15 @@ def objective_signal_in_detector(data, obj_params):
     for detector in detectors:
         N_detector += signal_in_detector(N_angular, theta, phi, detector,
                                          align_to_max=False)
-    return N_detector
-
-
-def objective_discernible_signal_in_detector(data, obj_params):
-    """
-    Calculate the discernible signal detected within a specified detector region.
-
-    Parameters
-    ----------
-    data : dict
-        Dictionary containing simulation results, including spherical grid data.
-    obj_params : dict
-        Dictionary containing detector parameters.
-
-    Returns
-    -------
-    float
-        The signal detected within the specified detector region.
-    """
-    detectors = obj_params["detectors"]
-    detectors = [detectors] if isinstance(detectors, dict) else detectors
-    k, theta, phi, N_sph, discernible = [
-        data[key] for key in "k theta phi N_sph discernible".split()
-    ]
-    N_angular = integrate_spherical(N_sph, (k,theta,phi), axs_integrate=['k'])
-
-    N_detector = 0
-    for detector in detectors:
-        N_detector += signal_in_detector(N_angular*discernible, theta, phi, detector,
-                                         align_to_max=False)
-    return N_detector
+    
+    N_detector_disc = 0
+    if discernible:
+        discernible_mask = data["discernible"]
+        for detector in detectors:
+            N_detector_disc += signal_in_detector(
+                N_angular*discernible_mask, theta, phi, detector, align_to_max=False
+            )
+    return (N_detector, N_detector_disc)
 
 
 def update_energies(ini_data, energy_params):
@@ -175,7 +158,8 @@ def update_energies(ini_data, energy_params):
     return ini
 
 
-def collect_metrics(data, obj_params, metric_names=("N_total")):
+def collect_metrics(data, obj_params, metric_names=("N_total"), 
+                    noiseless_observations=True):
     """
     Collect metrics from simulation results.
 
@@ -197,22 +181,27 @@ def collect_metrics(data, obj_params, metric_names=("N_total")):
     N_total = data.get("N_total", 0)
 
     metrics = {}
-    metrics["N_total"] = (float(N_total), 0.0)
+    metrics["N_total"] = float(N_total)
     if N_disc is not None:
-        metrics["N_disc"] = (float(N_disc), 0.0)
+        metrics["N_disc"] = float(N_disc)
 
     if "detectors" in obj_params:
-        N_detector = objective_signal_in_detector(data, obj_params)
-        metrics["N_detector"] = (float(N_detector), 0.0)
-        N_detector_disc = objective_discernible_signal_in_detector(data, obj_params)
-        metrics["N_detector_disc"] = (float(N_detector_disc), 0.0)
+        N_detector, N_detector_disc = objective_signal_in_detector(
+            data, obj_params, discernible=True
+        )
+        metrics["N_detector"] = float(N_detector)
+        metrics["N_detector_disc"] = float(N_detector_disc)
 
     # filter metrics
-    metrics = {k:v for k,v in metrics.items() if k in metric_names}
+    if noiseless_observations:
+        metrics = {k:(v,0.0) for k,v in metrics.items() if k in metric_names}
+    else:
+        metrics = {k:v for k,v in metrics.items() if k in metric_names}
     return metrics
 
 
-def quvac_evaluation(params, metric_names=("N_total")):
+def quvac_evaluation(params, trial_index, default_ini_file, metric_names=("N_total"),
+                     noiseless_observations=True):
     """
     Evaluate a single trial of the quvac simulation.
 
@@ -229,22 +218,19 @@ def quvac_evaluation(params, metric_names=("N_total")):
         Dictionary containing metrics such as `N_disc`, `N_total`, and optionally 
         `N_detector`.
     """
-    ini_file = params["ini_default"]
-    ini_data = read_yaml(ini_file)
-    params.pop("ini_default")
-    trial_idx = params.pop("trial_idx")
+    ini_data = read_yaml(default_ini_file)
 
     optimization_params = ini_data["optimization"]
     obj_params = optimization_params.get("objectives_params", {})
     scales = optimization_params.get("scales", {})
 
     # Create ini.yml file for current trial
-    trial_str = str(trial_idx).zfill(3)
-    save_folder = ini_data.get("save_path", os.path.dirname(ini_file))
+    trial_str = str(trial_index).zfill(3)
+    save_folder = ini_data.get("save_path", os.path.dirname(default_ini_file))
     save_path = os.path.join(save_folder, trial_str)
 
     energy_params = {}
-    # Update_parameters for current trial
+    # Update parameters for current trial
     for param_key, param in params.items():
         category, key = param_key.split(":")
         if key != "W":
@@ -267,7 +253,8 @@ def quvac_evaluation(params, metric_names=("N_total")):
 
     # Load results
     data = np.load(os.path.join(save_path, "spectra_total.npz"))
-    metrics = collect_metrics(data, obj_params, metric_names)
+    metrics = collect_metrics(data, obj_params, metric_names, noiseless_observations)
+    write_yaml(os.path.join(save_path, "metrics.yml"), metrics)
     return metrics
 
 
@@ -296,10 +283,9 @@ def check_energy_constraint(trial_index_to_param):
     for _, params in trial_index_to_param.items():
         energies = []
         for param_key, param in params.items():
-            if param_key != "ini_default":
-                category, key = param_key.split(":")
-                if key == "W":
-                    energies.append(param)
+            category, key = param_key.split(":")
+            if key == "W":
+                energies.append(param)
         
         W_total = np.sum(energies)
         eps = 1.0 - W_total
@@ -344,7 +330,6 @@ def check_repeated_samples(trial_index_to_param, last_samples, fail_count, patie
     continue_sampling = True
     trials = deepcopy(trial_index_to_param)
     for _, params in trials.items():
-        params.pop("ini_default")
         # round-up ints and floats for comparison
         params_list = []
         for k,v in tuple(sorted(params.items())):
@@ -404,19 +389,55 @@ def check_sampled_trials(trial_index_to_param, last_samples, fail_count):
 
     continue_optimization = energy_ok and continue_sampling
     return continue_optimization, fail_count
+                
 
-
-def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experiment_file,
-                     metric_names=("N_total")):
+def setup_generation_strategy(num_random_trials=6):
     """
-    Run Bayesian optimization using Ax and Submitit.
+    Setup custom generation strategy.
 
     Parameters
     ----------
-    ax_client : ax.service.ax_client.AxClient
+    num_random_trials : int, optional
+        Number of random trials to perform before starting Bayesian optimization. 
+        Default is 6.
+
+    Returns
+    -------
+    ax.modelbridge.generation_strategy.GenerationStrategy
+        The configured generation strategy.
+    """
+    gs = GenerationStrategy(
+        nodes=[
+            GenerationNode(
+                name="sobol",
+                generator_specs=[GeneratorSpec(generator_enum=Generators.SOBOL)],
+                transition_criteria=[
+                    MinTrials(transition_to="gpei", threshold=num_random_trials)
+                ],
+            ),
+            GenerationNode(
+                name="gpei",
+                generator_specs=[GeneratorSpec(generator_enum=Generators.BOTORCH_MODULAR)],
+            ),
+        ]
+    )
+    return gs
+
+
+def run_optimization(ax_client, executor, default_ini_file, n_trials, max_parallel_jobs,
+                     experiment_file, metric_names=("N_total"), 
+                     noiseless_observations=True):
+    """
+    Run Bayesian optimization using Ax and submitit.
+
+    Parameters
+    ----------
+    ax_client : ax.api.client.Client
         Ax client for managing the optimization process.
     executor : submitit.AutoExecutor
-        Submitit executor for running jobs on a cluster.
+        Submitit executor for running jobs on a cluster or locally.
+    default_ini_file: string
+        Path to the default initialization file.
     n_trials : int
         Total number of trials to run.
     max_parallel_jobs : int
@@ -450,9 +471,14 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
         # sample new points if optimization is not terminated
         if continue_optimization:
             # Schedule new jobs if there is availablity
-            trial_index_to_param, _ = ax_client.get_next_trials(
-                max_trials=min(max_parallel_jobs - len(jobs), n_trials - submitted_jobs)
+            number_of_jobs_to_submit = min(
+                max_parallel_jobs - len(jobs), n_trials - submitted_jobs
             )
+            trial_index_to_param = {}
+            if number_of_jobs_to_submit > 0:
+                trial_index_to_param = ax_client.get_next_trials(
+                    max_trials=number_of_jobs_to_submit
+                )
             # Check that sampled trials satisfy the requirements
             if trial_index_to_param:
                 flags = check_sampled_trials(trial_index_to_param,last_samples,
@@ -461,38 +487,78 @@ def run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experimen
 
                 if continue_optimization:
                     for trial_idx, params in trial_index_to_param.items():
-                        params["trial_idx"] = trial_idx
-                        job = executor.submit(quvac_evaluation, params, metric_names)
+                        job = executor.submit(
+                            quvac_evaluation, 
+                            params, 
+                            trial_idx,
+                            default_ini_file,
+                            metric_names,
+                            noiseless_observations,
+                        )
                         submitted_jobs += 1
                         jobs.append((job, trial_idx))
-                        time.sleep(1)
+                        time.sleep(5)
                 else:
                     warnings.warn("Terminating optimization... Finishing last "
                                   "trials...", stacklevel=2)
-                
+            else:
+                time.sleep(5)
+                    
 
-def setup_generation_strategy(num_random_trials=6):
+def _create_new_ax_client(experiment_name,params_for_ax,parameter_constraints):
+    ax_client = Client()
+    ax_client.configure_experiment(
+        parameters=params_for_ax,
+        parameter_constraints=parameter_constraints,
+        name=experiment_name,
+    )
+    print("Created a new experiment!")
+
+    return ax_client
+
+
+def setup_ax_client(
+        experiment_file, 
+        experiment_name,
+        params_for_ax,
+        parameter_constraints,
+        start_fresh,
+    ):
     """
-    Setup custom generation strategy.
+    Create a new ax client or load it from the existing file.
 
     Parameters
     ----------
-    num_random_trials : int, optional
-        Number of random trials to perform before starting Bayesian optimization. 
-        Default is 6.
+    experiment_file : str
+        Path to save the Ax experiment data.
+    experiment_name: str
+        Experiment name.
+    params_for_ax: list of ax.api.configs.RangeParameterConfig
+        Parameters to optimize in ax-appropriate style.
+    parameter_constraints: list of str
+        Constraints for parameter space.
+    start_fresh: bool
+        Whether to remove the old experiment file if it would be found.
 
     Returns
     -------
-    ax.modelbridge.generation_strategy.GenerationStrategy
-        The configured generation strategy.
+    ax.api.client.Client
+        Client with defined parameter landscape.
     """
-    gs = GenerationStrategy(
-        steps=[
-            GenerationStep(model=Models.SOBOL, num_trials=num_random_trials),
-            GenerationStep(model=Models.GPEI, num_trials=-1),
-        ]
-    )
-    return gs
+    if start_fresh:
+        if os.path.isfile(experiment_file):
+            os.remove(experiment_file)
+            print("Deleted old experiment...")
+        ax_client = _create_new_ax_client(
+            experiment_name,
+            params_for_ax,
+            parameter_constraints,
+        )
+    else:
+        ax_client = Client.load_from_json_file(experiment_file)
+        print("Loaded existing experiment!")
+    
+    return ax_client
 
 
 def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
@@ -523,7 +589,7 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
 
     ini_default = read_yaml(ini_file)
     optimization_params = ini_default["optimization"]
-    cluster_params = optimization_params.get("cluster", {})
+    cluster_params = optimization_params.get("cluster_params", {})
 
     # Check that optimization parameters are only field_parameters
     optimization_keys = list(optimization_params["parameters"].keys())
@@ -538,48 +604,52 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     params_for_ax = prepare_params_for_ax(optimization_params["parameters"], ini_file)
 
     # custom generation strategy
-    gs_params = optimization_params.get("gs_params", {})
-    num_random_trials = gs_params.get("num_random_trials", 6)
-    gs = setup_generation_strategy(num_random_trials=num_random_trials)
+    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 5)
+    experiment_name = optimization_params.get("experiment_name", "test_optimization")
 
     # Set up optimization client
-    ax_client = AxClient(generation_strategy=gs)
-    objectives = optimization_params["objectives"]
-    track_metrics = optimization_params.get("track_metrics", [])
-    # collect metric names to keep track of
-    metric_names = [name for name, flag in objectives]
-    metric_names += track_metrics
+    parameter_constraints = optimization_params.get("parameter_constraints", None)
+    start_fresh = optimization_params.get("start_fresh", True)
 
-    ax_client.create_experiment(
-        name=optimization_params.get("name", "test_optimization"),
-        parameters=params_for_ax,
-        objectives={
-            name: ObjectiveProperties(minimize=flag) for name, flag in objectives
-        },
-        parameter_constraints=optimization_params.get("parameter_constraints", None),
-        outcome_constraints=optimization_params.get(
-            "outcome_constraints", None
-        ),
-        tracking_metric_names=track_metrics,
+    ax_client = setup_ax_client(experiment_file, experiment_name, params_for_ax, 
+                                parameter_constraints, start_fresh)
+
+    objective = optimization_params["objective"]
+    metrics_to_track = optimization_params.get("metrics_to_track", [])
+
+    # Configure objective and tracking metrics
+    ax_client.configure_optimization(
+        objective=f"{objective}",
+        outcome_constraints=optimization_params.get("outcome_constraints", None),
+    )
+    if metrics_to_track:
+        ax_client.configure_tracking_metrics(metrics_to_track)
+
+    gs_initialization_random_seed = optimization_params.get(
+        "gs_initialization_random_seed", None
+    )
+    if gs_initialization_random_seed is None:
+        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
+    print(
+        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
     )
 
-    # Set up sibmitit AutoExecutor
-    cluster = cluster_params.get("cluster", "local")
-    sbatch_params = cluster_params.get("sbatch_params", DEFAULT_SUBMITIT_PARAMS)
+    ax_client.configure_generation_strategy(
+        method=optimization_params.get("generation_strategy_type", "fast"),
+        initialization_budget=number_of_ini_trials,
+    )
+
     max_parallel_jobs = cluster_params.get("max_parallel_jobs", 3)
-    log_folder = os.path.join(save_path, "submitit_logs")
+    executor = setup_job_executor_from_params(cluster_params, save_path,
+                                              max_parallel_jobs)
+    metric_names = tuple([objective] + metrics_to_track)
 
-    executor = AutoExecutor(folder=log_folder, cluster=cluster)
-    if cluster == "slurm":
-        executor.update_parameters(slurm_array_parallelism=max_parallel_jobs)
-        executor.update_parameters(**sbatch_params)
-    elif "timeout_min" in cluster_params:
-        executor.update_parameters(timeout_min=cluster_params["timeout_min"])
-
+    noiseless_observations = optimization_params.get("noiseless_observations", True)
     n_trials = optimization_params.get("n_trials", 10)
 
-    run_optimization(ax_client, executor, n_trials, max_parallel_jobs, experiment_file,
-                     metric_names)
+    run_optimization(ax_client, executor, ini_file, n_trials, max_parallel_jobs, 
+                     experiment_file, metric_names, noiseless_observations)
+
     print("Optimization finished!")
 
 
@@ -589,7 +659,7 @@ def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):
 
     Parameters
     ----------
-    ax_client : ax.service.ax_client.AxClient
+    ax_client : ax.api.client.Client
         Ax client managing the optimization process.
     metric_names : list of str, optional
         List of metric names to extract from the trials. Default is 
@@ -598,10 +668,10 @@ def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):
     Returns
     -------
     dict
-        Dictionary containing trial parameters and their corresponding metrics.
+        Dictionary containing optimized parameters and metrics.
     """
-    metrics = ax_client.experiment.fetch_data().df
-    trials = ax_client.experiment.trials
+    metrics = ax_client._experiment.fetch_data().df
+    trials = ax_client._experiment.trials
     trials_params = {key: trial.arm.parameters for key, trial in trials.items()
                      if trial.completed_successfully}
     for key in trials_params:
@@ -610,9 +680,124 @@ def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):
                 metrics["trial_index"] == key
             )
             trials_params[key][metric_name] = metrics.loc[condition]["mean"].iloc[0]
-        if "ini_default" in trials_params[key]:
-            trials_params[key].pop("ini_default")
-    return trials_params
+    
+    # join data from separate trials into arrays
+    first_trial_key = list(trials_params.keys())[0]
+    trial_keys = list(trials_params[first_trial_key].keys())
+    trial_data = {}
+    for key in trial_keys:
+        trial_data[key] = np.array([val[key] for val in trials_params.values()])
+    return trial_data
+
+
+class SurrogateModel:
+    """
+    Restores surrogate model for a given optimization experiment.
+
+    Parameters
+    ----------
+    ax_client: ax.api.client.Client
+        Ax client managing the optimization process.
+    metric: str, optional
+        Metric of interest to collect. 
+    """
+    def __init__(self, ax_client, metric="N_total"):
+        self.experiment_data = ax_client._experiment.fetch_data()
+        self.model = Generators.BOTORCH_MODULAR(
+            experiment=ax_client._experiment,
+            data=self.experiment_data,
+        )
+        self.metric = metric
+
+    def _update_input_parameters(self, model_input, fixed_params):
+        if fixed_params:
+            for point in model_input:
+                point.update(fixed_params)
+        model_input = [ObservationFeatures(parameters=pt) for pt in model_input]
+        return model_input
+    
+    def _make_model_prediction(self, model_input, fixed_params):
+        model_input = self._update_input_parameters(model_input, fixed_params)
+        mean, covariance = self.model.predict(model_input)
+        mean = np.array(mean[self.metric])
+        covariance = np.array(covariance[self.metric][self.metric])
+        return mean, covariance
+
+    def predict_at_point(self, param_name, param_value, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_name: str
+            Parameter name for which the prediction would be made.
+        param_value: int or float
+            Parameter value (prediction point).
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values at a given parameter point.
+        """
+        model_input = [{param_name: param_value}]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        return mean, covariance
+
+    def predict_1d(self, param_name, param_values, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_name: str
+            Parameter name for which the prediction would be made.
+        param_values: collections.abc.Iterable
+            Array of parameter values.
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values for given array of parameter values.
+        """
+        err_msg = "Method `predict_1d` works only with sequences"
+        assert isinstance(param_values, Iterable), err_msg
+        model_input = [{param_name: value} for value in param_values]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        return mean, covariance
+
+    def predict_2d(self, param_names, param_values, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_names: (str, str)
+            Two parameter names for which the prediction would be made.
+        param_values: (Iterable, Iterable)
+            Two arrays of parameter values.
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values for given arrays of parameter values.
+        """
+        assert len(param_names) == 2, "Only two variable parameters are accepted"
+        assert len(param_values) == 2, "Only two variable parameter grids are accepted"
+        param_name_1, param_name_2 = param_names
+        n1, n2 = len(param_values[0]), len(param_values[1])
+        model_input = [
+            {param_name_1: value1, param_name_2: value2}
+            for value1,value2 in itertools.product(*param_values)
+        ]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = mean.reshape((n1,n2)), covariance.reshape((n1,n2))
+        return mean, covariance
 
 
 def main_optimization():
