@@ -228,9 +228,11 @@ Keys:
         Submission parameters for a single job.
     - ``n_trials``: int
         Number of trials to perform.
-    - ``objectives``: list of [str, bool] 
-        Objective functions, for each function specify its name and whether to minimize it.
-        For instance, for the total discernible signal objective funtion corresponds to ``[['N_disc', False]]``.
+    - ``objective``: str 
+        Objective function. By default, objectives are assumed to be maximized, put ``-`` in front of it to indicate
+        that it needs to be minimized (e.g., ``"-signal"`` would mean "minimize metric called ``signal``"). Multi-objective
+        optimization could be also specified this way, e.g. ``"signal, computational_cost"``. For more details, check
+        `ax tutorials <https://ax.dev/docs/recipes/multi-objective-optimization>`_.
     - ``objectives_params``: dict
         Objective parameters:
             - ``detectors``: dict or list of dicts
@@ -239,9 +241,11 @@ Keys:
         Additional metrics to track.
     - ``parameter_constraints``: list of str
         Optimized parameter constraints, for example ``a + b + c <= 1``.
-    - ``gs_params``: dict
-        Generation strategy parameters:
-            - ``num_random_trials``: int
-                Number of random trials to initialize Gaussian process.
+    - ``generation_strategy_type``: 'quality' or 'fast'
+        Generation strategy for sampling next trials.
+    - ``gs_initialization_random_seed``: int
+        Initial random seed for the generation strategy for reproducible experiments.
+    - ``noiseless_observations``: bool
+        Whether observations are considered noisy or not.
         
 

@@ -11,7 +11,9 @@ Usage:
 
     optimization.py -i <input>.yaml -o <output_dir>
 """
+from collections.abc import Iterable
 from copy import deepcopy
+import itertools
 import os
 from pathlib import Path
 import time
@@ -20,6 +22,7 @@ import warnings
 from ax.adapter.registry import Generators
 from ax.api.client import Client
 from ax.api.configs import RangeParameterConfig
+from ax.core.observation import ObservationFeatures
 from ax.generation_strategy.generation_node import GenerationNode
 from ax.generation_strategy.generation_strategy import GenerationStrategy
 from ax.generation_strategy.generator_spec import GeneratorSpec
@@ -155,7 +158,8 @@ def update_energies(ini_data, energy_params):
     return ini
 
 
-def collect_metrics(data, obj_params, metric_names=("N_total")):
+def collect_metrics(data, obj_params, metric_names=("N_total"), 
+                    noiseless_observations=True):
     """
     Collect metrics from simulation results.
 
@@ -189,11 +193,15 @@ def collect_metrics(data, obj_params, metric_names=("N_total")):
         metrics["N_detector_disc"] = float(N_detector_disc)
 
     # filter metrics
-    metrics = {k:v for k,v in metrics.items() if k in metric_names}
+    if noiseless_observations:
+        metrics = {k:(v,0.0) for k,v in metrics.items() if k in metric_names}
+    else:
+        metrics = {k:v for k,v in metrics.items() if k in metric_names}
     return metrics
 
 
-def quvac_evaluation(params, trial_index, default_ini_file, metric_names=("N_total")):
+def quvac_evaluation(params, trial_index, default_ini_file, metric_names=("N_total"),
+                     noiseless_observations=True):
     """
     Evaluate a single trial of the quvac simulation.
 
@@ -245,7 +253,7 @@ def quvac_evaluation(params, trial_index, default_ini_file, metric_names=("N_tot
 
     # Load results
     data = np.load(os.path.join(save_path, "spectra_total.npz"))
-    metrics = collect_metrics(data, obj_params, metric_names)
+    metrics = collect_metrics(data, obj_params, metric_names, noiseless_observations)
     write_yaml(os.path.join(save_path, "metrics.yml"), metrics)
     return metrics
 
@@ -417,7 +425,8 @@ def setup_generation_strategy(num_random_trials=6):
 
 
 def run_optimization(ax_client, executor, default_ini_file, n_trials, max_parallel_jobs,
-                     experiment_file, metric_names=("N_total")):
+                     experiment_file, metric_names=("N_total"), 
+                     noiseless_observations=True):
     """
     Run Bayesian optimization using Ax and submitit.
 
@@ -484,6 +493,7 @@ def run_optimization(ax_client, executor, default_ini_file, n_trials, max_parall
                             trial_idx,
                             default_ini_file,
                             metric_names,
+                            noiseless_observations,
                         )
                         submitted_jobs += 1
                         jobs.append((job, trial_idx))
@@ -615,6 +625,15 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     if metrics_to_track:
         ax_client.configure_tracking_metrics(metrics_to_track)
 
+    gs_initialization_random_seed = optimization_params.get(
+        "gs_initialization_random_seed", None
+    )
+    if gs_initialization_random_seed is None:
+        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
+    print(
+        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
+    )
+
     ax_client.configure_generation_strategy(
         method=optimization_params.get("generation_strategy_type", "fast"),
         initialization_budget=number_of_ini_trials,
@@ -625,11 +644,11 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
                                               max_parallel_jobs)
     metric_names = tuple([objective] + metrics_to_track)
 
+    noiseless_observations = optimization_params.get("noiseless_observations", True)
     n_trials = optimization_params.get("n_trials", 10)
 
-    run_optimization(ax_client, executor, ini_file, 
-                     n_trials, max_parallel_jobs, 
-                     experiment_file, metric_names)
+    run_optimization(ax_client, executor, ini_file, n_trials, max_parallel_jobs, 
+                     experiment_file, metric_names, noiseless_observations)
 
     print("Optimization finished!")
 
@@ -649,7 +668,7 @@ def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):
     Returns
     -------
     dict
-        Dictionary containing trial parameters and their corresponding metrics.
+        Dictionary containing optimized parameters and metrics.
     """
     metrics = ax_client._experiment.fetch_data().df
     trials = ax_client._experiment.trials
@@ -661,7 +680,124 @@ def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):
                 metrics["trial_index"] == key
             )
             trials_params[key][metric_name] = metrics.loc[condition]["mean"].iloc[0]
-    return trials_params
+    
+    # join data from separate trials into arrays
+    first_trial_key = list(trials_params.keys())[0]
+    trial_keys = list(trials_params[first_trial_key].keys())
+    trial_data = {}
+    for key in trial_keys:
+        trial_data[key] = np.array([val[key] for val in trials_params.values()])
+    return trial_data
+
+
+class SurrogateModel:
+    """
+    Restores surrogate model for a given optimization experiment.
+
+    Parameters
+    ----------
+    ax_client: ax.api.client.Client
+        Ax client managing the optimization process.
+    metric: str, optional
+        Metric of interest to collect. 
+    """
+    def __init__(self, ax_client, metric="N_total"):
+        self.experiment_data = ax_client._experiment.fetch_data()
+        self.model = Generators.BOTORCH_MODULAR(
+            experiment=ax_client._experiment,
+            data=self.experiment_data,
+        )
+        self.metric = metric
+
+    def _update_input_parameters(self, model_input, fixed_params):
+        if fixed_params:
+            for point in model_input:
+                point.update(fixed_params)
+        model_input = [ObservationFeatures(parameters=pt) for pt in model_input]
+        return model_input
+    
+    def _make_model_prediction(self, model_input, fixed_params):
+        model_input = self._update_input_parameters(model_input, fixed_params)
+        mean, covariance = self.model.predict(model_input)
+        mean = np.array(mean[self.metric])
+        covariance = np.array(covariance[self.metric][self.metric])
+        return mean, covariance
+
+    def predict_at_point(self, param_name, param_value, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_name: str
+            Parameter name for which the prediction would be made.
+        param_value: int or float
+            Parameter value (prediction point).
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values at a given parameter point.
+        """
+        model_input = [{param_name: param_value}]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        return mean, covariance
+
+    def predict_1d(self, param_name, param_values, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_name: str
+            Parameter name for which the prediction would be made.
+        param_values: collections.abc.Iterable
+            Array of parameter values.
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values for given array of parameter values.
+        """
+        err_msg = "Method `predict_1d` works only with sequences"
+        assert isinstance(param_values, Iterable), err_msg
+        model_input = [{param_name: value} for value in param_values]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        return mean, covariance
+
+    def predict_2d(self, param_names, param_values, fixed_params=None):
+        """
+        Make a prediction for a particular parameter value.
+
+        Parameters
+        ----------
+        param_names: (str, str)
+            Two parameter names for which the prediction would be made.
+        param_values: (Iterable, Iterable)
+            Two arrays of parameter values.
+        fixed_params: dict of {param_name: param_value}, optional
+            Fixed values of other parameters (useful for high-dimentional optimization).
+
+        Returns
+        -------
+        (np.ndarray, np.ndarray)
+            Mean and covariance values for given arrays of parameter values.
+        """
+        assert len(param_names) == 2, "Only two variable parameters are accepted"
+        assert len(param_values) == 2, "Only two variable parameter grids are accepted"
+        param_name_1, param_name_2 = param_names
+        n1, n2 = len(param_values[0]), len(param_values[1])
+        model_input = [
+            {param_name_1: value1, param_name_2: value2}
+            for value1,value2 in itertools.product(*param_values)
+        ]
+        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = mean.reshape((n1,n2)), covariance.reshape((n1,n2))
+        return mean, covariance
 
 
 def main_optimization():
