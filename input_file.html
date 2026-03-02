@@ -233,6 +233,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/log/index.html">quvac.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
@@ -625,24 +626,24 @@ by default False.</p>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">n_jobs</span></code>: int</dt><dd><p>Number of jobs to parallelize between, by default 2.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">cluster_type</span></code>: str,</dt><dd><p>Where perform calculations, <code class="docutils literal notranslate"><span class="pre">local</span></code> or <code class="docutils literal notranslate"><span class="pre">slurm</span></code>.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">max_jobs</span></code>: int</dt><dd><p>Maximal number of jobs to submit simultaneously, by default equal to <code class="docutils literal notranslate"><span class="pre">n_jobs</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">number_of_time_intervals</span></code>: int</dt><dd><p>Number of time intervals to split the amplitude, by default 2.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: str,</dt><dd><p>Where perform calculations, <code class="docutils literal notranslate"><span class="pre">local</span></code> or <code class="docutils literal notranslate"><span class="pre">slurm</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">max_parallel_jobs</span></code>: int</dt><dd><p>Maximal number of jobs to submit simultaneously, by default equal to <code class="docutils literal notranslate"><span class="pre">number_of_time_intervals</span></code>.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">sbatch_params</span></code>: dict</dt><dd><p>Submission parameters for a single job. Possible keys: <code class="docutils literal notranslate"><span class="pre">slurm_partition</span></code>,
-<code class="docutils literal notranslate"><span class="pre">cpus_per_task</span></code>, <code class="docutils literal notranslate"><span class="pre">slurm_mem</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout_min</span></code>. By default,
-<code class="docutils literal notranslate"><span class="pre">quvac.config.DEFAULT_SUBMITIT_PARAMS</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cpus_per_task</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code>, <code class="docutils literal notranslate"><span class="pre">walltime</span></code>. By default,
+<code class="docutils literal notranslate"><span class="pre">quvac.config.DEFAULT_SLURM_PARAMS</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -665,9 +666,9 @@ by default False.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: dict</dt><dd><ul>
+<dt><code class="docutils literal notranslate"><span class="pre">cluster_params</span></code>: dict</dt><dd><ul>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: str</dt><dd><p><code class="docutils literal notranslate"><span class="pre">local</span></code> or <code class="docutils literal notranslate"><span class="pre">slurm</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">cluster_type</span></code>: str</dt><dd><p>Where perform calculations, <code class="docutils literal notranslate"><span class="pre">local</span></code> or <code class="docutils literal notranslate"><span class="pre">slurm</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -724,12 +725,12 @@ by default False.</p>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">scales</span></code>: dict</dt><dd><p>Scales for optimized parameters. For instance, parameter could be the duration with bounds
-[20,50] and the provided scale 1e-15 corresponding to femtoseconds.</p>
+<code class="docutils literal notranslate"><span class="pre">[20,50]</span></code> and the provided scale <code class="docutils literal notranslate"><span class="pre">1e-15</span></code> corresponds to femtoseconds.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: dict</dt><dd><p>Submission parameters for a single job.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">cluster_params</span></code>: dict</dt><dd><p>Submission parameters for a single job.</p>
 </dd>
 </dl>
 </li>
@@ -739,8 +740,10 @@ by default False.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">objectives</span></code>: list of [str, bool]</dt><dd><p>Objective functions, for each function specify its name and whether to minimize it.
-For instance, for the total discernible signal objective funtion corresponds to <code class="docutils literal notranslate"><span class="pre">[['N_disc',</span> <span class="pre">False]]</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">objective</span></code>: str</dt><dd><p>Objective function. By default, objectives are assumed to be maximized, put <code class="docutils literal notranslate"><span class="pre">-</span></code> in front of it to indicate
+that it needs to be minimized (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;-signal&quot;</span></code> would mean “minimize metric called <code class="docutils literal notranslate"><span class="pre">signal</span></code>”). Multi-objective
+optimization could be also specified this way, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;signal,</span> <span class="pre">computational_cost&quot;</span></code>. For more details, check
+<a class="reference external" href="https://ax.dev/docs/recipes/multi-objective-optimization">ax tutorials</a>.</p>
 </dd>
 </dl>
 </li>
@@ -769,16 +772,17 @@ For instance, for the total discernible signal objective funtion corresponds to 
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">gs_params</span></code>: dict</dt><dd><dl class="simple">
-<dt>Generation strategy parameters:</dt><dd><ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">num_random_trials</span></code>: int</dt><dd><p>Number of random trials to initialize Gaussian process.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">generation_strategy_type</span></code>: ‘quality’ or ‘fast’</dt><dd><p>Generation strategy for sampling next trials.</p>
 </dd>
 </dl>
 </li>
-</ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">gs_initialization_random_seed</span></code>: int</dt><dd><p>Initial random seed for the generation strategy for reproducible experiments.</p>
 </dd>
 </dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">noiseless_observations</span></code>: bool</dt><dd><p>Whether observations are considered noisy or not.</p>
 </dd>
 </dl>
 </li>

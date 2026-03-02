@@ -231,6 +231,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/log/index.html">quvac.log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
@@ -381,6 +382,8 @@
 </li>
         <li><a href="autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.create_ini_files_for_parallel">create_ini_files_for_parallel() (in module quvac.simulation_parallel)</a>
 </li>
+        <li><a href="autoapi/quvac/parallel/index.html#quvac.parallel.create_job_executor">create_job_executor() (in module quvac.parallel)</a>
+</li>
         <li><a href="autoapi/quvac/field/dipole/index.html#quvac.field.dipole.create_multibeam">create_multibeam() (in module quvac.field.dipole)</a>
 </li>
     </ul></td>
@@ -391,7 +394,7 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/quvac/config/index.html#quvac.config.DEFAULT_SUBMITIT_PARAMS">DEFAULT_SUBMITIT_PARAMS (in module quvac.config)</a>
+        <li><a href="autoapi/quvac/config/index.html#quvac.config.DEFAULT_SLURM_PARAMS">DEFAULT_SLURM_PARAMS (in module quvac.config)</a>
 </li>
         <li><a href="autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianAnalytic.define_ho_variables">define_ho_variables() (quvac.field.gaussian.GaussianAnalytic method)</a>
 </li>
@@ -705,6 +708,8 @@
 </li>
           <li><a href="autoapi/quvac/log/index.html#module-quvac.log">quvac.log</a>
 </li>
+          <li><a href="autoapi/quvac/parallel/index.html#module-quvac.parallel">quvac.parallel</a>
+</li>
           <li><a href="autoapi/quvac/plotting/index.html#module-quvac.plotting">quvac.plotting</a>
 </li>
           <li><a href="autoapi/quvac/postprocess/index.html#module-quvac.postprocess">quvac.postprocess</a>
@@ -854,8 +859,6 @@
           <li><a href="autoapi/quvac/field/planewave/index.html#module-quvac.field.planewave">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     quvac.field.utils
 
@@ -863,6 +866,8 @@
           <li><a href="autoapi/quvac/field/utils/index.html#module-quvac.field.utils">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     quvac.grid
 
@@ -896,6 +901,13 @@
 
         <ul>
           <li><a href="autoapi/quvac/log/index.html#module-quvac.log">module</a>
+</li>
+        </ul></li>
+        <li>
+    quvac.parallel
+
+        <ul>
+          <li><a href="autoapi/quvac/parallel/index.html#module-quvac.parallel">module</a>
 </li>
         </ul></li>
         <li>
@@ -953,10 +965,10 @@
 </li>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.SpectralField.rotate_kgrid">rotate_kgrid() (quvac.field.abc.SpectralField method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.SpectralField.rotate_vector_potential_back">rotate_vector_potential_back() (quvac.field.abc.SpectralField method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.Field.rotation_bwd_m">rotation_bwd_m (quvac.field.abc.Field attribute)</a>
 </li>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.Field.rotation_m">rotation_m (quvac.field.abc.Field attribute)</a>
@@ -964,6 +976,8 @@
         <li><a href="autoapi/quvac/utils/index.html#quvac.utils.round_to_n">round_to_n() (in module quvac.utils)</a>
 </li>
         <li><a href="autoapi/quvac/simulation/index.html#quvac.simulation.run_simulation">run_simulation() (in module quvac.simulation)</a>
+</li>
+        <li><a href="autoapi/quvac/parallel/index.html#quvac.parallel.run_simulations_with_job_executor">run_simulations_with_job_executor() (in module quvac.parallel)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -987,15 +1001,21 @@
 </li>
         <li><a href="autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.set_envelope_expressions">set_envelope_expressions() (quvac.field.dipole.DipoleAnalytic method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/simulation/index.html#quvac.simulation.set_precision">set_precision() (in module quvac.simulation)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.setup_field">setup_field() (quvac.field.external_field.ExternalField method)</a>
 </li>
         <li><a href="autoapi/quvac/grid/index.html#quvac.grid.setup_grids">setup_grids() (in module quvac.grid)</a>
 </li>
+        <li><a href="autoapi/quvac/parallel/index.html#quvac.parallel.setup_job_executor_from_params">setup_job_executor_from_params() (in module quvac.parallel)</a>
+</li>
         <li><a href="autoapi/quvac/postprocess/index.html#quvac.postprocess.signal_in_detector">signal_in_detector() (in module quvac.postprocess)</a>
+</li>
+        <li><a href="autoapi/quvac/parallel/index.html#quvac.parallel.slurm_time_to_mins">slurm_time_to_mins() (in module quvac.parallel)</a>
+</li>
+        <li><a href="autoapi/quvac/parallel/index.html#quvac.parallel.slurm_to_submitit_params">slurm_to_submitit_params() (in module quvac.parallel)</a>
 </li>
         <li><a href="autoapi/quvac/field/index.html#quvac.field.SPATIAL_MODEL_FIELDS">SPATIAL_MODEL_FIELDS (in module quvac.field)</a>
 </li>

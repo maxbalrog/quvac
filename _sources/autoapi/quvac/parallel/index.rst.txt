@@ -1,0 +1,94 @@
+quvac.parallel
+==============
+
+.. py:module:: quvac.parallel
+
+.. autoapi-nested-parse::
+
+   Utilities to run simulations in parallel either locally or in Slurm environment.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.parallel.slurm_time_to_mins
+   quvac.parallel.slurm_to_submitit_params
+   quvac.parallel.create_job_executor
+   quvac.parallel.setup_job_executor_from_params
+   quvac.parallel.run_simulations_with_job_executor
+
+
+Module Contents
+---------------
+
+.. py:function:: slurm_time_to_mins(slurm_time)
+
+   Converts Slurm time in format `DAYS-HOURS:MINUTES:SECONDS` to minutes.
+
+   :param slurm_time: Time formatted in Slurm format.
+   :type slurm_time: str
+
+   :returns: Time in minutes.
+   :rtype: int
+
+
+.. py:function:: slurm_to_submitit_params(sbatch_params)
+
+   Transform Slurm keywords to relevant ones for submitit.
+
+   :param sbatch_params: Parameters for sbatch script.
+   :type sbatch_params: dict
+
+   :returns: Parameters for sbatch script in submitit format.
+   :rtype: dict
+
+
+.. py:function:: create_job_executor(cluster_type, executor_folder, sbatch_params, max_parallel_jobs)
+
+   Create submitit job executor.
+
+   :param cluster_type: On which machine the calculation would be performed.
+   :type cluster_type: 'local' or 'slurm'
+   :param executor_folder: Path where to create a folder for executor files and logs.
+   :type executor_folder: str
+   :param sbatch_params: Parameters of individual Slurm job.
+   :type sbatch_params: dict
+   :param max_parallel_jobs: Maximal number of jobs to run concurrently.
+   :type max_parallel_jobs: int
+
+   :returns: Executor for running jobs.
+   :rtype: submitit.AutoExecutor
+
+
+.. py:function:: setup_job_executor_from_params(cluster_params, save_path, max_parallel_jobs_default=2)
+
+   Setup job executor from unified cluster parameters.
+
+   :param cluster_params: Parameters of parallel execution.
+   :type cluster_params: dict
+   :param save_path: Path where to create a folder for executor files and logs.
+   :type save_path: str
+   :param max_parallel_jobs_default: Default maximal number of jobs to run concurrently.
+   :type max_parallel_jobs_default: int, optional
+
+   :returns: Executor for running jobs.
+   :rtype: submitit.AutoExecutor
+
+
+.. py:function:: run_simulations_with_job_executor(ini_files, cluster_params, save_path, max_parallel_jobs_default=2)
+
+   Run simulations for a list of ini files with job executor.
+
+   :param ini_files: List of paths to the initialization files for each job.
+   :type ini_files: list of str
+   :param cluster_params: Parameters of parallel execution.
+   :type cluster_params: dict
+   :param save_path: Path where to create a folder for submitit files and logs.
+   :type save_path: str
+   :param max_parallel_jobs_default: Maximal number of jobs to run concurrently.
+   :type max_parallel_jobs_default: int, optional
+
+

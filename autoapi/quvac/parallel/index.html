@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.field" href="../field/index.html" /><link rel="prev" title="quvac.analytic_scalings" href="../analytic_scalings/index.html" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.plotting" href="../plotting/index.html" /><link rel="prev" title="quvac.log" href="../log/index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.config - quvac 0.1.3 documentation</title>
+        <title>quvac.parallel - quvac 0.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -213,7 +213,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">quvac</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of quvac</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../analytic_scalings/index.html">quvac.analytic_scalings</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">quvac.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../config/index.html">quvac.config</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../field/index.html">quvac.field</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of quvac.field</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../field/abc/index.html">quvac.field.abc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../field/dipole/index.html">quvac.field.dipole</a></li>
@@ -233,7 +233,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../log/index.html">quvac.log</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../parallel/index.html">quvac.parallel</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../postprocess/index.html">quvac.postprocess</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../simulation/index.html">quvac.simulation</a></li>
@@ -263,7 +263,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../../_sources/autoapi/quvac/config/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../../_sources/autoapi/quvac/parallel/index.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -283,26 +283,28 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-quvac.config">
-<span id="quvac-config"></span><h1>quvac.config<a class="headerlink" href="#module-quvac.config" title="Link to this heading">¶</a></h1>
-<p>Configuration file for simulations.</p>
-<p><code class="docutils literal notranslate"><span class="pre">FDTYPE</span></code> and <code class="docutils literal notranslate"><span class="pre">CDTYPE</span></code> control the float precision for the
-calculations (<code class="docutils literal notranslate"><span class="pre">float32</span></code> or <code class="docutils literal notranslate"><span class="pre">float64</span></code>).</p>
-<p><code class="docutils literal notranslate"><span class="pre">DEFAULT_SLURM_PARAMS</span></code> is a dictionary with default parameters for
-job submission to the cluster.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+          <section id="module-quvac.parallel">
+<span id="quvac-parallel"></span><h1>quvac.parallel<a class="headerlink" href="#module-quvac.parallel" title="Link to this heading">¶</a></h1>
+<p>Utilities to run simulations in parallel either locally or in Slurm environment.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.config.DEFAULT_SLURM_PARAMS" title="quvac.config.DEFAULT_SLURM_PARAMS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_SLURM_PARAMS</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.parallel.slurm_time_to_mins" title="quvac.parallel.slurm_time_to_mins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slurm_time_to_mins</span></code></a>(slurm_time)</p></td>
+<td><p>Converts Slurm time in format <cite>DAYS-HOURS:MINUTES:SECONDS</cite> to minutes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.config.FDTYPE" title="quvac.config.FDTYPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FDTYPE</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.parallel.slurm_to_submitit_params" title="quvac.parallel.slurm_to_submitit_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slurm_to_submitit_params</span></code></a>(sbatch_params)</p></td>
+<td><p>Transform Slurm keywords to relevant ones for submitit.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.config.CDTYPE" title="quvac.config.CDTYPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CDTYPE</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.parallel.create_job_executor" title="quvac.parallel.create_job_executor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_job_executor</span></code></a>(cluster_type, executor_folder, ...)</p></td>
+<td><p>Create submitit job executor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.parallel.setup_job_executor_from_params" title="quvac.parallel.setup_job_executor_from_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_job_executor_from_params</span></code></a>(cluster_params, save_path)</p></td>
+<td><p>Setup job executor from unified cluster parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.parallel.run_simulations_with_job_executor" title="quvac.parallel.run_simulations_with_job_executor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulations_with_job_executor</span></code></a>(ini_files, ...[, ...])</p></td>
+<td><p>Run simulations for a list of ini files with job executor.</p></td>
 </tr>
 </tbody>
 </table>
@@ -310,20 +312,98 @@ job submission to the cluster.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="quvac.config.DEFAULT_SLURM_PARAMS">
-<span class="sig-prename descclassname"><span class="pre">quvac.config.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_SLURM_PARAMS</span></span><a class="headerlink" href="#quvac.config.DEFAULT_SLURM_PARAMS" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.slurm_time_to_mins">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">slurm_time_to_mins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slurm_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#slurm_time_to_mins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.slurm_time_to_mins" title="Link to this definition">¶</a></dt>
+<dd><p>Converts Slurm time in format <cite>DAYS-HOURS:MINUTES:SECONDS</cite> to minutes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slurm_time</strong> (<em>str</em>) – Time formatted in Slurm format.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Time in minutes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="quvac.config.FDTYPE">
-<span class="sig-prename descclassname"><span class="pre">quvac.config.</span></span><span class="sig-name descname"><span class="pre">FDTYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float64'</span></em><a class="headerlink" href="#quvac.config.FDTYPE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.slurm_to_submitit_params">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">slurm_to_submitit_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sbatch_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#slurm_to_submitit_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.slurm_to_submitit_params" title="Link to this definition">¶</a></dt>
+<dd><p>Transform Slurm keywords to relevant ones for submitit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sbatch_params</strong> (<em>dict</em>) – Parameters for sbatch script.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parameters for sbatch script in submitit format.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="quvac.config.CDTYPE">
-<span class="sig-prename descclassname"><span class="pre">quvac.config.</span></span><span class="sig-name descname"><span class="pre">CDTYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'complex128'</span></em><a class="headerlink" href="#quvac.config.CDTYPE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.create_job_executor">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">create_job_executor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executor_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbatch_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_parallel_jobs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#create_job_executor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.create_job_executor" title="Link to this definition">¶</a></dt>
+<dd><p>Create submitit job executor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_type</strong> (<em>'local'</em><em> or </em><em>'slurm'</em>) – On which machine the calculation would be performed.</p></li>
+<li><p><strong>executor_folder</strong> (<em>str</em>) – Path where to create a folder for executor files and logs.</p></li>
+<li><p><strong>sbatch_params</strong> (<em>dict</em>) – Parameters of individual Slurm job.</p></li>
+<li><p><strong>max_parallel_jobs</strong> (<em>int</em>) – Maximal number of jobs to run concurrently.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Executor for running jobs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>submitit.AutoExecutor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.setup_job_executor_from_params">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">setup_job_executor_from_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_parallel_jobs_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#setup_job_executor_from_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.setup_job_executor_from_params" title="Link to this definition">¶</a></dt>
+<dd><p>Setup job executor from unified cluster parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_params</strong> (<em>dict</em>) – Parameters of parallel execution.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Path where to create a folder for executor files and logs.</p></li>
+<li><p><strong>max_parallel_jobs_default</strong> (<em>int</em><em>, </em><em>optional</em>) – Default maximal number of jobs to run concurrently.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Executor for running jobs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>submitit.AutoExecutor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.run_simulations_with_job_executor">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">run_simulations_with_job_executor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_parallel_jobs_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#run_simulations_with_job_executor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.run_simulations_with_job_executor" title="Link to this definition">¶</a></dt>
+<dd><p>Run simulations for a list of ini files with job executor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini_files</strong> (<em>list</em><em> of </em><em>str</em>) – List of paths to the initialization files for each job.</p></li>
+<li><p><strong>cluster_params</strong> (<em>dict</em>) – Parameters of parallel execution.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Path where to create a folder for submitit files and logs.</p></li>
+<li><p><strong>max_parallel_jobs_default</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximal number of jobs to run concurrently.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -333,23 +413,23 @@ job submission to the cluster.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../field/index.html">
+          <a class="next-page" href="../plotting/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">quvac.field</div>
+                <div class="title">quvac.plotting</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../analytic_scalings/index.html">
+          <a class="prev-page" href="../log/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">quvac.analytic_scalings</div>
+                <div class="title">quvac.log</div>
                 
               </div>
             </a>
@@ -383,12 +463,14 @@ job submission to the cluster.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">quvac.config</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#">quvac.parallel</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#quvac.config.DEFAULT_SLURM_PARAMS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SLURM_PARAMS</span></code></a></li>
-<li><a class="reference internal" href="#quvac.config.FDTYPE"><code class="docutils literal notranslate"><span class="pre">FDTYPE</span></code></a></li>
-<li><a class="reference internal" href="#quvac.config.CDTYPE"><code class="docutils literal notranslate"><span class="pre">CDTYPE</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.slurm_time_to_mins"><code class="docutils literal notranslate"><span class="pre">slurm_time_to_mins()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.slurm_to_submitit_params"><code class="docutils literal notranslate"><span class="pre">slurm_to_submitit_params()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.create_job_executor"><code class="docutils literal notranslate"><span class="pre">create_job_executor()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.setup_job_executor_from_params"><code class="docutils literal notranslate"><span class="pre">setup_job_executor_from_params()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.run_simulations_with_job_executor"><code class="docutils literal notranslate"><span class="pre">run_simulations_with_job_executor()</span></code></a></li>
 </ul>
 </li>
 </ul>

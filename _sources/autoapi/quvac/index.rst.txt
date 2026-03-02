@@ -16,6 +16,7 @@ Submodules
    /autoapi/quvac/grid/index
    /autoapi/quvac/integrator/index
    /autoapi/quvac/log/index
+   /autoapi/quvac/parallel/index
    /autoapi/quvac/plotting/index
    /autoapi/quvac/postprocess/index
    /autoapi/quvac/simulation/index

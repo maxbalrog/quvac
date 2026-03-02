@@ -10,7 +10,7 @@ quvac.config
    ``FDTYPE`` and ``CDTYPE`` control the float precision for the
    calculations (``float32`` or ``float64``).
 
-   ``DEFAULT_SUBMITIT_PARAMS`` is a dictionary with default parameters for
+   ``DEFAULT_SLURM_PARAMS`` is a dictionary with default parameters for
    job submission to the cluster.
 
 
@@ -20,7 +20,7 @@ Attributes
 
 .. autoapisummary::
 
-   quvac.config.DEFAULT_SUBMITIT_PARAMS
+   quvac.config.DEFAULT_SLURM_PARAMS
    quvac.config.FDTYPE
    quvac.config.CDTYPE
 
@@ -28,7 +28,7 @@ Attributes
 Module Contents
 ---------------
 
-.. py:data:: DEFAULT_SUBMITIT_PARAMS
+.. py:data:: DEFAULT_SLURM_PARAMS
 
 .. py:data:: FDTYPE
    :value: 'float64'
