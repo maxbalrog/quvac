@@ -12,7 +12,7 @@ quvac.simulation
 
    .. code-block:: bash
 
-       python simulation.py -i <input>.yaml -o <output_dir> --wisdom <wisdom_file>
+       python simulation.py -i <input>.yml -o <output_dir> --wisdom <wisdom_file>
 
 
 
@@ -26,6 +26,7 @@ Functions
    quvac.simulation.get_filenames
    quvac.simulation.get_dirs
    quvac.simulation.set_precision
+   quvac.simulation.create_basic_logger
    quvac.simulation.run_simulation
    quvac.simulation.postprocess_simulation
    quvac.simulation.quvac_simulation
@@ -56,7 +57,7 @@ Module Contents
    :rtype: str
 
 
-.. py:function:: get_filenames(ini_file, save_path, wisdom_file)
+.. py:function:: get_filenames(ini_file, save_path, wisdom_file, mode=None)
 
    Get filenames for saving simulation data.
 
@@ -71,7 +72,7 @@ Module Contents
    :rtype: dict
 
 
-.. py:function:: get_dirs(ini_file, save_path, wisdom_file)
+.. py:function:: get_dirs(ini_file, save_path, wisdom_file, mode=None)
 
    Get directories for saving simulation data.
 
@@ -93,6 +94,8 @@ Module Contents
    :param precision: Precision type, either "float32" or "float64".
    :type precision: str
 
+
+.. py:function:: create_basic_logger(filename)
 
 .. py:function:: run_simulation(ini_config, fields_params, files, timings, memory)
 
@@ -127,7 +130,7 @@ Module Contents
 
 .. py:function:: quvac_simulation(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
 
-   Launch a single quvac simulation for given <ini>.yaml file.
+   Launch a single quvac simulation for given <ini>.yml file.
 
    :param ini_file: Path to the initialization file.
    :type ini_file: str

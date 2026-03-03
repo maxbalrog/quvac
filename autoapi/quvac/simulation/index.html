@@ -288,7 +288,7 @@
 <p>Script to launch Vacuum Emission simulation, do postprocessing
 and measure performance.</p>
 <p>Usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>simulation.py<span class="w"> </span>-i<span class="w"> </span>&lt;input&gt;.yaml<span class="w"> </span>-o<span class="w"> </span>&lt;output_dir&gt;<span class="w"> </span>--wisdom<span class="w"> </span>&lt;wisdom_file&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>simulation.py<span class="w"> </span>-i<span class="w"> </span>&lt;input&gt;.yml<span class="w"> </span>-o<span class="w"> </span>&lt;output_dir&gt;<span class="w"> </span>--wisdom<span class="w"> </span>&lt;wisdom_file&gt;
 </pre></div>
 </div>
 <section id="functions">
@@ -302,25 +302,28 @@ and measure performance.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.check_dirs" title="quvac.simulation.check_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_dirs</span></code></a>(ini_file, save_path)</p></td>
 <td><p>Check if directories exist and create them if necessary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.get_filenames" title="quvac.simulation.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a>(ini_file, save_path, wisdom_file)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.get_filenames" title="quvac.simulation.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a>(ini_file, save_path, wisdom_file[, mode])</p></td>
 <td><p>Get filenames for saving simulation data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.get_dirs" title="quvac.simulation.get_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dirs</span></code></a>(ini_file, save_path, wisdom_file)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.get_dirs" title="quvac.simulation.get_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dirs</span></code></a>(ini_file, save_path, wisdom_file[, mode])</p></td>
 <td><p>Get directories for saving simulation data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.set_precision" title="quvac.simulation.set_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_precision</span></code></a>(precision)</p></td>
 <td><p>Set global precision for calculations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.run_simulation" title="quvac.simulation.run_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulation</span></code></a>(ini_config, fields_params, files, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.create_basic_logger" title="quvac.simulation.create_basic_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_basic_logger</span></code></a>(filename)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.run_simulation" title="quvac.simulation.run_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulation</span></code></a>(ini_config, fields_params, files, ...)</p></td>
 <td><p>Run the vacuum emission simulation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.postprocess_simulation" title="quvac.simulation.postprocess_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess_simulation</span></code></a>(ini_config, files, fields_params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.postprocess_simulation" title="quvac.simulation.postprocess_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess_simulation</span></code></a>(ini_config, files, fields_params)</p></td>
 <td><p>Perform postprocessing on the simulation data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.quvac_simulation" title="quvac.simulation.quvac_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation</span></code></a>(ini_file[, save_path, wisdom_file])</p></td>
-<td><p>Launch a single quvac simulation for given &lt;ini&gt;.yaml file.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.quvac_simulation" title="quvac.simulation.quvac_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation</span></code></a>(ini_file[, save_path, wisdom_file])</p></td>
+<td><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.main_simulation" title="quvac.simulation.main_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.main_simulation" title="quvac.simulation.main_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation</span></code></a>()</p></td>
 <td><p>Main function to run the simulation script.</p></td>
 </tr>
 </tbody>
@@ -365,7 +368,7 @@ and measure performance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation.get_filenames">
-<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">get_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#get_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.get_filenames" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">get_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#get_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.get_filenames" title="Link to this definition">¶</a></dt>
 <dd><p>Get filenames for saving simulation data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -386,7 +389,7 @@ and measure performance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation.get_dirs">
-<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">get_dirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#get_dirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.get_dirs" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">get_dirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#get_dirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.get_dirs" title="Link to this definition">¶</a></dt>
 <dd><p>Get directories for saving simulation data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -415,6 +418,11 @@ and measure performance.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.simulation.create_basic_logger">
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">create_basic_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#create_basic_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.create_basic_logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation.run_simulation">
@@ -458,7 +466,7 @@ and measure performance.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation.quvac_simulation">
 <span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">quvac_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wisdom/fftw-wisdom'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#quvac_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.quvac_simulation" title="Link to this definition">¶</a></dt>
-<dd><p>Launch a single quvac simulation for given &lt;ini&gt;.yaml file.</p>
+<dd><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -542,6 +550,7 @@ and measure performance.</p>
 <li><a class="reference internal" href="#quvac.simulation.get_filenames"><code class="docutils literal notranslate"><span class="pre">get_filenames()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.get_dirs"><code class="docutils literal notranslate"><span class="pre">get_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.set_precision"><code class="docutils literal notranslate"><span class="pre">set_precision()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.simulation.create_basic_logger"><code class="docutils literal notranslate"><span class="pre">create_basic_logger()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.run_simulation"><code class="docutils literal notranslate"><span class="pre">run_simulation()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.postprocess_simulation"><code class="docutils literal notranslate"><span class="pre">postprocess_simulation()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.quvac_simulation"><code class="docutils literal notranslate"><span class="pre">quvac_simulation()</span></code></a></li>

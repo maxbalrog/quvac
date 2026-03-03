@@ -280,6 +280,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Usefult functions and default strings for logs.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_memory</span><span class="p">,</span> <span class="n">format_time</span>
 
 <span class="c1"># Warning when total signal on spherical grid differs from</span>
@@ -592,6 +594,19 @@
         <span class="n">format_time</span><span class="p">(</span><span class="n">time_total</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">test_run_str_print</span></div>
+
+
+
+<div class="viewcode-block" id="log_time">
+<a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.log_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_time</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">):</span>
+    <span class="n">time_log</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">asctime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+        <span class="n">str_template</span> <span class="o">=</span> <span class="n">simulation_start_str</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+        <span class="n">str_template</span> <span class="o">=</span> <span class="n">simulation_end_str</span>
+    <span class="n">str_to_print</span> <span class="o">=</span> <span class="n">str_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_log</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">str_to_print</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

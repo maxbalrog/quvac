@@ -20,6 +20,7 @@ Functions
    quvac.log.get_postprocess_stats
    quvac.log.get_parallel_performance_stats
    quvac.log.get_test_timings
+   quvac.log.log_time
 
 
 Module Contents
@@ -96,4 +97,6 @@ Module Contents
    :returns: **test_run_str_print** -- Formatted string with test run timings.
    :rtype: str
 
+
+.. py:function:: log_time(logger, name='start')
 

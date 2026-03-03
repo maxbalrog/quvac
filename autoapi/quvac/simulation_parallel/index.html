@@ -289,7 +289,7 @@
 (using submitit for semi-slurm submission type), do postprocessing
 and measure performance.</p>
 <p>Usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>simulation_parallel.py<span class="w"> </span>-i<span class="w"> </span>&lt;input&gt;.yaml<span class="w"> </span>-o<span class="w"> </span>&lt;output_dir&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>simulation_parallel.py<span class="w"> </span>-i<span class="w"> </span>&lt;input&gt;.yml<span class="w"> </span>-o<span class="w"> </span>&lt;output_dir&gt;
 --wisdom<span class="w"> </span>&lt;wisdom_file&gt;
 </pre></div>
 </div>
@@ -305,7 +305,7 @@ and measure performance.</p>
 <td><p>Collect results from parallel jobs and combine them.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation_parallel.quvac_simulation_parallel" title="quvac.simulation_parallel.quvac_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation_parallel</span></code></a>(ini_file[, save_path, ...])</p></td>
-<td><p>Launch a single quvac simulation for given &lt;ini&gt;.yaml file in parallel.</p></td>
+<td><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file in parallel.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation_parallel.main_simulation_parallel" title="quvac.simulation_parallel.main_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation_parallel</span></code></a>()</p></td>
 <td><p>Main function to run the simulation in parallel.</p></td>
@@ -356,7 +356,7 @@ and measure performance.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation_parallel.quvac_simulation_parallel">
 <span class="sig-prename descclassname"><span class="pre">quvac.simulation_parallel.</span></span><span class="sig-name descname"><span class="pre">quvac_simulation_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wisdom_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wisdom/fftw-wisdom'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation_parallel.html#quvac_simulation_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation_parallel.quvac_simulation_parallel" title="Link to this definition">¶</a></dt>
-<dd><p>Launch a single quvac simulation for given &lt;ini&gt;.yaml file in parallel.</p>
+<dd><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file in parallel.</p>
 <p>Depending on available jobs, we split the total time interval
 into several sub-intervals and submit each sub-interval for
 calculation as a separate quvac simulation (without postprocessing).

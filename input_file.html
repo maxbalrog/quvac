@@ -323,12 +323,12 @@
 </dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">quvac-simulation-parallel</span></code> additionally requires section <code class="docutils literal notranslate"><span class="pre">cluster_params</span></code> describing
-parameters of parallelization. Similarly, <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code> requires a section <code class="docutils literal notranslate"><span class="pre">variables</span></code> (parameters
+parameters of parallelization. Similarly, <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code> requires a section <code class="docutils literal notranslate"><span class="pre">gridscan</span></code> (parameters
 being scanned and slurm job parameters), <code class="docutils literal notranslate"><span class="pre">quvac-optimization</span></code> requires a section <code class="docutils literal notranslate"><span class="pre">optimization</span></code>
 (parameters to setup optimization experiment: optimized variables, metrics, sampling strategy, …).</p>
 </section>
 <section id="fields">
-<h2>Fields<a class="headerlink" href="#fields" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">fields</span></code><a class="headerlink" href="#fields" title="Link to this heading">¶</a></h2>
 <p>This section of <code class="docutils literal notranslate"><span class="pre">.yml</span></code> file is constructed as <code class="docutils literal notranslate"><span class="pre">{'field_1':</span> <span class="pre">{...},</span> <span class="pre">'field_2':</span> <span class="pre">{...},</span> <span class="pre">...}</span></code> where each dictionary of field parameters has the <code class="docutils literal notranslate"><span class="pre">field_type</span></code> parameter and
 other parameters specific to the chosen field type.</p>
 <p><code class="docutils literal notranslate"><span class="pre">field_type</span></code> is constructed via the combination of the field name (<code class="docutils literal notranslate"><span class="pre">dipole</span></code>, <code class="docutils literal notranslate"><span class="pre">paraxial_gaussian</span></code>, <code class="docutils literal notranslate"><span class="pre">laguerre_gaussian</span></code>)
@@ -409,7 +409,7 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </div>
 </section>
 <section id="grid">
-<h2>Grid<a class="headerlink" href="#grid" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">grid</span></code><a class="headerlink" href="#grid" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Required keys are:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -483,7 +483,7 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </dl>
 </section>
 <section id="integrator-optional">
-<h2>Integrator (optional)<a class="headerlink" href="#integrator-optional" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">integrator</span></code> (optional)<a class="headerlink" href="#integrator-optional" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -515,7 +515,7 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </dl>
 </section>
 <section id="performance-optional">
-<h2>Performance (optional)<a class="headerlink" href="#performance-optional" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">performance</span></code> (optional)<a class="headerlink" href="#performance-optional" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -553,7 +553,7 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </dl>
 </section>
 <section id="postprocessing-optional">
-<h2>Postprocessing (optional)<a class="headerlink" href="#postprocessing-optional" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">postprocessing</span></code> (optional)<a class="headerlink" href="#postprocessing-optional" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>This section is relevant only when <code class="docutils literal notranslate"><span class="pre">mode</span></code> is <code class="docutils literal notranslate"><span class="pre">postprocess</span></code> or <code class="docutils literal notranslate"><span class="pre">simulation_postprocess</span></code>. Relevant keys for the polarization-insensitive signals:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -622,7 +622,7 @@ by default False.</p>
 </dl>
 </section>
 <section id="cluster-params-for-quvac-simulation-parallel">
-<h2>Cluster_params (for <code class="docutils literal notranslate"><span class="pre">quvac-simulation-parallel</span></code>)<a class="headerlink" href="#cluster-params-for-quvac-simulation-parallel" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">cluster_params</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-simulation-parallel</span></code>)<a class="headerlink" href="#cluster-params-for-quvac-simulation-parallel" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -651,8 +651,8 @@ by default False.</p>
 </dd>
 </dl>
 </section>
-<section id="variables-for-quvac-gridscan">
-<h2>Variables (for <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code>)<a class="headerlink" href="#variables-for-quvac-gridscan" title="Link to this heading">¶</a></h2>
+<section id="gridscan-for-quvac-gridscan">
+<h2><code class="docutils literal notranslate"><span class="pre">gridscan</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code>)<a class="headerlink" href="#gridscan-for-quvac-gridscan" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -691,7 +691,7 @@ by default False.</p>
 </dl>
 </section>
 <section id="optimization-for-quvac-optimization">
-<h2>Optimization (for <code class="docutils literal notranslate"><span class="pre">quvac-optimization</span></code>)<a class="headerlink" href="#optimization-for-quvac-optimization" title="Link to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">optimization</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-optimization</span></code>)<a class="headerlink" href="#optimization-for-quvac-optimization" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Keys:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -849,14 +849,14 @@ optimization could be also specified this way, e.g. <code class="docutils litera
             <ul>
 <li><a class="reference internal" href="#">Create input file</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#fields">Fields</a></li>
-<li><a class="reference internal" href="#grid">Grid</a></li>
-<li><a class="reference internal" href="#integrator-optional">Integrator (optional)</a></li>
-<li><a class="reference internal" href="#performance-optional">Performance (optional)</a></li>
-<li><a class="reference internal" href="#postprocessing-optional">Postprocessing (optional)</a></li>
-<li><a class="reference internal" href="#cluster-params-for-quvac-simulation-parallel">Cluster_params (for <code class="docutils literal notranslate"><span class="pre">quvac-simulation-parallel</span></code>)</a></li>
-<li><a class="reference internal" href="#variables-for-quvac-gridscan">Variables (for <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code>)</a></li>
-<li><a class="reference internal" href="#optimization-for-quvac-optimization">Optimization (for <code class="docutils literal notranslate"><span class="pre">quvac-optimization</span></code>)</a></li>
+<li><a class="reference internal" href="#fields"><code class="docutils literal notranslate"><span class="pre">fields</span></code></a></li>
+<li><a class="reference internal" href="#grid"><code class="docutils literal notranslate"><span class="pre">grid</span></code></a></li>
+<li><a class="reference internal" href="#integrator-optional"><code class="docutils literal notranslate"><span class="pre">integrator</span></code> (optional)</a></li>
+<li><a class="reference internal" href="#performance-optional"><code class="docutils literal notranslate"><span class="pre">performance</span></code> (optional)</a></li>
+<li><a class="reference internal" href="#postprocessing-optional"><code class="docutils literal notranslate"><span class="pre">postprocessing</span></code> (optional)</a></li>
+<li><a class="reference internal" href="#cluster-params-for-quvac-simulation-parallel"><code class="docutils literal notranslate"><span class="pre">cluster_params</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-simulation-parallel</span></code>)</a></li>
+<li><a class="reference internal" href="#gridscan-for-quvac-gridscan"><code class="docutils literal notranslate"><span class="pre">gridscan</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-gridscan</span></code>)</a></li>
+<li><a class="reference internal" href="#optimization-for-quvac-optimization"><code class="docutils literal notranslate"><span class="pre">optimization</span></code> (for <code class="docutils literal notranslate"><span class="pre">quvac-optimization</span></code>)</a></li>
 </ul>
 </li>
 </ul>
