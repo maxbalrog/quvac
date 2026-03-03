@@ -8,7 +8,7 @@ Usage:
 
 .. code-block:: bash
 
-    python simulation_parallel.py -i <input>.yaml -o <output_dir> 
+    python simulation_parallel.py -i <input>.yml -o <output_dir> 
     --wisdom <wisdom_file>
 """
 from copy import deepcopy
@@ -20,13 +20,14 @@ import time
 import numpy as np
 
 from quvac.grid import setup_grids
-from quvac.log import (
-    get_parallel_performance_stats,
-    simulation_end_str,
-    simulation_start_str,
-)
+from quvac.log import get_parallel_performance_stats, log_time
 from quvac.parallel import run_simulations_with_job_executor
-from quvac.simulation import get_dirs, parse_args, postprocess_simulation
+from quvac.simulation import (
+    create_basic_logger,
+    get_dirs,
+    parse_args,
+    postprocess_simulation,
+)
 from quvac.utils import get_maxrss, read_yaml, write_yaml
 
 _logger = logging.getLogger("simulation")
@@ -116,7 +117,7 @@ def quvac_simulation_parallel(
     ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom"
 ):
     """
-    Launch a single quvac simulation for given <ini>.yaml file in parallel.
+    Launch a single quvac simulation for given <ini>.yml file in parallel.
 
     Depending on available jobs, we split the total time interval
     into several sub-intervals and submit each sub-interval for
@@ -142,18 +143,10 @@ def quvac_simulation_parallel(
     do_postprocess = 'postprocess' in mode
 
     # Setup logger
-    logging.basicConfig(
-        filename=files['logger'],
-        filemode="w",
-        encoding="utf-8",
-        level=logging.DEBUG,
-        format="%(message)s",
-    )
+    create_basic_logger(files["logger"])
 
     # Start time
-    time_log_start = time.asctime(time.localtime())
-    start_print = simulation_start_str.format(time_log_start)
-    _logger.info(start_print)
+    log_time(_logger, name="start")
     timings = {}
     timings['start'] = time.perf_counter()
 
@@ -209,9 +202,7 @@ def quvac_simulation_parallel(
     print("Simulation finished!")
 
     # End time
-    time_log_end = time.asctime(time.localtime())
-    end_print = simulation_end_str.format(time_log_end)
-    _logger.info(end_print)
+    log_time(_logger, name="end")
 
 
 def main_simulation_parallel():

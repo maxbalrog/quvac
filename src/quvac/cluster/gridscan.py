@@ -3,24 +3,28 @@
 Script to run gridscan simulations on cluster with Slurm.
 
 Gridscan parameters (scanned variables and their grids)
-should be located in `ini.yml` at key `variables`.
+should be located in `ini.yml` at key `gridscan`.
 
 Usage:
 
 .. code-block:: bash
 
-    gridscan.py -i <input>.yaml -o <output_dir>
+    gridscan.py -i <input>.yml -o <output_dir>
 """
 from copy import deepcopy
 import itertools
+import logging
 import os
 from pathlib import Path
 
 import numpy as np
 
+from quvac.log import log_time
 from quvac.parallel import run_simulations_with_job_executor
-from quvac.simulation import parse_args
+from quvac.simulation import create_basic_logger, get_dirs, parse_args
 from quvac.utils import read_yaml, write_yaml
+
+_logger = logging.getLogger("simulation")
 
 
 def _create_grids(variables):
@@ -170,28 +174,31 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
     -------
     None
     """
-    # Check that ini file and save_path exists
-    assert os.path.isfile(ini_file), f"{ini_file} is not a file or does not exist"
-    if save_path is None:
-        save_path = os.path.dirname(ini_file)
-    if not os.path.exists(save_path):
-        Path(save_path).mkdir(parents=True, exist_ok=True)
+    # Check that ini file and save_path exist
+    files = get_dirs(ini_file, save_path, wisdom_file, mode="gridscan")
+    save_path = files['save_path']
+
+    # Setup logger
+    create_basic_logger(files["logger"])
+
+    # Start time
+    log_time(_logger, name="start")
 
     ini_default = read_yaml(ini_file)
-    variables = ini_default["variables"]
-    cluster_params = variables.get("cluster_params", {})
+    gridscan_params = ini_default["gridscan"]
+    cluster_params = gridscan_params.get("cluster_params", {})
     if cluster_params:
-        variables.pop("cluster_params")
+        gridscan_params.pop("cluster_params")
 
-    create_grids = variables.get("create_grids", False)
-    if "create_grids" in variables:
-        variables.pop("create_grids")
+    create_grids = gridscan_params.get("create_grids", False)
+    if "create_grids" in gridscan_params:
+        gridscan_params.pop("create_grids")
 
     # Create parameter grids if required
     if create_grids:
-        variables_grid = create_parameter_grids(variables)
+        variables_grid = create_parameter_grids(gridscan_params)
     else:
-        variables_grid = variables
+        variables_grid = gridscan_params
 
     # Restructure variables dict
     param_names, param_grids = restructure_variables_grid(variables_grid)
@@ -200,6 +207,7 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
     ini_files = create_ini_files_for_gridscan(
         ini_default, param_names, param_grids, save_path
     )
+    _logger.info("MILESTONE: ini files are created for the specified grid.")
 
     run_simulations_with_job_executor(
         ini_files, 
@@ -207,7 +215,10 @@ def cluster_gridscan(ini_file, save_path=None, wisdom_file=None):
         save_path,
         max_parallel_jobs_default=5,
     )
-    print("Grid scan is finished!")
+    _logger.info("Grid scan is finished!")
+
+    # End time
+    log_time(_logger, name="end")
 
 
 def main_gridscan():

@@ -7,7 +7,7 @@ Usage:
 
 .. code-block:: bash
 
-    python simulation.py -i <input>.yaml -o <output_dir> --wisdom <wisdom_file>
+    python simulation.py -i <input>.yml -o <output_dir> --wisdom <wisdom_file>
 """
 
 import argparse
@@ -29,8 +29,7 @@ from quvac.log import (
     get_postprocess_info,
     get_postprocess_stats,
     get_test_timings,
-    simulation_end_str,
-    simulation_start_str,
+    log_time,
 )
 from quvac.postprocess import VacuumEmissionAnalyzer
 from quvac.utils import get_maxrss, load_wisdom, read_yaml, save_wisdom, write_yaml
@@ -84,7 +83,7 @@ def check_dirs(ini_file, save_path):
     return save_path
 
 
-def get_filenames(ini_file, save_path, wisdom_file):
+def get_filenames(ini_file, save_path, wisdom_file, mode=None):
     """
     Get filenames for saving simulation data.
 
@@ -103,7 +102,8 @@ def get_filenames(ini_file, save_path, wisdom_file):
         Dictionary containing filenames for saving simulation data.
     """
     ini_config = read_yaml(ini_file)
-    mode = ini_config.get('mode', 'simulation_postprocess')
+    if mode is None:
+        mode = ini_config.get('mode', 'simulation_postprocess')
     files = {}
     files['save_path'] = save_path
     files['ini'] = ini_file
@@ -115,7 +115,7 @@ def get_filenames(ini_file, save_path, wisdom_file):
     return files
 
 
-def get_dirs(ini_file, save_path, wisdom_file):
+def get_dirs(ini_file, save_path, wisdom_file, mode=None):
     """
     Get directories for saving simulation data.
 
@@ -134,7 +134,7 @@ def get_dirs(ini_file, save_path, wisdom_file):
         Dictionary containing directories for saving simulation data.
     """
     save_path = check_dirs(ini_file, save_path)
-    files = get_filenames(ini_file, save_path, wisdom_file)
+    files = get_filenames(ini_file, save_path, wisdom_file, mode=mode)
     return files
 
 
@@ -153,6 +153,16 @@ def set_precision(precision):
     else:
         config.FDTYPE = "float64"
         config.CDTYPE = "complex128"
+
+
+def create_basic_logger(filename):
+    logging.basicConfig(
+        filename=filename,
+        filemode="w",
+        encoding="utf-8",
+        level=logging.DEBUG,
+        format="%(message)s",
+    )
 
 
 def run_simulation(ini_config, fields_params, files, timings, memory):
@@ -313,7 +323,7 @@ def postprocess_simulation(ini_config, files, fields_params):
 
 def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom"):
     """
-    Launch a single quvac simulation for given <ini>.yaml file.
+    Launch a single quvac simulation for given <ini>.yml file.
 
     Parameters
     ----------
@@ -335,18 +345,10 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom")
     do_postprocess = 'postprocess' in mode
 
     # Setup logger
-    logging.basicConfig(
-        filename=files['logger'],
-        filemode="w",
-        encoding="utf-8",
-        level=logging.DEBUG,
-        format="%(message)s",
-    )
+    create_basic_logger(files["logger"])
 
     # Start time
-    time_log_start = time.asctime(time.localtime())
-    start_print = simulation_start_str.format(time_log_start)
-    _logger.info(start_print)
+    log_time(_logger, name="start")
     timings = {}
     timings['start'] = time.perf_counter()
     memory = {'maxrss_amplitudes': 0}
@@ -390,9 +392,7 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom")
     print("Simulation finished!")
 
     # End time
-    time_log_end = time.asctime(time.localtime())
-    end_print = simulation_end_str.format(time_log_end)
-    _logger.info(end_print)
+    log_time(_logger, name="end")
 
 
 def main_simulation():

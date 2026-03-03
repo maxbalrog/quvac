@@ -9,11 +9,12 @@ Usage:
 
 .. code-block:: bash
 
-    optimization.py -i <input>.yaml -o <output_dir>
+    optimization.py -i <input>.yml -o <output_dir>
 """
 from collections.abc import Iterable
 from copy import deepcopy
 import itertools
+import logging
 import os
 from pathlib import Path
 import time
@@ -30,13 +31,16 @@ from ax.generation_strategy.transition_criterion import MinTrials
 import numpy as np
 from submitit import DebugJob, LocalJob
 
+from quvac.log import log_time
 from quvac.parallel import setup_job_executor_from_params
 from quvac.postprocess import integrate_spherical, signal_in_detector
-from quvac.simulation import parse_args, quvac_simulation
+from quvac.simulation import create_basic_logger, get_dirs, parse_args, quvac_simulation
 from quvac.utils import read_yaml, round_to_n, write_yaml
 
+_logger = logging.getLogger("simulation")
 
-def prepare_params_for_ax(params, ini_file):
+
+def prepare_params_for_ax(params):
     """
     Prepare parameters for Ax optimization.
 
@@ -44,12 +48,10 @@ def prepare_params_for_ax(params, ini_file):
     ----------
     params : dict
         Dictionary containing parameter categories and their bounds.
-    ini_file : str
-        Path to the initial configuration file.
 
     Returns
     -------
-    list of dict
+    list of ax.api.configs.RangeParameterConfig
         List of parameter descriptions formatted for Ax optimization.
 
     Note
@@ -58,8 +60,8 @@ def prepare_params_for_ax(params, ini_file):
     {"field_1": {"param_1": range_1, "param_2": range_2}, ...} which are transformed
     to ["field_1:param_1", "field_1:param_2", ...] parameter names.
 
-    Also the path to default `ini.yml` is passed. For every optimization trial it is 
-    loaded, optimized parameters are changed and the simulation is submitted.
+    For every optimization trial it is loaded, optimized parameters are changed and 
+    the simulation is submitted.
     """
     params_ax = []
     for category_key, category in params.items():
@@ -512,7 +514,7 @@ def _create_new_ax_client(experiment_name,params_for_ax,parameter_constraints):
         parameter_constraints=parameter_constraints,
         name=experiment_name,
     )
-    print("Created a new experiment!")
+    _logger.info("Created a new experiment!")
 
     return ax_client
 
@@ -548,7 +550,7 @@ def setup_ax_client(
     if start_fresh:
         if os.path.isfile(experiment_file):
             os.remove(experiment_file)
-            print("Deleted old experiment...")
+            _logger.info("Deleted old experiment...")
         ax_client = _create_new_ax_client(
             experiment_name,
             params_for_ax,
@@ -556,7 +558,7 @@ def setup_ax_client(
         )
     else:
         ax_client = Client.load_from_json_file(experiment_file)
-        print("Loaded existing experiment!")
+        _logger.info("Loaded existing experiment!")
     
     return ax_client
 
@@ -579,12 +581,16 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     -------
     None
     """
-    # Check that ini file and save_path exists
-    assert os.path.isfile(ini_file), f"{ini_file} is not a file or does not exist"
-    if save_path is None:
-        save_path = os.path.dirname(ini_file)
-    if not os.path.exists(save_path):
-        Path(save_path).mkdir(parents=True, exist_ok=True)
+    # Check that ini file and save_path exist
+    files = get_dirs(ini_file, save_path, wisdom_file, mode="optimization")
+    save_path = files['save_path']
+
+    # Setup logger
+    create_basic_logger(files["logger"])
+
+    # Start time
+    log_time(_logger, name="start")
+
     experiment_file = os.path.join(save_path, "experiment.json")
 
     ini_default = read_yaml(ini_file)
@@ -601,7 +607,7 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     ), err_msg
 
     # Prepare parameters for optimization in ax style
-    params_for_ax = prepare_params_for_ax(optimization_params["parameters"], ini_file)
+    params_for_ax = prepare_params_for_ax(optimization_params["parameters"])
 
     # custom generation strategy
     number_of_ini_trials = optimization_params.get("number_of_ini_trials", 5)
@@ -630,7 +636,7 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     )
     if gs_initialization_random_seed is None:
         gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
-    print(
+    _logger.info(
         f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
     )
 
@@ -647,10 +653,16 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     noiseless_observations = optimization_params.get("noiseless_observations", True)
     n_trials = optimization_params.get("n_trials", 10)
 
+    _logger.info("MILESTONE: Optimization is fully configured.")
+    _logger.info("Launching first trials...")
+
     run_optimization(ax_client, executor, ini_file, n_trials, max_parallel_jobs, 
                      experiment_file, metric_names, noiseless_observations)
 
-    print("Optimization finished!")
+    _logger.info("Optimization is finished!")
+
+    # End time
+    log_time(_logger, name="end")
 
 
 def gather_trials_data(ax_client, metric_names=("N_total", "N_disc")):

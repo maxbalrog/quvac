@@ -5,7 +5,7 @@ Various field profiles and interfaces to unite them.
     After implementing a new field profile, it should be added to the 
     ``ANALYTIC_FIELDS`` and ``SPATIAL_MODEL_FIELDS`` dicts in the 
     ``quvac.field.__init__``. These dictionaries connect ``field_type``
-    keywords in the ``ini.yaml`` files and particular field implementations.
+    keywords in the ``ini.yml`` files and particular field implementations.
 """
 from quvac.field.dipole import DipoleAnalytic
 from quvac.field.gaussian import (

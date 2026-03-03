@@ -75,7 +75,7 @@ SPATIAL_MODEL_FIELDS = {
 
 **Step 3. Run a simulation.**
 
-Now, add an appropriate `field_params` dictionary to the `ini.yaml` file, e.g.
+Now, add an appropriate `field_params` dictionary to the `ini.yml` file, e.g.
 
 ```python
 field_params = {

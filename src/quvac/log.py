@@ -1,6 +1,8 @@
 """
 Usefult functions and default strings for logs.
 """
+import time
+
 from quvac.utils import format_memory, format_time
 
 # Warning when total signal on spherical grid differs from
@@ -296,3 +298,13 @@ def get_test_timings(timings, Nt, expected_timesteps):
         format_time(time_total),
     )
     return test_run_str_print
+
+
+def log_time(logger, name="start"):
+    time_log = time.asctime(time.localtime())
+    if name == "start":
+        str_template = simulation_start_str
+    elif name == "end":
+        str_template = simulation_end_str
+    str_to_print = str_template.format(time_log)
+    logger.info(str_to_print)
