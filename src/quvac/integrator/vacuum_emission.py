@@ -162,7 +162,7 @@ class VacuumEmission:
         Calculate the field and U terms (integrand) for one time step.
         """
         # Calculate fields
-        self._allocate_fields()
+        # self._allocate_fields()
 
         if not self.channels:
             self.field.calculate_field(t, E_out=self.E_out, B_out=self.B_out)
@@ -244,6 +244,7 @@ class VacuumEmission:
         # Allocate resources
         self._allocate_result_arrays()
         self._allocate_fft()
+        self._allocate_fields()
 
         time_integral_start = time.perf_counter()
         self.calculate_time_integral(t_grid, integration_method)

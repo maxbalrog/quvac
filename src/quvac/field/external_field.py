@@ -43,6 +43,11 @@ class ExternalField(Field):
 
         self.nthreads = nthreads if nthreads else os.cpu_count()
 
+        # Reallocation of E_out and B_out fields at each time step was removed.
+        # If Maxwell fields are present in the setup, the zeroing out fields is 
+        # automatic
+        self.need_to_zero_fields = True
+
         maxwell_params = [
             params
             for params in fields_params
@@ -54,7 +59,12 @@ class ExternalField(Field):
             if not params["field_type"].endswith("maxwell")
         ]
         if maxwell_params:
-            new_params.append(maxwell_params)
+            # MaxwellField directly overwrites given E_out and B_out arrays.
+            # If it's used together with other fields (analytic profiles) then
+            # it needs to go first so total external field is correct.
+            new_params.insert(0, maxwell_params)
+            # MaxwellField takes care of zeroing out.
+            self.need_to_zero_fields = False
 
         _logger.info(
             f"{self.__class__.__name__}\n"
@@ -97,10 +107,19 @@ class ExternalField(Field):
         self.fields.append(field)
         _logger.info(f"Base class: {field.__class__.__name__}")
 
+    def maybe_zero_out_field_buffers(self, E_out, B_out):
+        output_given = (E_out is not None) and (B_out is not None)
+        if output_given and self.need_to_zero_fields:
+            for idx in range(3):
+                E_out[idx][:] = 0.
+                B_out[idx][:] = 0.
+        return E_out, B_out
+
     def calculate_field(self, t, E_out=None, B_out=None):
         """
         Calculates the electric and magnetic fields at a given time step.
         """
+        E_out, B_out = self.maybe_zero_out_field_buffers(E_out, B_out)
         for field in self.fields:
             E_out, B_out = field.calculate_field(t, E_out=E_out, B_out=B_out)
         return E_out, B_out
