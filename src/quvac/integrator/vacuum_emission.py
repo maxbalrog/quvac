@@ -121,12 +121,8 @@ class VacuumEmission:
         self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape, 
                                                 self.nthreads)
 
-        self.prefactor = np.zeros(self.grid_shape, dtype="complex128")
-
-        self.prefactor_dict = {
-            "kabs": self.kabs,
-            "c": c,
-        }
+        self.prefactor = np.ones(self.grid_shape, dtype="complex128")
+        self.prefactor_step = np.zeros(self.grid_shape, dtype="complex128")
 
         self.U_dict = {"F": self.F, "G": self.G}
 
@@ -175,33 +171,53 @@ class VacuumEmission:
                                 "G_Ep_B": self.G_Ep_B,
                                 "G_E_Bp": self.G_E_Bp,})
 
+        # Update prefactor: this prescription is valid only for equidistant grids!!!
+        ne.evaluate("prefactor*prefactor_step", local_dict=self.__dict__, 
+                    out=self.prefactor)
+
         # Evaluate U1 and U2 expressions
-        self.prefactor_dict.update({"t": t})
-        ne.evaluate(
-            "exp(1j*kabs*c*t)", local_dict=self.prefactor_dict, out=self.prefactor
-        )
         for U_acc, U_expr in zip([self.U1_acc, self.U2_acc], [self.U1, self.U2]): # noqa: B905
-            # U_acc = getattr(self, U_key)
             ne.evaluate(U_expr, global_dict=self.U_dict, out=self.fft_executor.tmp)
             self.fft_executor.forward_fftw.execute()
 
             U_res = ne.evaluate(
-                    "U_acc + U*prefactor*dt*dV",
-                    global_dict={
-                        "U_acc": U_acc,
-                        "U": self.fft_executor.tmp,
-                        "prefactor": self.prefactor,
-                        "dt": self.dt,
-                        "dV": self.dV,
-                    },
-                )
+                "U_acc + U*prefactor",
+                global_dict={
+                    "U_acc": U_acc,
+                    "U": self.fft_executor.tmp,
+                    "prefactor": self.prefactor,
+                },
+            )
             np.copyto(U_acc, U_res)
+
+    def multiply_integration_result(self, t_grid):
+        self._free_resources()
+        # prefactor related to time grid and discretization
+        self.prefactor_dict.update({"t": t_grid[0], "dt": self.dt, "dV": self.dV,})
+        ne.evaluate(
+            "exp(1j*kabs*c*t)*dt*dV", 
+            local_dict=self.prefactor_dict, 
+            out=self.prefactor
+        )
+        for acc in [self.U1_acc, self.U2_acc]:
+            ne.evaluate("acc*prefactor", global_dict={"prefactor": self.prefactor},
+                        out=acc)
 
     def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
         """
         Calculate the time integral.
         """
         self.dt = t_grid[1] - t_grid[0]
+        # prefactor-related variables
+        self.prefactor_dict = {
+            "kabs": self.kabs,
+            "c": c,
+            "dt": self.dt,
+        }
+        ne.evaluate(
+            "exp(1j*kabs*c*dt)", local_dict=self.prefactor_dict, out=self.prefactor_step
+        )
+
         if integration_method == "trapezoid":
             # end_pts = (0, len(t_grid) - 1)
             for _, t in enumerate(t_grid):
@@ -214,6 +230,9 @@ class VacuumEmission:
                 f"passed {integration_method}"
             )
             raise NotImplementedError(err_msg)
+        
+        # finish calculation
+        self.multiply_integration_result(t_grid)
 
     def calculate_amplitudes(
         self, t_grid, integration_method="trapezoid", save_path=None
@@ -230,7 +249,7 @@ class VacuumEmission:
         self.calculate_time_integral(t_grid, integration_method)
         time_integral_end = time.perf_counter()
         time_integral = time_integral_end - time_integral_start
-        self._free_resources()
+        # self._free_resources()
 
         # Results should be in U1_acc and U2_acc
         dims = 1 / BS**3 * m_e**2 * c**3 / hbar**2
