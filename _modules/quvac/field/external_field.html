@@ -235,6 +235,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/utils/index.html">quvac.utils</a></li>
@@ -283,7 +284,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">ANALYTIC_FIELDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
@@ -304,6 +304,8 @@
 <span class="sd">        List of dictionaries containing the parameters for each external field.</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and spectral grid.</span>
+<span class="sd">    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional</span>
+<span class="sd">        Executor that performs FFTs.</span>
 <span class="sd">    nthreads : int, optional</span>
 <span class="sd">        Number of threads to use for calculations. If not provided, defaults to the </span>
 <span class="sd">        number of CPU cores.</span>
@@ -314,15 +316,23 @@
 <span class="sd">        List of field objects.</span>
 <span class="sd">    grid_xyz : tuple of np.array</span>
 <span class="sd">        The spatial grid.</span>
+<span class="sd">    fft_executor: quvac.pyfftw_executor.FFTExecutor</span>
+<span class="sd">        Executor that performs FFTs.</span>
 <span class="sd">    nthreads : int</span>
 <span class="sd">        Number of threads to use for calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">grid</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="k">if</span> <span class="n">nthreads</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">fft_executor</span>
+
+        <span class="c1"># Reallocation of E_out and B_out fields at each time step was removed.</span>
+        <span class="c1"># If Maxwell fields are present in the setup, the zeroing out fields is </span>
+        <span class="c1"># automatic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">need_to_zero_fields</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">maxwell_params</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">params</span>
@@ -335,7 +345,12 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;maxwell&quot;</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">maxwell_params</span><span class="p">:</span>
-            <span class="n">new_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maxwell_params</span><span class="p">)</span>
+            <span class="c1"># MaxwellField directly overwrites given E_out and B_out arrays.</span>
+            <span class="c1"># If it&#39;s used together with other fields (analytic profiles) then</span>
+            <span class="c1"># it needs to go first so total external field is correct.</span>
+            <span class="n">new_params</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxwell_params</span><span class="p">)</span>
+            <span class="c1"># MaxwellField takes care of zeroing out.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">need_to_zero_fields</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -370,7 +385,8 @@
             <span class="n">field</span> <span class="o">=</span> <span class="n">ANALYTIC_FIELDS</span><span class="p">[</span><span class="n">field_type</span><span class="p">](</span><span class="n">field_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s2">&quot;maxwell&quot;</span><span class="p">:</span>
             <span class="n">field</span> <span class="o">=</span> <span class="n">MaxwellMultiple</span><span class="p">(</span>
-                    <span class="n">field_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span>
+                    <span class="n">field_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="p">,</span> 
+                    <span class="n">nthreads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -381,12 +397,24 @@
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base class: </span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="ExternalField.maybe_zero_out_field_buffers">
+<a class="viewcode-back" href="../../../autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.maybe_zero_out_field_buffers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maybe_zero_out_field_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">):</span>
+        <span class="n">output_given</span> <span class="o">=</span> <span class="p">(</span><span class="n">E_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">B_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_given</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">need_to_zero_fields</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">E_out</span><span class="p">[</span><span class="n">idx</span><span class="p">][:]</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="n">B_out</span><span class="p">[</span><span class="n">idx</span><span class="p">][:]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
+
+
 <div class="viewcode-block" id="ExternalField.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.calculate_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_zero_out_field_buffers</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
             <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">calculate_field</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="n">B_out</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
@@ -416,6 +444,8 @@
 <span class="sd">                </span>
 <span class="sd">        If not provided, defaults to {&quot;probe&quot;: [0], &quot;pump&quot;: [1]}.</span>
 
+<span class="sd">    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional</span>
+<span class="sd">        Executor that performs FFTs.</span>
 <span class="sd">    nthreads : int, optional</span>
 <span class="sd">        Number of threads to use for calculations. If not provided, defaults to the </span>
 <span class="sd">        number of CPU cores.</span>
@@ -432,18 +462,19 @@
 <span class="sd">        ExternalField object for the pump fields.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">probe_pump_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">probe_pump_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">probe_pump_idx</span><span class="p">:</span>
             <span class="n">probe_pump_idx</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;probe&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;pump&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probe_pump_idx</span> <span class="o">=</span> <span class="n">probe_pump_idx</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="k">if</span> <span class="n">nthreads</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
-
         <span class="n">probe_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields_params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">probe_pump_idx</span><span class="p">[</span><span class="s2">&quot;probe&quot;</span><span class="p">]]</span>
         <span class="n">pump_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields_params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">probe_pump_idx</span><span class="p">[</span><span class="s2">&quot;pump&quot;</span><span class="p">]]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">probe_field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">probe_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pump_field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">pump_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probe_field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">probe_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> 
+                                         <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pump_field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">pump_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> 
+                                        <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ProbePumpField.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ProbePumpField.calculate_field">[docs]</a>

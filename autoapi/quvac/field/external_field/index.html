@@ -236,6 +236,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">quvac.utils</a></li>
@@ -306,7 +307,7 @@ various field types.</p>
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="quvac.field.external_field.ExternalField">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.external_field.</span></span><span class="sig-name descname"><span class="pre">ExternalField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ExternalField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ExternalField" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.external_field.</span></span><span class="sig-name descname"><span class="pre">ExternalField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ExternalField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ExternalField" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../abc/index.html#quvac.field.abc.Field" title="quvac.field.abc.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac.field.abc.Field</span></code></a></p>
 <p>Class to unite several participating external fields under one interface.</p>
 <dl class="field-list simple">
@@ -314,6 +315,7 @@ various field types.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fields_params</strong> (<em>list</em><em> of </em><em>dict</em>) – List of dictionaries containing the parameters for each external field.</p></li>
 <li><p><strong>grid</strong> (<a class="reference internal" href="../../grid/index.html#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><em>quvac.grid.GridXYZ</em></a>) – Spatial and spectral grid.</p></li>
+<li><p><strong>fft_executor</strong> (<a class="reference internal" href="../../pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor" title="quvac.pyfftw_executor.FFTExecutor"><em>quvac.pyfftw_executor.FFTExecutor</em></a><em>, </em><em>optional</em>) – Executor that performs FFTs.</p></li>
 <li><p><strong>nthreads</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads to use for calculations. If not provided, defaults to the
 number of CPU cores.</p></li>
 </ul>
@@ -337,6 +339,17 @@ number of CPU cores.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple of np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quvac.field.external_field.ExternalField.fft_executor">
+<span class="sig-name descname"><span class="pre">fft_executor</span></span><a class="headerlink" href="#quvac.field.external_field.ExternalField.fft_executor" title="Link to this definition">¶</a></dt>
+<dd><p>Executor that performs FFTs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor" title="quvac.pyfftw_executor.FFTExecutor">quvac.pyfftw_executor.FFTExecutor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -367,6 +380,11 @@ number of CPU cores.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="quvac.field.external_field.ExternalField.maybe_zero_out_field_buffers">
+<span class="sig-name descname"><span class="pre">maybe_zero_out_field_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ExternalField.maybe_zero_out_field_buffers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ExternalField.maybe_zero_out_field_buffers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="quvac.field.external_field.ExternalField.calculate_field">
 <span class="sig-name descname"><span class="pre">calculate_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ExternalField.calculate_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ExternalField.calculate_field" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the electric and magnetic fields at a given time step.</p>
@@ -376,7 +394,7 @@ number of CPU cores.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="quvac.field.external_field.ProbePumpField">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.external_field.</span></span><span class="sig-name descname"><span class="pre">ProbePumpField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_pump_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ProbePumpField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ProbePumpField" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.external_field.</span></span><span class="sig-name descname"><span class="pre">ProbePumpField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_pump_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/external_field.html#ProbePumpField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.external_field.ProbePumpField" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../abc/index.html#quvac.field.abc.Field" title="quvac.field.abc.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac.field.abc.Field</span></code></a></p>
 <p>Class for splitting fields into probe and pump.</p>
 <dl class="field-list simple">
@@ -401,6 +419,7 @@ number of CPU cores.</p></li>
 </dl>
 <p>If not provided, defaults to {“probe”: [0], “pump”: [1]}.</p>
 </p></li>
+<li><p><strong>fft_executor</strong> (<a class="reference internal" href="../../pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor" title="quvac.pyfftw_executor.FFTExecutor"><em>quvac.pyfftw_executor.FFTExecutor</em></a><em>, </em><em>optional</em>) – Executor that performs FFTs.</p></li>
 <li><p><strong>nthreads</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads to use for calculations. If not provided, defaults to the
 number of CPU cores.</p></li>
 </ul>
@@ -539,8 +558,10 @@ number of CPU cores.</p></li>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField"><code class="docutils literal notranslate"><span class="pre">ExternalField</span></code></a><ul>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField.fields"><code class="docutils literal notranslate"><span class="pre">ExternalField.fields</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField.grid_xyz"><code class="docutils literal notranslate"><span class="pre">ExternalField.grid_xyz</span></code></a></li>
+<li><a class="reference internal" href="#quvac.field.external_field.ExternalField.fft_executor"><code class="docutils literal notranslate"><span class="pre">ExternalField.fft_executor</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField.nthreads"><code class="docutils literal notranslate"><span class="pre">ExternalField.nthreads</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField.setup_field"><code class="docutils literal notranslate"><span class="pre">ExternalField.setup_field()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.field.external_field.ExternalField.maybe_zero_out_field_buffers"><code class="docutils literal notranslate"><span class="pre">ExternalField.maybe_zero_out_field_buffers()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.field.external_field.ExternalField.calculate_field"><code class="docutils literal notranslate"><span class="pre">ExternalField.calculate_field()</span></code></a></li>
 </ul>
 </li>

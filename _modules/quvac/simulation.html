@@ -235,6 +235,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/quvac/utils/index.html">quvac.utils</a></li>
@@ -311,6 +312,7 @@
     <span class="n">log_time</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumEmissionAnalyzer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.pyfftw_executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">FFTExecutor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_maxrss</span><span class="p">,</span> <span class="n">load_wisdom</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">save_wisdom</span><span class="p">,</span> <span class="n">write_yaml</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
@@ -449,6 +451,22 @@
 
 
 
+<div class="viewcode-block" id="set_pyfftw_flag">
+<a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.set_pyfftw_flag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_pyfftw_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set global planning flag for pyfftw.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    flag : str</span>
+<span class="sd">        How much to plan the transform. One of `FFTW_ESTIMATE`, `FFTW_MEASURE`, </span>
+<span class="sd">        `FFTW_PATIENT` and `FFTW_EXHAUSTIVE`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span> <span class="o">=</span> <span class="n">flag</span></div>
+
+
+
 <div class="viewcode-block" id="create_basic_logger">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.create_basic_logger">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_basic_logger</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
@@ -519,23 +537,29 @@
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">grid_print</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Grids are created</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Set up FFT executor</span>
+    <span class="n">fft_executor</span> <span class="o">=</span> <span class="n">FFTExecutor</span><span class="p">(</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">pyfftw_threads</span><span class="p">)</span>
+
     <span class="c1"># Shorten time grid for the test run</span>
     <span class="k">if</span> <span class="n">test_run</span><span class="p">:</span>
         <span class="n">expected_timesteps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
         <span class="n">grid_t</span> <span class="o">=</span> <span class="n">grid_t</span><span class="p">[:</span><span class="n">test_timesteps</span><span class="p">]</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing test run for </span><span class="si">{</span><span class="n">test_timesteps</span><span class="si">}</span><span class="s2"> timesteps</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
+
     <span class="c1"># Field setup</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="s2">&quot;Field constructor:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="s2">&quot;====================================================&quot;</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">channels</span><span class="p">:</span>
-        <span class="n">field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">)</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> 
+                              <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">field</span> <span class="o">=</span> <span class="n">ProbePumpField</span><span class="p">(</span>
             <span class="n">fields_params</span><span class="p">,</span>
             <span class="n">grid_xyz</span><span class="p">,</span>
             <span class="n">probe_pump_idx</span><span class="o">=</span><span class="n">probe_pump_idx</span><span class="p">,</span>
+            <span class="n">fft_executor</span><span class="o">=</span><span class="n">fft_executor</span><span class="p">,</span>
             <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -553,7 +577,8 @@
             <span class="sa">f</span><span class="s2">&quot;    Pump  idx: </span><span class="si">{</span><span class="n">probe_pump</span><span class="p">[</span><span class="s1">&#39;pump&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_message</span><span class="p">)</span>
-    <span class="n">vacem</span> <span class="o">=</span> <span class="n">VacuumEmission</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
+    <span class="n">vacem</span> <span class="o">=</span> <span class="n">VacuumEmission</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span> 
+                           <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;vacem_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span><span class="n">grid_t</span><span class="p">,</span> 
                                                      <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">])</span>
@@ -658,11 +683,16 @@
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;maxrss_amplitudes&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 
-    <span class="c1"># Set up global precision for calculations</span>
     <span class="n">perf_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="c1"># Set up global precision for calculations</span>
+    <span class="c1"># Note: since we use numexpr, internally it casts to </span>
+    <span class="c1"># float64 and complex128 anyway!</span>
     <span class="n">precision</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;float64&quot;</span><span class="p">)</span>
     <span class="n">set_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">precision</span><span class="si">}</span><span class="s2"> precision&quot;</span><span class="p">)</span>
+    <span class="c1"># Set pyfftw planning flag</span>
+    <span class="n">pyfftw_flag</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pyfftw_flag&quot;</span><span class="p">,</span> <span class="s2">&quot;FFTW_MEASURE&quot;</span><span class="p">)</span>
+    <span class="n">set_pyfftw_flag</span><span class="p">(</span><span class="n">pyfftw_flag</span><span class="p">)</span>
 
     <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>

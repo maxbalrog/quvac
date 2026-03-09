@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.simulation_parallel" href="../simulation_parallel/index.html" /><link rel="prev" title="quvac.postprocess" href="../postprocess/index.html" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.simulation_parallel" href="../simulation_parallel/index.html" /><link rel="prev" title="quvac.pyfftw_executor" href="../pyfftw_executor/index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>quvac.simulation - quvac 0.1.3 documentation</title>
@@ -236,6 +236,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">quvac.utils</a></li>
@@ -311,19 +312,22 @@ and measure performance.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.set_precision" title="quvac.simulation.set_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_precision</span></code></a>(precision)</p></td>
 <td><p>Set global precision for calculations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.create_basic_logger" title="quvac.simulation.create_basic_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_basic_logger</span></code></a>(filename)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.set_pyfftw_flag" title="quvac.simulation.set_pyfftw_flag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pyfftw_flag</span></code></a>(flag)</p></td>
+<td><p>Set global planning flag for pyfftw.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.create_basic_logger" title="quvac.simulation.create_basic_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_basic_logger</span></code></a>(filename)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.run_simulation" title="quvac.simulation.run_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulation</span></code></a>(ini_config, fields_params, files, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.run_simulation" title="quvac.simulation.run_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulation</span></code></a>(ini_config, fields_params, files, ...)</p></td>
 <td><p>Run the vacuum emission simulation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.postprocess_simulation" title="quvac.simulation.postprocess_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess_simulation</span></code></a>(ini_config, files, fields_params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.postprocess_simulation" title="quvac.simulation.postprocess_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess_simulation</span></code></a>(ini_config, files, fields_params)</p></td>
 <td><p>Perform postprocessing on the simulation data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.quvac_simulation" title="quvac.simulation.quvac_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation</span></code></a>(ini_file[, save_path, wisdom_file])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.quvac_simulation" title="quvac.simulation.quvac_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation</span></code></a>(ini_file[, save_path, wisdom_file])</p></td>
 <td><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation.main_simulation" title="quvac.simulation.main_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation.main_simulation" title="quvac.simulation.main_simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation</span></code></a>()</p></td>
 <td><p>Main function to run the simulation script.</p></td>
 </tr>
 </tbody>
@@ -420,6 +424,18 @@ and measure performance.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="quvac.simulation.set_pyfftw_flag">
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">set_pyfftw_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#set_pyfftw_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.set_pyfftw_flag" title="Link to this definition">¶</a></dt>
+<dd><p>Set global planning flag for pyfftw.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flag</strong> (<em>str</em>) – How much to plan the transform. One of <cite>FFTW_ESTIMATE</cite>, <cite>FFTW_MEASURE</cite>,
+<cite>FFTW_PATIENT</cite> and <cite>FFTW_EXHAUSTIVE</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation.create_basic_logger">
 <span class="sig-prename descclassname"><span class="pre">quvac.simulation.</span></span><span class="sig-name descname"><span class="pre">create_basic_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation.html#create_basic_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation.create_basic_logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -501,14 +517,14 @@ and measure performance.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../postprocess/index.html">
+          <a class="prev-page" href="../pyfftw_executor/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">quvac.postprocess</div>
+                <div class="title">quvac.pyfftw_executor</div>
                 
               </div>
             </a>
@@ -550,6 +566,7 @@ and measure performance.</p>
 <li><a class="reference internal" href="#quvac.simulation.get_filenames"><code class="docutils literal notranslate"><span class="pre">get_filenames()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.get_dirs"><code class="docutils literal notranslate"><span class="pre">get_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.set_precision"><code class="docutils literal notranslate"><span class="pre">set_precision()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.simulation.set_pyfftw_flag"><code class="docutils literal notranslate"><span class="pre">set_pyfftw_flag()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.create_basic_logger"><code class="docutils literal notranslate"><span class="pre">create_basic_logger()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.run_simulation"><code class="docutils literal notranslate"><span class="pre">run_simulation()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation.postprocess_simulation"><code class="docutils literal notranslate"><span class="pre">postprocess_simulation()</span></code></a></li>

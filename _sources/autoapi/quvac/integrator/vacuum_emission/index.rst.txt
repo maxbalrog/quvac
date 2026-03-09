@@ -31,7 +31,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: VacuumEmission(field, grid, nthreads=None, channels=False)
+.. py:class:: VacuumEmission(field, grid, fft_executor=None, nthreads=None, channels=False)
 
    Calculator of Vacuum Emission amplitude from given fields
 
@@ -39,6 +39,8 @@ Module Contents
    :type field: quvac.Field
    :param grid: Spatial and spectral grid.
    :type grid: quvac.grid.GridXYZ
+   :param fft_executor: Executor that performs FFTs.
+   :type fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
    :param nthreads: Number of threads to use for calculations. If not provided,
                     defaults to the number of CPU cores.
    :type nthreads: int, optional
@@ -50,6 +52,12 @@ Module Contents
    .. py:method:: calculate_one_time_step(t, weight=1)
 
       Calculate the field and U terms (integrand) for one time step.
+
+
+
+   .. py:method:: multiply_integration_result(t_grid)
+
+      Multiply the integral by common prefactors.
 
 
 

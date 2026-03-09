@@ -23,6 +23,7 @@ Attributes
    quvac.config.DEFAULT_SLURM_PARAMS
    quvac.config.FDTYPE
    quvac.config.CDTYPE
+   quvac.config.FFTW_FLAG
 
 
 Module Contents
@@ -36,5 +37,9 @@ Module Contents
 
 .. py:data:: CDTYPE
    :value: 'complex128'
+
+
+.. py:data:: FFTW_FLAG
+   :value: 'FFTW_MEASURE'
 
 

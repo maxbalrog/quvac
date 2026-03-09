@@ -234,6 +234,7 @@
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/quvac/utils/index.html">quvac.utils</a></li>
@@ -278,7 +279,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Z"><strong>Z</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Z"><strong>Z</strong></a></div>
 </section>
 <section id="A" class="genindex-section">
   <h2>A</h2>
@@ -304,9 +305,21 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianEllipticAnalytic.account_for_ellipse_rotation">account_for_ellipse_rotation() (quvac.field.gaussian.GaussianEllipticAnalytic method)</a>
 </li>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.allocate_fft">allocate_fft() (quvac.pyfftw_executor.FFTExecutor method)</a>
+</li>
         <li><a href="autoapi/quvac/field/index.html#quvac.field.ANALYTIC_FIELDS">ANALYTIC_FIELDS (in module quvac.field)</a>
 </li>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.ANGLE_KEYS">ANGLE_KEYS (in module quvac.field.abc)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.backward_fftw">backward_fftw (quvac.pyfftw_executor.FFTExecutor attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -446,18 +459,26 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/config/index.html#quvac.config.FDTYPE">FDTYPE (in module quvac.config)</a>
 </li>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.fft_axes">fft_axes (quvac.pyfftw_executor.FFTExecutor attribute)</a>
+</li>
+        <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.fft_executor">fft_executor (quvac.field.external_field.ExternalField attribute)</a>
+</li>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor">FFTExecutor (class in quvac.pyfftw_executor)</a>
+</li>
+        <li><a href="autoapi/quvac/config/index.html#quvac.config.FFTW_FLAG">FFTW_FLAG (in module quvac.config)</a>
+</li>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.Field">Field (class in quvac.field.abc)</a>
 </li>
         <li><a href="autoapi/quvac/field/abc/index.html#quvac.field.abc.FieldFromFile">FieldFromFile (class in quvac.field.abc)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.fields">fields (quvac.field.external_field.ExternalField attribute)</a>
 
         <ul>
           <li><a href="autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple.fields">(quvac.field.maxwell.MaxwellMultiple attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/postprocess/index.html#quvac.postprocess.VacuumEmissionAnalyzer.fields_params">fields_params (quvac.postprocess.VacuumEmissionAnalyzer attribute)</a>
 </li>
         <li><a href="autoapi/quvac/field/gaussian/index.html#quvac.field.gaussian.GaussianAnalytic.figure_out_field_components">figure_out_field_components() (quvac.field.gaussian.GaussianAnalytic method)</a>
@@ -467,6 +488,8 @@
         <li><a href="autoapi/quvac/utils/index.html#quvac.utils.format_memory">format_memory() (in module quvac.utils)</a>
 </li>
         <li><a href="autoapi/quvac/utils/index.html#quvac.utils.format_time">format_time() (in module quvac.utils)</a>
+</li>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.forward_fftw">forward_fftw (quvac.pyfftw_executor.FFTExecutor attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -672,6 +695,8 @@
 </li>
         <li><a href="autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple">MaxwellMultiple (class in quvac.field.maxwell)</a>
 </li>
+        <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.maybe_zero_out_field_buffers">maybe_zero_out_field_buffers() (quvac.field.external_field.ExternalField method)</a>
+</li>
         <li>
     module
 
@@ -718,6 +743,8 @@
 </li>
           <li><a href="autoapi/quvac/postprocess/index.html#module-quvac.postprocess">quvac.postprocess</a>
 </li>
+          <li><a href="autoapi/quvac/pyfftw_executor/index.html#module-quvac.pyfftw_executor">quvac.pyfftw_executor</a>
+</li>
           <li><a href="autoapi/quvac/simulation/index.html#module-quvac.simulation">quvac.simulation</a>
 </li>
           <li><a href="autoapi/quvac/simulation_parallel/index.html#module-quvac.simulation_parallel">quvac.simulation_parallel</a>
@@ -725,6 +752,10 @@
           <li><a href="autoapi/quvac/utils/index.html#module-quvac.utils">quvac.utils</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/quvac/integrator/vacuum_emission/index.html#quvac.integrator.vacuum_emission.VacuumEmission.multiply_integration_result">multiply_integration_result() (quvac.integrator.vacuum_emission.VacuumEmission method)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -737,6 +768,8 @@
 
         <ul>
           <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ProbePumpField.nthreads">(quvac.field.external_field.ProbePumpField attribute)</a>
+</li>
+          <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.nthreads">(quvac.pyfftw_executor.FFTExecutor attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -929,6 +962,13 @@
 </li>
         </ul></li>
         <li>
+    quvac.pyfftw_executor
+
+        <ul>
+          <li><a href="autoapi/quvac/pyfftw_executor/index.html#module-quvac.pyfftw_executor">module</a>
+</li>
+        </ul></li>
+        <li>
     quvac.simulation
 
         <ul>
@@ -1007,8 +1047,12 @@
 </li>
         <li><a href="autoapi/quvac/simulation/index.html#quvac.simulation.set_precision">set_precision() (in module quvac.simulation)</a>
 </li>
+        <li><a href="autoapi/quvac/simulation/index.html#quvac.simulation.set_pyfftw_flag">set_pyfftw_flag() (in module quvac.simulation)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.setup_fftw_executor">setup_fftw_executor() (in module quvac.pyfftw_executor)</a>
+</li>
         <li><a href="autoapi/quvac/field/external_field/index.html#quvac.field.external_field.ExternalField.setup_field">setup_field() (quvac.field.external_field.ExternalField method)</a>
 </li>
         <li><a href="autoapi/quvac/grid/index.html#quvac.grid.setup_grids">setup_grids() (in module quvac.grid)</a>
@@ -1037,8 +1081,12 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple.t0">t0 (quvac.field.maxwell.MaxwellMultiple attribute)</a>
 </li>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.tmp">tmp (quvac.pyfftw_executor.FFTExecutor attribute)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.tmp_shape">tmp_shape (quvac.pyfftw_executor.FFTExecutor attribute)</a>
+</li>
         <li><a href="autoapi/quvac/postprocess/index.html#quvac.postprocess.transform_S12_to_a12">transform_S12_to_a12() (in module quvac.postprocess)</a>
 </li>
     </ul></td>

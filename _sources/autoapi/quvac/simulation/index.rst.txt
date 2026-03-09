@@ -26,6 +26,7 @@ Functions
    quvac.simulation.get_filenames
    quvac.simulation.get_dirs
    quvac.simulation.set_precision
+   quvac.simulation.set_pyfftw_flag
    quvac.simulation.create_basic_logger
    quvac.simulation.run_simulation
    quvac.simulation.postprocess_simulation
@@ -93,6 +94,15 @@ Module Contents
 
    :param precision: Precision type, either "float32" or "float64".
    :type precision: str
+
+
+.. py:function:: set_pyfftw_flag(flag)
+
+   Set global planning flag for pyfftw.
+
+   :param flag: How much to plan the transform. One of `FFTW_ESTIMATE`, `FFTW_MEASURE`,
+                `FFTW_PATIENT` and `FFTW_EXHAUSTIVE`.
+   :type flag: str
 
 
 .. py:function:: create_basic_logger(filename)

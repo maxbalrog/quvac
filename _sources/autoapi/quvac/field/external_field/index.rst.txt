@@ -22,7 +22,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: ExternalField(fields_params, grid, nthreads=None)
+.. py:class:: ExternalField(fields_params, grid, fft_executor=None, nthreads=None)
 
    Bases: :py:obj:`quvac.field.abc.Field`
 
@@ -33,6 +33,8 @@ Module Contents
    :type fields_params: list of dict
    :param grid: Spatial and spectral grid.
    :type grid: quvac.grid.GridXYZ
+   :param fft_executor: Executor that performs FFTs.
+   :type fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
    :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
                     number of CPU cores.
    :type nthreads: int, optional
@@ -48,6 +50,12 @@ Module Contents
       The spatial grid.
 
       :type: tuple of np.array
+
+   .. attribute:: fft_executor
+
+      Executor that performs FFTs.
+
+      :type: quvac.pyfftw_executor.FFTExecutor
 
    .. attribute:: nthreads
 
@@ -67,13 +75,16 @@ Module Contents
 
 
 
+   .. py:method:: maybe_zero_out_field_buffers(E_out, B_out)
+
+
    .. py:method:: calculate_field(t, E_out=None, B_out=None)
 
       Calculates the electric and magnetic fields at a given time step.
 
 
 
-.. py:class:: ProbePumpField(fields_params, grid, probe_pump_idx=None, nthreads=None)
+.. py:class:: ProbePumpField(fields_params, grid, probe_pump_idx=None, fft_executor=None, nthreads=None)
 
    Bases: :py:obj:`quvac.field.abc.Field`
 
@@ -93,6 +104,8 @@ Module Contents
 
                           If not provided, defaults to {"probe": [0], "pump": [1]}.
    :type probe_pump_idx: dict, optional
+   :param fft_executor: Executor that performs FFTs.
+   :type fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
    :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
                     number of CPU cores.
    :type nthreads: int, optional

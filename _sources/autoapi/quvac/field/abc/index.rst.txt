@@ -192,7 +192,7 @@ Module Contents
       :type: complex numpy.ndarray
 
 
-   .. py:method:: get_a12(t0=None)
+   .. py:method:: get_a12(t0=None, fft_executor=None)
 
       Calculates the a1 and a2 coefficients at a given time step.
 

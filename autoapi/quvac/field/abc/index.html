@@ -236,6 +236,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">quvac.utils</a></li>
@@ -537,7 +538,7 @@ to other time steps.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="quvac.field.abc.ExplicitField.get_a12">
-<span class="sig-name descname"><span class="pre">get_a12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/abc.html#ExplicitField.get_a12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.abc.ExplicitField.get_a12" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_a12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/abc.html#ExplicitField.get_a12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.abc.ExplicitField.get_a12" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the a1 and a2 coefficients at a given time step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

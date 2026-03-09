@@ -22,7 +22,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: MaxwellField(grid, nthreads=None)
+.. py:class:: MaxwellField(grid, fft_executor=None, nthreads=None)
 
    Bases: :py:obj:`quvac.field.abc.Field`
 
@@ -36,6 +36,8 @@ Module Contents
 
    :param grid: Spatial and spectral grid.
    :type grid: quvac.grid.GridXYZ
+   :param fft_executor: Executor that performs FFTs.
+   :type fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
    :param nthreads: Number of threads to use for calculations. If not provided, defaults to
                     the number of CPU cores.
    :type nthreads: int, optional
@@ -47,7 +49,7 @@ Module Contents
 
 
 
-.. py:class:: MaxwellMultiple(fields, grid, nthreads=None)
+.. py:class:: MaxwellMultiple(fields, grid, fft_executor=None, nthreads=None)
 
    Bases: :py:obj:`MaxwellField`
 
@@ -59,6 +61,8 @@ Module Contents
    :type fields: dict or list of dict
    :param grid: Spatial and spectral grid.
    :type grid: quvac.grid.GridXYZ
+   :param fft_executor: Executor that performs FFTs.
+   :type fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
    :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
                     number of CPU cores.
    :type nthreads: int, optional

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.parallel - quvac 0.1.3 documentation</title>
+        <title>quvac.pyfftw_executor - quvac 0.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -277,169 +277,102 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for quvac.parallel</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Utilities to run simulations in parallel either locally or in Slurm environment.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+          <h1>Source code for quvac.pyfftw_executor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Pyfftw executor that is used in all 3D FFTs.</span>
+
+<span class="sd">At the moment, batched FFT transforms of three 3D arrays are performed (corresponding</span>
+<span class="sd">to a vector field on 3D grid).</span>
+<span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">submitit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyfftw</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SLURM_PARAMS</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">quvac_simulation</span>
-
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
 
 
-<div class="viewcode-block" id="slurm_time_to_mins">
-<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.slurm_time_to_mins">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">slurm_time_to_mins</span><span class="p">(</span><span class="n">slurm_time</span><span class="p">):</span>
+<div class="viewcode-block" id="FFTExecutor">
+<a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FFTExecutor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts Slurm time in format `DAYS-HOURS:MINUTES:SECONDS` to minutes.</span>
+<span class="sd">    Class to unite the FFT calculation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    slurm_time: str</span>
-<span class="sd">        Time formatted in Slurm format.</span>
+<span class="sd">    tmp_shape : tuple or list</span>
+<span class="sd">        Size of the buffer array over which FFTs are performed. By default, it expects </span>
+<span class="sd">        (3, Nx, Ny, Nz).</span>
+<span class="sd">    nthreads : int, optional</span>
+<span class="sd">        Number of threads to use for calculations. If not provided, defaults to the </span>
+<span class="sd">        number of CPU cores.</span>
+<span class="sd">    fft_axes : tuple or list</span>
+<span class="sd">        Axes over which to perform FFT. By default, (1,2,3).</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Time in minutes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">slurm_time</span><span class="p">:</span>
-        <span class="n">days</span><span class="p">,</span> <span class="n">slurm_time</span> <span class="o">=</span> <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-    <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span>  <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-    <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">days</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">hours</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">mins</span></div>
-
-
-
-<div class="viewcode-block" id="slurm_to_submitit_params">
-<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.slurm_to_submitit_params">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">slurm_to_submitit_params</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Transform Slurm keywords to relevant ones for submitit.</span>
-
-<span class="sd">    Parameters</span>
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    sbatch_params: dict</span>
-<span class="sd">        Parameters for sbatch script.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        Parameters for sbatch script in submitit format.</span>
+<span class="sd">    tmp_shape : tuple</span>
+<span class="sd">        Size of the buffer array.</span>
+<span class="sd">    nthreads : int</span>
+<span class="sd">        Number of threads to use for FFTs.</span>
+<span class="sd">    fft_axes : tuple</span>
+<span class="sd">        Axes over which to perform FFT.</span>
+<span class="sd">    tmp : np.ndarray of size `tmp_shape`</span>
+<span class="sd">        Buffer array used for FFTs.</span>
+<span class="sd">    forward_fftw : pyfftw.FFTW</span>
+<span class="sd">        Forward FFT executor.</span>
+<span class="sd">    backward_fftw : pyfftw.FFTW</span>
+<span class="sd">        Backward FFT executor.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">keys_to_copy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slurm_partition&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cpus_per_task&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
-    <span class="n">submitit_params</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">key</span><span class="p">:</span> <span class="n">sbatch_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default_val</span><span class="p">)</span> 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">default_val</span> <span class="ow">in</span> <span class="n">keys_to_copy</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">&quot;slurm_mem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sbatch_params</span><span class="p">[</span><span class="s2">&quot;memory&quot;</span><span class="p">]</span>
-    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">&quot;timeout_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slurm_time_to_mins</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">[</span><span class="s2">&quot;walltime&quot;</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">submitit_params</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fft_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="k">if</span> <span class="n">nthreads</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_axes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fft_axes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FFTExecutor.allocate_fft">
+<a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.allocate_fft">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allocate_fft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allocate buffer array and set up FFT executors if they were not already.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tmp&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_fft</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_allocate_fft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">zeros_aligned</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward_fftw</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">FFTW</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="n">axes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_axes</span><span class="p">,</span>
+            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;FFTW_FORWARD&quot;</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span><span class="p">,),</span>
+            <span class="n">threads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">backward_fftw</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">FFTW</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="n">axes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_axes</span><span class="p">,</span>
+            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;FFTW_BACKWARD&quot;</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span><span class="p">,),</span>
+            <span class="n">threads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="create_job_executor">
-<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.create_job_executor">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_job_executor</span><span class="p">(</span><span class="n">cluster_type</span><span class="p">,</span> <span class="n">executor_folder</span><span class="p">,</span> <span class="n">sbatch_params</span><span class="p">,</span>
-                        <span class="n">max_parallel_jobs</span><span class="p">):</span>
+<div class="viewcode-block" id="setup_fftw_executor">
+<a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.setup_fftw_executor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_fftw_executor</span><span class="p">(</span><span class="n">fft_executor</span><span class="p">,</span> <span class="n">grid_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create submitit job executor.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    cluster_type: &#39;local&#39; or &#39;slurm&#39;</span>
-<span class="sd">        On which machine the calculation would be performed.</span>
-<span class="sd">    executor_folder: str</span>
-<span class="sd">        Path where to create a folder for executor files and logs.</span>
-<span class="sd">    sbatch_params: dict</span>
-<span class="sd">        Parameters of individual Slurm job.</span>
-<span class="sd">    max_parallel_jobs: int</span>
-<span class="sd">        Maximal number of jobs to run concurrently.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    submitit.AutoExecutor</span>
-<span class="sd">        Executor for running jobs.</span>
+<span class="sd">    Unified function to:</span>
+<span class="sd">        - (Optional )Set up FFTExecutor if it was not already.</span>
+<span class="sd">        - Allocate buffer arrays and FFT executors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">executor</span> <span class="o">=</span> <span class="n">submitit</span><span class="o">.</span><span class="n">AutoExecutor</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">executor_folder</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="n">cluster_type</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">cluster_type</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span><span class="p">:</span>
-        <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">slurm_array_parallelism</span><span class="o">=</span><span class="n">max_parallel_jobs</span><span class="p">)</span>
-    <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">sbatch_params</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">executor</span></div>
-
-
-
-<div class="viewcode-block" id="setup_job_executor_from_params">
-<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.setup_job_executor_from_params">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">setup_job_executor_from_params</span><span class="p">(</span><span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> 
-                                   <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Setup job executor from unified cluster parameters.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    cluster_params: dict</span>
-<span class="sd">        Parameters of parallel execution.</span>
-<span class="sd">    save_path : str</span>
-<span class="sd">        Path where to create a folder for executor files and logs.</span>
-<span class="sd">    max_parallel_jobs_default: int, optional</span>
-<span class="sd">        Default maximal number of jobs to run concurrently.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    submitit.AutoExecutor</span>
-<span class="sd">        Executor for running jobs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">max_parallel_jobs</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_parallel_jobs&quot;</span><span class="p">,</span> 
-                                           <span class="n">max_parallel_jobs_default</span><span class="p">)</span>
-    <span class="n">cluster_type</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cluster_type&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">)</span>
-    <span class="n">sbatch_params</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sbatch_params&quot;</span><span class="p">,</span> <span class="n">DEFAULT_SLURM_PARAMS</span><span class="p">)</span>
-    <span class="n">sbatch_params</span> <span class="o">=</span> <span class="n">slurm_to_submitit_params</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">)</span>
-
-    <span class="c1"># Create submitit executor</span>
-    <span class="n">submitit_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;submitit_files&quot;</span><span class="p">)</span>
-    <span class="n">executor</span> <span class="o">=</span> <span class="n">create_job_executor</span><span class="p">(</span><span class="n">cluster_type</span><span class="p">,</span> <span class="n">submitit_folder</span><span class="p">,</span> <span class="n">sbatch_params</span><span class="p">,</span>
-                                   <span class="n">max_parallel_jobs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">executor</span></div>
-
-
-
-<div class="viewcode-block" id="run_simulations_with_job_executor">
-<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.run_simulations_with_job_executor">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_simulations_with_job_executor</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span>
-                                      <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Run simulations for a list of ini files with job executor.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ini_files : list of str</span>
-<span class="sd">        List of paths to the initialization files for each job.</span>
-<span class="sd">    cluster_params: dict</span>
-<span class="sd">        Parameters of parallel execution.</span>
-<span class="sd">    save_path : str</span>
-<span class="sd">        Path where to create a folder for submitit files and logs.</span>
-<span class="sd">    max_parallel_jobs_default: int, optional</span>
-<span class="sd">        Maximal number of jobs to run concurrently.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">executor</span> <span class="o">=</span> <span class="n">setup_job_executor_from_params</span><span class="p">(</span><span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> 
-                                              <span class="n">max_parallel_jobs_default</span><span class="p">)</span>
-
-    <span class="c1"># Submit jobs</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Submitting jobs...&quot;</span><span class="p">)</span>
-    <span class="n">jobs</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs submitted, waiting for results...&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Wait till all jobs end</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs are finished&quot;</span><span class="p">)</span></div>
-
+    <span class="k">if</span> <span class="n">fft_executor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fft_executor</span> <span class="o">=</span> <span class="n">FFTExecutor</span><span class="p">(</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
+    <span class="n">fft_executor</span><span class="o">.</span><span class="n">allocate_fft</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fft_executor</span></div>
 
 </pre></div>
         </article>

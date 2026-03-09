@@ -235,6 +235,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quvac/utils/index.html">quvac.utils</a></li>
@@ -283,7 +284,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -293,6 +293,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPATIAL_MODEL_FIELDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.pyfftw_executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_fftw_executor</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 
@@ -312,69 +313,57 @@
 <span class="sd">    ----------</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and spectral grid.</span>
+<span class="sd">    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional</span>
+<span class="sd">        Executor that performs FFTs.</span>
 <span class="sd">    nthreads : int, optional</span>
 <span class="sd">        Number of threads to use for calculations. If not provided, defaults to </span>
 <span class="sd">        the number of CPU cores.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="k">if</span> <span class="n">nthreads</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">fft_executor</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">norm_ifft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span>
 
-        <span class="c1"># 1st list for E, 2nd list for B</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">EB_expr</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;(e1</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">*a1t + e2</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">*a2t)&quot;</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">&quot;xyz&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;(e2</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">*a1t - e1</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">*a2t)&quot;</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">&quot;xyz&quot;</span>
-        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_expr</span> <span class="o">=</span> <span class="s2">&quot;exp(-1j*kabs*c*(t-t0)) * norm_ifft&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_tmp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="s2">&quot;prefactor * (e1*a1 + e2*a2)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B_expr</span> <span class="o">=</span> <span class="s2">&quot;prefactor * (e2*a1 - e1*a2)&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">B_expr</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_allocate_ifft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allocate memory for inverse FFT calculations and define dictionaries</span>
 <span class="sd">        for numexpr.evaluate().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">a1t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2t</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;complex128&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">setup_fftw_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> 
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">a_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;kabs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span>
             <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
             <span class="s2">&quot;t0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
             <span class="s2">&quot;norm_ifft&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_ifft</span><span class="p">,</span>
-            <span class="s2">&quot;a1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span>
-            <span class="s2">&quot;a2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;e1x&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1x</span><span class="p">,</span>
-            <span class="s2">&quot;e1y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1y</span><span class="p">,</span>
-            <span class="s2">&quot;e1z&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1z</span><span class="p">,</span>
-            <span class="s2">&quot;e2x&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2x</span><span class="p">,</span>
-            <span class="s2">&quot;e2y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2y</span><span class="p">,</span>
-            <span class="s2">&quot;e2z&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2z</span><span class="p">,</span>
-            <span class="s2">&quot;a1t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1t</span><span class="p">,</span>
-            <span class="s2">&quot;a2t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2t</span><span class="p">,</span>
+            <span class="s2">&quot;e1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span>
+            <span class="s2">&quot;e2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">,</span>
+            <span class="s2">&quot;a1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span>
+            <span class="s2">&quot;a2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span>
+            <span class="s2">&quot;prefactor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">,</span>
         <span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_allocate_tmp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allocate temporary memory for FFT calculations.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">zeros_aligned</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;complex128&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">EB_fftw</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">FFTW</span><span class="p">(</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
-                            <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;FFTW_BACKWARD&quot;</span><span class="p">,</span>
-                            <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;FFTW_MEASURE&quot;</span><span class="p">,),</span>
-                            <span class="n">threads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span>
-                       <span class="p">)</span>
 
 <div class="viewcode-block" id="MaxwellField.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellField.calculate_field">[docs]</a>
@@ -383,31 +372,23 @@
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">E_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">E_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
-            <span class="n">B_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="n">E_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+            <span class="n">B_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">E_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">B_out</span>
 
-        <span class="c1"># Calculate a1,a2 at time t</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">a_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">})</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;exp(-1j*kabs*c*(t-t0)) * a1 * norm_ifft&quot;</span><span class="p">,</span>
-            <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a_dict</span><span class="p">,</span>
-            <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a1t</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;exp(-1j*kabs*c*(t-t0)) * a2 * norm_ifft&quot;</span><span class="p">,</span>
-            <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a_dict</span><span class="p">,</span>
-            <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a2t</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="c1"># Calculate prefactor at time t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">})</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_expr</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="p">,</span> 
+                    <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">)</span>
 
         <span class="c1"># Calculate fourier of fields at time t and transform back to</span>
         <span class="c1"># spatial domain</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-            <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_expr</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">EB_fftw</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">E_out</span><span class="p">[</span><span class="n">idx</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">B_out</span><span class="p">[</span><span class="n">idx</span><span class="o">-</span><span class="mi">3</span><span class="p">][:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">expr</span><span class="p">,</span><span class="n">out_array</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span><span class="p">:</span>  <span class="c1"># noqa: B905</span>
+            <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="o">.</span><span class="n">tmp</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="o">.</span><span class="n">backward_fftw</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">out_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="o">.</span><span class="n">tmp</span><span class="p">)</span>
+        
         <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
 </div>
 
@@ -426,6 +407,8 @@
 <span class="sd">        Parameters of the fields.</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and spectral grid.</span>
+<span class="sd">    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional</span>
+<span class="sd">        Executor that performs FFTs.</span>
 <span class="sd">    nthreads : int, optional</span>
 <span class="sd">        Number of threads to use for calculations. If not provided, defaults to the </span>
 <span class="sd">        number of CPU cores.</span>
@@ -442,8 +425,9 @@
 <span class="sd">        Initial time for the field.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">fft_executor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">pyfftw</span><span class="o">.</span><span class="n">zeros_aligned</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -484,7 +468,7 @@
             <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">ini_field</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="n">ini_field</span><span class="o">.</span><span class="n">t0</span>
-            <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">ini_field</span><span class="o">.</span><span class="n">get_a12</span><span class="p">(</span><span class="n">ini_field</span><span class="o">.</span><span class="n">t0</span><span class="p">)</span>
+            <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">ini_field</span><span class="o">.</span><span class="n">get_a12</span><span class="p">(</span><span class="n">ini_field</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">` is not implemented, use&quot;</span>

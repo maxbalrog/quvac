@@ -1,0 +1,96 @@
+quvac.pyfftw_executor
+=====================
+
+.. py:module:: quvac.pyfftw_executor
+
+.. autoapi-nested-parse::
+
+   Pyfftw executor that is used in all 3D FFTs.
+
+   At the moment, batched FFT transforms of three 3D arrays are performed (corresponding
+   to a vector field on 3D grid).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quvac.pyfftw_executor.FFTExecutor
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.pyfftw_executor.setup_fftw_executor
+
+
+Module Contents
+---------------
+
+.. py:class:: FFTExecutor(tmp_shape, nthreads=None, fft_axes=(1, 2, 3))
+
+   Class to unite the FFT calculation.
+
+   :param tmp_shape: Size of the buffer array over which FFTs are performed. By default, it expects
+                     (3, Nx, Ny, Nz).
+   :type tmp_shape: tuple or list
+   :param nthreads: Number of threads to use for calculations. If not provided, defaults to the
+                    number of CPU cores.
+   :type nthreads: int, optional
+   :param fft_axes: Axes over which to perform FFT. By default, (1,2,3).
+   :type fft_axes: tuple or list
+
+   .. attribute:: tmp_shape
+
+      Size of the buffer array.
+
+      :type: tuple
+
+   .. attribute:: nthreads
+
+      Number of threads to use for FFTs.
+
+      :type: int
+
+   .. attribute:: fft_axes
+
+      Axes over which to perform FFT.
+
+      :type: tuple
+
+   .. attribute:: tmp
+
+      Buffer array used for FFTs.
+
+      :type: np.ndarray of size `tmp_shape`
+
+   .. attribute:: forward_fftw
+
+      Forward FFT executor.
+
+      :type: pyfftw.FFTW
+
+   .. attribute:: backward_fftw
+
+      Backward FFT executor.
+
+      :type: pyfftw.FFTW
+
+
+   .. py:method:: allocate_fft()
+
+      Allocate buffer array and set up FFT executors if they were not already.
+
+
+
+.. py:function:: setup_fftw_executor(fft_executor, grid_shape, nthreads=None)
+
+   Unified function to:
+       - (Optional )Set up FFTExecutor if it was not already.
+       - Allocate buffer arrays and FFT executors.
+
+

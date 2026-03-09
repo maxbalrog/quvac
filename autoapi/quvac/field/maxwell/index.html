@@ -236,6 +236,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../parallel/index.html">quvac.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../plotting/index.html">quvac.plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../postprocess/index.html">quvac.postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../pyfftw_executor/index.html">quvac.pyfftw_executor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation/index.html">quvac.simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../simulation_parallel/index.html">quvac.simulation_parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">quvac.utils</a></li>
@@ -306,7 +307,7 @@ a unified interface combining several Maxwell fields into one.</p>
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="quvac.field.maxwell.MaxwellField">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.maxwell.</span></span><span class="sig-name descname"><span class="pre">MaxwellField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/maxwell.html#MaxwellField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.maxwell.MaxwellField" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.maxwell.</span></span><span class="sig-name descname"><span class="pre">MaxwellField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/maxwell.html#MaxwellField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.maxwell.MaxwellField" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../abc/index.html#quvac.field.abc.Field" title="quvac.field.abc.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac.field.abc.Field</span></code></a></p>
 <p>Basic linear Maxwell propagation class for a single field.</p>
 <p>For such fields, the initial field distribution (spectral coefficients)
@@ -317,6 +318,7 @@ equations.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>grid</strong> (<a class="reference internal" href="../../grid/index.html#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><em>quvac.grid.GridXYZ</em></a>) – Spatial and spectral grid.</p></li>
+<li><p><strong>fft_executor</strong> (<a class="reference internal" href="../../pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor" title="quvac.pyfftw_executor.FFTExecutor"><em>quvac.pyfftw_executor.FFTExecutor</em></a><em>, </em><em>optional</em>) – Executor that performs FFTs.</p></li>
 <li><p><strong>nthreads</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads to use for calculations. If not provided, defaults to
 the number of CPU cores.</p></li>
 </ul>
@@ -332,7 +334,7 @@ the number of CPU cores.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="quvac.field.maxwell.MaxwellMultiple">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.maxwell.</span></span><span class="sig-name descname"><span class="pre">MaxwellMultiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/maxwell.html#MaxwellMultiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.maxwell.MaxwellMultiple" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quvac.field.maxwell.</span></span><span class="sig-name descname"><span class="pre">MaxwellMultiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_executor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quvac/field/maxwell.html#MaxwellMultiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.field.maxwell.MaxwellMultiple" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#quvac.field.maxwell.MaxwellField" title="quvac.field.maxwell.MaxwellField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaxwellField</span></code></a></p>
 <p>Combine spectral coefficients from several fields and
 propagate them as one field.</p>
@@ -341,6 +343,7 @@ propagate them as one field.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fields</strong> (<em>dict</em><em> or </em><em>list</em><em> of </em><em>dict</em>) – Parameters of the fields.</p></li>
 <li><p><strong>grid</strong> (<a class="reference internal" href="../../grid/index.html#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><em>quvac.grid.GridXYZ</em></a>) – Spatial and spectral grid.</p></li>
+<li><p><strong>fft_executor</strong> (<a class="reference internal" href="../../pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor" title="quvac.pyfftw_executor.FFTExecutor"><em>quvac.pyfftw_executor.FFTExecutor</em></a><em>, </em><em>optional</em>) – Executor that performs FFTs.</p></li>
 <li><p><strong>nthreads</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of threads to use for calculations. If not provided, defaults to the
 number of CPU cores.</p></li>
 </ul>
