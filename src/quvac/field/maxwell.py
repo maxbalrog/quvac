@@ -46,8 +46,10 @@ class MaxwellField(Field):
         self.c = c
         self.norm_ifft = self.dVk / (2.0 * pi) ** 3
 
-        self.E_expr = "(e1*a1t + e2*a2t)"
-        self.B_expr = "(e2*a1t - e1*a2t)"
+        self.prefactor_expr = "exp(-1j*kabs*c*(t-t0)) * norm_ifft"
+
+        self.E_expr = "prefactor * (e1*a1 + e2*a2)"
+        self.B_expr = "prefactor * (e2*a1 - e1*a2)"
 
         self._allocate_tmp()
 
@@ -56,24 +58,21 @@ class MaxwellField(Field):
         Allocate memory for inverse FFT calculations and define dictionaries
         for numexpr.evaluate().
         """
-        self.a1t, self.a2t = [
-            np.zeros(self.grid_shape, dtype="complex128") for _ in range(2)
-        ]
+        self.prefactor = np.zeros(self.grid_shape, dtype=config.CDTYPE)
 
-        self.a_dict = {
+        self.prefactor_dict = {
             "kabs": self.kabs,
             "c": c,
             "t0": self.t0,
             "norm_ifft": self.norm_ifft,
-            "a1": self.a1,
-            "a2": self.a2,
         }
 
         self.EB_dict = {
             "e1": self.e1,
             "e2": self.e2,
-            "a1t": self.a1t,
-            "a2t": self.a2t,
+            "a1": self.a1,
+            "a2": self.a2,
+            "prefactor": self.prefactor,
         }
 
     def _allocate_tmp(self):
@@ -91,26 +90,15 @@ class MaxwellField(Field):
             E_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
             B_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
 
-        # Calculate a1,a2 at time t
-        self.a_dict.update({"t": t})
-        ne.evaluate(
-            "exp(-1j*kabs*c*(t-t0)) * a1 * norm_ifft",
-            local_dict=self.a_dict,
-            out=self.a1t,
-        )
-        ne.evaluate(
-            "exp(-1j*kabs*c*(t-t0)) * a2 * norm_ifft",
-            local_dict=self.a_dict,
-            out=self.a2t,
-        )
+        # Calculate prefactor at time t
+        self.prefactor_dict.update({"t": t})
+        ne.evaluate(self.prefactor_expr, local_dict=self.prefactor_dict, 
+                    out=self.prefactor)
 
         # Calculate fourier of fields at time t and transform back to
         # spatial domain
         for expr,out_array in zip([self.E_expr, self.B_expr], [E_out, B_out]):  # noqa: B905
-            np.copyto(
-                self.fft_executor.tmp,
-                ne.evaluate(expr, local_dict=self.EB_dict)
-            )
+            ne.evaluate(expr, local_dict=self.EB_dict, out=self.fft_executor.tmp)
             self.fft_executor.backward_fftw.execute()
             np.copyto(out_array, self.fft_executor.tmp)
         

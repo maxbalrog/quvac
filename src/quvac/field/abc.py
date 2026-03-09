@@ -233,6 +233,13 @@ class ExplicitField(Field):
         self.Ef = pyfftw.zeros_aligned(self.vector_shape, dtype="complex128")
         self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape)
 
+        self.a_dict = {
+            "e1x": self.e1x, "e1y": self.e1y, "e1z": self.e1z,
+            "e2x": self.e2x, "e2y": self.e2y, "e2z": self.e2z,
+            "Efx": self.Ef[0], "Efy": self.Ef[1], "Efz": self.Ef[2],
+            "dV": self.dV,
+        }
+
     def _check_energy_kspace(self):
         # Fix energy
         W_upd = get_field_energy_kspace(
@@ -287,10 +294,10 @@ class ExplicitField(Field):
         Efx, Efy, Efz = self.Ef
 
         self.a1 = ne.evaluate(
-            "dV * (e1x*Efx + e1y*Efy + e1z*Efz)", global_dict=self.__dict__
+            "dV * (e1x*Efx + e1y*Efy + e1z*Efz)", local_dict=self.a_dict
         )
         self.a2 = ne.evaluate(
-            "dV * (e2x*Efx + e2y*Efy + e2z*Efz)", global_dict=self.__dict__
+            "dV * (e2x*Efx + e2y*Efy + e2z*Efz)", global_dict=self.a_dict
         )
 
         self._check_energy_kspace()

@@ -125,6 +125,10 @@ class VacuumEmission:
         self.prefactor_step = np.zeros(self.grid_shape, dtype="complex128")
 
         self.U_dict = {"F": self.F, "G": self.G}
+        self.U_acc_dict = {
+            "U": self.fft_executor.tmp,
+            "prefactor": self.prefactor,
+        }
 
     def _free_resources(self):
         """
@@ -157,6 +161,7 @@ class VacuumEmission:
                             "Ex": Ex, "Ey": Ey, "Ez": Ez, 
                             "Bx": Bx, "By": By, "Bz": Bz,})
 
+        # Evaluate F and G
         ne.evaluate(self.F_expr, out=self.F)
         ne.evaluate(self.G_expr, out=self.G)
 
@@ -172,7 +177,7 @@ class VacuumEmission:
                                 "G_E_Bp": self.G_E_Bp,})
 
         # Update prefactor: this prescription is valid only for equidistant grids!!!
-        ne.evaluate("prefactor*prefactor_step", local_dict=self.__dict__, 
+        ne.evaluate("prefactor*prefactor_step", local_dict=self.prefactor_dict, 
                     out=self.prefactor)
 
         # Evaluate U1 and U2 expressions
@@ -180,15 +185,12 @@ class VacuumEmission:
             ne.evaluate(U_expr, global_dict=self.U_dict, out=self.fft_executor.tmp)
             self.fft_executor.forward_fftw.execute()
 
-            U_res = ne.evaluate(
+            self.U_acc_dict.update({"U_acc": U_acc})
+            ne.evaluate(
                 "U_acc + U*prefactor",
-                global_dict={
-                    "U_acc": U_acc,
-                    "U": self.fft_executor.tmp,
-                    "prefactor": self.prefactor,
-                },
+                local_dict=self.U_acc_dict,
+                out=U_acc,
             )
-            np.copyto(U_acc, U_res)
 
     def multiply_integration_result(self, t_grid):
         self._free_resources()
@@ -213,6 +215,8 @@ class VacuumEmission:
             "kabs": self.kabs,
             "c": c,
             "dt": self.dt,
+            "prefactor": self.prefactor, 
+            "prefactor_step": self.prefactor_step,
         }
         ne.evaluate(
             "exp(1j*kabs*c*dt)", local_dict=self.prefactor_dict, out=self.prefactor_step
@@ -249,7 +253,6 @@ class VacuumEmission:
         self.calculate_time_integral(t_grid, integration_method)
         time_integral_end = time.perf_counter()
         time_integral = time_integral_end - time_integral_start
-        # self._free_resources()
 
         # Results should be in U1_acc and U2_acc
         dims = 1 / BS**3 * m_e**2 * c**3 / hbar**2
@@ -263,6 +266,7 @@ class VacuumEmission:
             f"prefactor * ({self.I_12_expr} + {self.I_21_expr})",
             global_dict=self.__dict__,
         ).astype(config.CDTYPE)
+        
         # Save amplitudes
         if save_path:
             self.save_amplitudes(save_path)
