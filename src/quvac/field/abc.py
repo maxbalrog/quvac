@@ -11,7 +11,6 @@ import logging
 import numexpr as ne
 import numpy as np
 import pyfftw
-from scipy.constants import pi
 from scipy.spatial.transform import Rotation
 
 from quvac import config
@@ -60,7 +59,7 @@ class Field(ABC):
         # self.<variable_name>
         for key, val in field_params.items():
             if key in ANGLE_KEYS:
-                val *= pi / 180.0
+                val = np.radians(val)
             setattr(self, key, val)
     
     def _check_energy(self):
@@ -70,8 +69,8 @@ class Field(ABC):
         E, B = self.calculate_field(t=0)
         W = get_field_energy(E, B, self.dV)
 
-        self.modify_energy = "W" in self.__dict__.keys() and not np.isclose(W, self.W, 
-                                                                            rtol=1e-5)
+        self.modify_energy = getattr(self, "W", None) and not np.isclose(W, self.W, 
+                                                                         rtol=1e-5)
         if self.modify_energy:
             self.W_correction = np.sqrt(self.W / W) if W > 0 else 0
             self.W_num = self.W
@@ -130,10 +129,8 @@ class Field(ABC):
         """
         dtype = np.float64 if mode == "real" else np.complex128
         if E_out is None:
-            # E_out = [np.zeros(self.grid_shape, dtype=dtype) for _ in range(3)]
             E_out = np.zeros(self.vector_shape, dtype=dtype)
         if B_out is None:
-            # B_out = [np.zeros(self.grid_shape, dtype=dtype) for _ in range(3)]
             B_out = np.zeros(self.vector_shape, dtype=dtype)
         return E_out, B_out
     
@@ -173,7 +170,6 @@ class Field(ABC):
         """
         for field in "Ex Ey Ez Bx By Bz".split():
             setattr(self, field, np.real(getattr(self, field)))
-
 
     @abstractmethod
     def calculate_field(self, t, E_out=None, B_out=None, **kwargs):
@@ -234,27 +230,8 @@ class ExplicitField(Field):
         """
         Allocates memory for FFT calculations.
         """
-        # self.Ef = [
-        #     pyfftw.zeros_aligned(self.grid_shape, dtype="complex128") for _ in range(3)
-        # ]
         self.Ef = pyfftw.zeros_aligned(self.vector_shape, dtype="complex128")
         self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape)
-        # if self.fft_executor is None:
-        #     self.fft_executor = FFTExecutor(self.grid_shape)
-        # self.fft_executor.allocate_fft()
-
-        # pyfftw scheme
-        # self.Ef_fftw = [
-        #     pyfftw.FFTW(
-        #         a,
-        #         a,
-        #         axes=(0, 1, 2),
-        #         direction="FFTW_FORWARD",
-        #         flags=(config.FFTW_FLAG,),
-        #         threads=1,
-        #     )
-        #     for a in self.Ef
-        # ]
 
     def _check_energy_kspace(self):
         # Fix energy
@@ -306,12 +283,6 @@ class ExplicitField(Field):
         self.fft_executor.forward_fftw.execute()
         np.copyto(self.Ef, self.fft_executor.tmp)
 
-        # for idx in range(3):
-        #     np.copyto(self.fft_executor.tmp, self.Ef[idx])
-        #     self.fft_executor.forward_fftw.execute()
-        #     np.copyto(self.Ef[idx], self.fft_executor.tmp)
-            # self.Ef_fftw[idx].execute()
-
         # Calculate a1, a2 coefficients
         Efx, Efy, Efz = self.Ef
 
@@ -321,13 +292,6 @@ class ExplicitField(Field):
         self.a2 = ne.evaluate(
             "dV * (e2x*Efx + e2y*Efy + e2z*Efz)", global_dict=self.__dict__
         )
-
-        # self.a1 = ne.evaluate(
-        #     "dV * (e1*Ef)", global_dict=self.__dict__
-        # )
-        # self.a2 = ne.evaluate(
-        #     "dV * (e2*Ef)", global_dict=self.__dict__
-        # )
 
         self._check_energy_kspace()
 

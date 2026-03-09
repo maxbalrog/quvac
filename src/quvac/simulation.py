@@ -255,8 +255,8 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
         field = ProbePumpField(
             fields_params,
             grid_xyz,
-            fft_executor,
             probe_pump_idx=probe_pump_idx,
+            fft_executor=fft_executor,
             nthreads=pyfftw_threads,
         )
     timings['field_setup'] = time.perf_counter()

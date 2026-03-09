@@ -4,7 +4,6 @@ various field types.
 """
 
 import logging
-import os
 
 from quvac.field import ANALYTIC_FIELDS
 from quvac.field.abc import Field
@@ -41,7 +40,7 @@ class ExternalField(Field):
         self.fields = []
         self.grid_xyz = grid
 
-        self.nthreads = nthreads if nthreads else os.cpu_count()
+        self.nthreads = nthreads
         self.fft_executor = fft_executor
 
         # Reallocation of E_out and B_out fields at each time step was removed.
@@ -163,13 +162,11 @@ class ProbePumpField(Field):
         ExternalField object for the pump fields.
     """
 
-    def __init__(self, fields_params, grid, fft_executor=None, probe_pump_idx=None, 
-                 nthreads=None):
+    def __init__(self, fields_params, grid, probe_pump_idx=None, 
+                 fft_executor=None, nthreads=None):
         if not probe_pump_idx:
             probe_pump_idx = {"probe": [0], "pump": [1]}
         self.probe_pump_idx = probe_pump_idx
-
-        self.nthreads = nthreads if nthreads else os.cpu_count()
 
         probe_params = [fields_params[idx] for idx in probe_pump_idx["probe"]]
         pump_params = [fields_params[idx] for idx in probe_pump_idx["pump"]]

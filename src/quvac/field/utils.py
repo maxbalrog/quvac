@@ -178,6 +178,6 @@ def get_intensity(field, t):
     The intensity is calculated as (abs(E)**2 + abs(B)**2)/2
     """
     E, B = field.calculate_field(t=t)
-    E, B = [np.real(Ex) for Ex in E], [np.real(Bx) for Bx in B]
+    E, B = np.real(E), np.real(B)
     intensity = (E[0]**2 + E[1]**2 + E[2]**2 + B[0]**2 + B[1]**2 + B[2]**2)/2
     return intensity

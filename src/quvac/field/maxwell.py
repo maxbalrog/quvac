@@ -4,7 +4,6 @@ a unified interface combining several Maxwell fields into one.
 """
 
 import logging
-import os
 
 import numexpr as ne
 import numpy as np
@@ -41,16 +40,12 @@ class MaxwellField(Field):
         self.grid_xyz = grid
         self.__dict__.update(self.grid_xyz.__dict__)
 
-        self.nthreads = nthreads if nthreads else os.cpu_count()
+        self.nthreads = nthreads
         self.fft_executor = fft_executor
 
         self.c = c
         self.norm_ifft = self.dVk / (2.0 * pi) ** 3
 
-        # 1st list for E, 2nd list for B
-        # self.EB_expr = [f"(e1{ax}*a1t + e2{ax}*a2t)" for ax in "xyz"] + [
-        #     f"(e2{ax}*a1t - e1{ax}*a2t)" for ax in "xyz"
-        # ]
         self.E_expr = "(e1*a1t + e2*a2t)"
         self.B_expr = "(e2*a1t - e1*a2t)"
 
@@ -74,16 +69,6 @@ class MaxwellField(Field):
             "a2": self.a2,
         }
 
-        # self.EB_dict = {
-        #     "e1x": self.e1x,
-        #     "e1y": self.e1y,
-        #     "e1z": self.e1z,
-        #     "e2x": self.e2x,
-        #     "e2y": self.e2y,
-        #     "e2z": self.e2z,
-        #     "a1t": self.a1t,
-        #     "a2t": self.a2t,
-        # }
         self.EB_dict = {
             "e1": self.e1,
             "e2": self.e2,
@@ -95,24 +80,14 @@ class MaxwellField(Field):
         """
         Allocate temporary memory for FFT calculations.
         """
-        # self.tmp = pyfftw.zeros_aligned(self.grid_shape, dtype="complex128")
-        # self.EB_fftw = pyfftw.FFTW(
-        #                     self.tmp,
-        #                     self.tmp,
-        #                     axes=(0, 1, 2),
-        #                     direction="FFTW_BACKWARD",
-        #                     flags=(config.FFTW_FLAG,),
-        #                     threads=self.nthreads,
-        #                )
-        self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape)
+        self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape, 
+                                                self.nthreads)
 
     def calculate_field(self, t, E_out=None, B_out=None):
         """
         Calculates the electric and magnetic fields at a given time step.
         """
         if E_out is None:
-            # E_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
-            # B_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
             E_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
             B_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
 
@@ -131,35 +106,14 @@ class MaxwellField(Field):
 
         # Calculate fourier of fields at time t and transform back to
         # spatial domain
-
-        # Transform electric field
-        np.copyto(
-            self.fft_executor.tmp,
-            ne.evaluate(self.E_expr, local_dict=self.EB_dict)
-        )
-        self.fft_executor.backward_fftw.execute()
-        np.copyto(E_out, self.fft_executor.tmp)
-
-        # Transform magnetic field
-        np.copyto(
-            self.fft_executor.tmp,
-            ne.evaluate(self.B_expr, local_dict=self.EB_dict)
-        )
-        self.fft_executor.backward_fftw.execute()
-        np.copyto(B_out, self.fft_executor.tmp)
+        for expr,out_array in zip([self.E_expr, self.B_expr], [E_out, B_out]):  # noqa: B905
+            np.copyto(
+                self.fft_executor.tmp,
+                ne.evaluate(expr, local_dict=self.EB_dict)
+            )
+            self.fft_executor.backward_fftw.execute()
+            np.copyto(out_array, self.fft_executor.tmp)
         
-        # for idx in range(6):
-        #     np.copyto(
-        #         self.fft_executor.tmp,
-        #         ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict)
-        #     )
-        #     # ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
-        #     # self.EB_fftw.execute()
-        #     self.fft_executor.backward_fftw.execute()
-        #     if idx < 3:
-        #         np.copyto(E_out[idx], self.fft_executor.tmp)
-        #     else:
-        #         np.copyto(B_out[idx-3], self.fft_executor.tmp)
         return E_out, B_out
 
 
