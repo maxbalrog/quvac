@@ -78,6 +78,7 @@ class GridXYZ:
         )
         self.dxyz = tuple(ax[1] - ax[0] for ax in grid)
         self.dV = np.prod(self.dxyz)
+        self.vector_shape = (3,) + self.grid_shape
         self.kgrid = None
 
     def get_k_grid(self):
@@ -92,6 +93,8 @@ class GridXYZ:
             self._calculate_k_grid()
 
     def _calculate_k_grid(self):
+        self.e1, self.e2 = [np.zeros((3,) + self.grid_shape) for _ in range(2)]
+
         for i, ax in enumerate("xyz"):
             Nx, dx = self.grid_shape[i], self.dxyz[i]
             k = (2 * pi * np.fft.fftfreq(Nx, dx)).astype(config.FDTYPE)
@@ -112,16 +115,32 @@ class GridXYZ:
         kperp = ne.evaluate("sqrt(kx**2 + ky**2)") # noqa: F841
 
         # Polarization vectors
-        self.e1x = ne.evaluate(
-            "where((kx==0) & (ky==0), 2*(kz>0)-1, kx * kz / (kperp*kabs))"
+        ne.evaluate(
+            "where((kx==0) & (ky==0), 2*(kz>0)-1, kx * kz / (kperp*kabs))",
+            out=self.e1[0]
         )
-        self.e1y = ne.evaluate("where((kx==0) & (ky==0), 0, ky * kz / (kperp*kabs))")
-        self.e1z = ne.evaluate("where((kx==0) & (ky==0), 0, -kperp / kabs)")
+        ne.evaluate("where((kx==0) & (ky==0), 0, ky * kz / (kperp*kabs))", 
+                    out=self.e1[1])
+        ne.evaluate("where((kx==0) & (ky==0), 0, -kperp / kabs)",
+                    out=self.e1[2])
+        self.e1x, self.e1y, self.e1z = self.e1
 
-        self.e2x = ne.evaluate("where((kx==0) & (ky==0), 0, -ky / kperp)")
-        self.e2y = ne.evaluate("where((kx==0) & (ky==0), 1, kx / kperp)")
+        ne.evaluate("where((kx==0) & (ky==0), 0, -ky / kperp)", out=self.e2[0])
+        ne.evaluate("where((kx==0) & (ky==0), 1, kx / kperp)", out=self.e2[1])
         # self.e2y = ne.evaluate("where((kx==0) & (ky==0), 2*(kz>0)-1, kx / kperp)")
-        self.e2z = 0
+        # self.e2z = 0
+        self.e2x, self.e2y, self.e2z = self.e2
+
+        # self.e1x = ne.evaluate(
+        #     "where((kx==0) & (ky==0), 2*(kz>0)-1, kx * kz / (kperp*kabs))"
+        # )
+        # self.e1y = ne.evaluate("where((kx==0) & (ky==0), 0, ky * kz / (kperp*kabs))")
+        # self.e1z = ne.evaluate("where((kx==0) & (ky==0), 0, -kperp / kabs)")
+
+        # self.e2x = ne.evaluate("where((kx==0) & (ky==0), 0, -ky / kperp)")
+        # self.e2y = ne.evaluate("where((kx==0) & (ky==0), 1, kx / kperp)")
+        # # self.e2y = ne.evaluate("where((kx==0) & (ky==0), 2*(kz>0)-1, kx / kperp)")
+        # self.e2z = 0
 
 
 def get_ek(theta, phi):

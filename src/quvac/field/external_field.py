@@ -4,7 +4,6 @@ various field types.
 """
 
 import logging
-import os
 
 from quvac.field import ANALYTIC_FIELDS
 from quvac.field.abc import Field
@@ -23,6 +22,8 @@ class ExternalField(Field):
         List of dictionaries containing the parameters for each external field.
     grid : quvac.grid.GridXYZ
         Spatial and spectral grid.
+    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
+        Executor that performs FFTs.
     nthreads : int, optional
         Number of threads to use for calculations. If not provided, defaults to the 
         number of CPU cores.
@@ -33,15 +34,23 @@ class ExternalField(Field):
         List of field objects.
     grid_xyz : tuple of np.array
         The spatial grid.
+    fft_executor: quvac.pyfftw_executor.FFTExecutor
+        Executor that performs FFTs.
     nthreads : int
         Number of threads to use for calculations.
     """
 
-    def __init__(self, fields_params, grid, nthreads=None):
+    def __init__(self, fields_params, grid, fft_executor=None, nthreads=None):
         self.fields = []
         self.grid_xyz = grid
 
-        self.nthreads = nthreads if nthreads else os.cpu_count()
+        self.nthreads = nthreads
+        self.fft_executor = fft_executor
+
+        # Reallocation of E_out and B_out fields at each time step was removed.
+        # If Maxwell fields are present in the setup, the zeroing out fields is 
+        # automatic
+        self.need_to_zero_fields = True
 
         maxwell_params = [
             params
@@ -54,7 +63,12 @@ class ExternalField(Field):
             if not params["field_type"].endswith("maxwell")
         ]
         if maxwell_params:
-            new_params.append(maxwell_params)
+            # MaxwellField directly overwrites given E_out and B_out arrays.
+            # If it's used together with other fields (analytic profiles) then
+            # it needs to go first so total external field is correct.
+            new_params.insert(0, maxwell_params)
+            # MaxwellField takes care of zeroing out.
+            self.need_to_zero_fields = False
 
         _logger.info(
             f"{self.__class__.__name__}\n"
@@ -87,7 +101,8 @@ class ExternalField(Field):
             field = ANALYTIC_FIELDS[field_type](field_params, self.grid_xyz)
         elif field_type == "maxwell":
             field = MaxwellMultiple(
-                    field_params, self.grid_xyz, nthreads=self.nthreads
+                    field_params, self.grid_xyz, self.fft_executor, 
+                    nthreads=self.nthreads
                 )
         else:
             raise NotImplementedError(
@@ -97,10 +112,19 @@ class ExternalField(Field):
         self.fields.append(field)
         _logger.info(f"Base class: {field.__class__.__name__}")
 
+    def maybe_zero_out_field_buffers(self, E_out, B_out):
+        output_given = (E_out is not None) and (B_out is not None)
+        if output_given and self.need_to_zero_fields:
+            for idx in range(3):
+                E_out[idx][:] = 0.
+                B_out[idx][:] = 0.
+        return E_out, B_out
+
     def calculate_field(self, t, E_out=None, B_out=None):
         """
         Calculates the electric and magnetic fields at a given time step.
         """
+        E_out, B_out = self.maybe_zero_out_field_buffers(E_out, B_out)
         for field in self.fields:
             E_out, B_out = field.calculate_field(t, E_out=E_out, B_out=B_out)
         return E_out, B_out
@@ -126,6 +150,8 @@ class ProbePumpField(Field):
                 
         If not provided, defaults to {"probe": [0], "pump": [1]}.
 
+    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
+        Executor that performs FFTs.
     nthreads : int, optional
         Number of threads to use for calculations. If not provided, defaults to the 
         number of CPU cores.
@@ -142,18 +168,19 @@ class ProbePumpField(Field):
         ExternalField object for the pump fields.
     """
 
-    def __init__(self, fields_params, grid, probe_pump_idx=None, nthreads=None):
+    def __init__(self, fields_params, grid, probe_pump_idx=None, 
+                 fft_executor=None, nthreads=None):
         if not probe_pump_idx:
             probe_pump_idx = {"probe": [0], "pump": [1]}
         self.probe_pump_idx = probe_pump_idx
 
-        self.nthreads = nthreads if nthreads else os.cpu_count()
-
         probe_params = [fields_params[idx] for idx in probe_pump_idx["probe"]]
         pump_params = [fields_params[idx] for idx in probe_pump_idx["pump"]]
 
-        self.probe_field = ExternalField(probe_params, grid, nthreads=nthreads)
-        self.pump_field = ExternalField(pump_params, grid, nthreads=nthreads)
+        self.probe_field = ExternalField(probe_params, grid, fft_executor, 
+                                         nthreads=nthreads)
+        self.pump_field = ExternalField(pump_params, grid, fft_executor, 
+                                        nthreads=nthreads)
 
     def calculate_field(self, t, E_probe=None, B_probe=None, E_pump=None, B_pump=None):
         """

@@ -4,7 +4,6 @@ a unified interface combining several Maxwell fields into one.
 """
 
 import logging
-import os
 
 import numexpr as ne
 import numpy as np
@@ -14,6 +13,7 @@ from scipy.constants import c, pi
 from quvac import config
 from quvac.field import SPATIAL_MODEL_FIELDS
 from quvac.field.abc import Field
+from quvac.pyfftw_executor import setup_fftw_executor
 
 _logger = logging.getLogger("simulation")
 
@@ -31,100 +31,80 @@ class MaxwellField(Field):
     ----------
     grid : quvac.grid.GridXYZ
         Spatial and spectral grid.
+    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
+        Executor that performs FFTs.
     nthreads : int, optional
         Number of threads to use for calculations. If not provided, defaults to 
         the number of CPU cores.
     """
 
-    def __init__(self, grid, nthreads=None):
+    def __init__(self, grid, fft_executor=None, nthreads=None):
         self.grid_xyz = grid
         self.__dict__.update(self.grid_xyz.__dict__)
 
-        self.nthreads = nthreads if nthreads else os.cpu_count()
+        self.nthreads = nthreads
+        self.fft_executor = fft_executor
 
         self.c = c
         self.norm_ifft = self.dVk / (2.0 * pi) ** 3
 
-        # 1st list for E, 2nd list for B
-        self.EB_expr = [f"(e1{ax}*a1t + e2{ax}*a2t)" for ax in "xyz"] + [
-            f"(e2{ax}*a1t - e1{ax}*a2t)" for ax in "xyz"
-        ]
+        self.prefactor_expr = "exp(-1j*kabs*c*(t-t0)) * norm_ifft"
 
-        self._allocate_tmp()
+        self.E_expr = "prefactor * (e1*a1 + e2*a2)"
+        self.B_expr = "prefactor * (e2*a1 - e1*a2)"
+
+        self.EB_pairs = [
+            [self.E_expr, None],
+            [self.B_expr, None],
+        ]
 
     def _allocate_ifft(self):
         """
         Allocate memory for inverse FFT calculations and define dictionaries
         for numexpr.evaluate().
         """
-        self.a1t, self.a2t = [
-            np.zeros(self.grid_shape, dtype="complex128") for _ in range(2)
-        ]
+        self.fft_executor = setup_fftw_executor(self.fft_executor, self.vector_shape, 
+                                                self.nthreads)
+        
+        self.prefactor = np.zeros(self.grid_shape, dtype=config.CDTYPE)
 
-        self.a_dict = {
+        self.prefactor_dict = {
             "kabs": self.kabs,
             "c": c,
             "t0": self.t0,
             "norm_ifft": self.norm_ifft,
-            "a1": self.a1,
-            "a2": self.a2,
         }
 
         self.EB_dict = {
-            "e1x": self.e1x,
-            "e1y": self.e1y,
-            "e1z": self.e1z,
-            "e2x": self.e2x,
-            "e2y": self.e2y,
-            "e2z": self.e2z,
-            "a1t": self.a1t,
-            "a2t": self.a2t,
+            "e1": self.e1,
+            "e2": self.e2,
+            "a1": self.a1,
+            "a2": self.a2,
+            "prefactor": self.prefactor,
         }
-
-    def _allocate_tmp(self):
-        """
-        Allocate temporary memory for FFT calculations.
-        """
-        self.tmp = pyfftw.zeros_aligned(self.grid_shape, dtype="complex128")
-        self.EB_fftw = pyfftw.FFTW(
-                            self.tmp,
-                            self.tmp,
-                            axes=(0, 1, 2),
-                            direction="FFTW_BACKWARD",
-                            flags=("FFTW_MEASURE",),
-                            threads=self.nthreads,
-                       )
 
     def calculate_field(self, t, E_out=None, B_out=None):
         """
         Calculates the electric and magnetic fields at a given time step.
         """
         if E_out is None:
-            E_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
-            B_out = [np.zeros(self.grid_shape, dtype=config.CDTYPE) for _ in range(3)]
+            E_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
+            B_out = np.zeros(self.vector_shape, dtype=config.CDTYPE)
+        self.EB_pairs[0][1] = E_out
+        self.EB_pairs[1][1] = B_out
 
-        # Calculate a1,a2 at time t
-        self.a_dict.update({"t": t})
-        ne.evaluate(
-            "exp(-1j*kabs*c*(t-t0)) * a1 * norm_ifft",
-            local_dict=self.a_dict,
-            out=self.a1t,
-        )
-        ne.evaluate(
-            "exp(-1j*kabs*c*(t-t0)) * a2 * norm_ifft",
-            local_dict=self.a_dict,
-            out=self.a2t,
-        )
+        # Calculate prefactor at time t
+        self.prefactor_dict.update({"t": t})
+        ne.evaluate(self.prefactor_expr, local_dict=self.prefactor_dict, 
+                    out=self.prefactor)
 
         # Calculate fourier of fields at time t and transform back to
         # spatial domain
-        for idx in range(6):
-            ne.evaluate(self.EB_expr[idx], local_dict=self.EB_dict, out=self.tmp)
-            self.EB_fftw.execute()
-            if idx < 3:
-                E_out[idx][:] = self.tmp.astype(config.CDTYPE)
-            else:
-                B_out[idx-3][:] = self.tmp.astype(config.CDTYPE)
+        for expr,out_array in self.EB_pairs:  # noqa: B905
+            ne.evaluate(expr, local_dict=self.EB_dict, out=self.fft_executor.tmp)
+            self.fft_executor.backward_fftw.execute()
+            np.copyto(out_array, self.fft_executor.tmp)
+        
         return E_out, B_out
 
 
@@ -139,6 +119,8 @@ class MaxwellMultiple(MaxwellField):
         Parameters of the fields.
     grid : quvac.grid.GridXYZ
         Spatial and spectral grid.
+    fft_executor: quvac.pyfftw_executor.FFTExecutor, optional
+        Executor that performs FFTs.
     nthreads : int, optional
         Number of threads to use for calculations. If not provided, defaults to the 
         number of CPU cores.
@@ -155,8 +137,9 @@ class MaxwellMultiple(MaxwellField):
         Initial time for the field.
     """
 
-    def __init__(self, fields, grid, nthreads=None):
-        super().__init__(grid, nthreads)
+    def __init__(self, fields, grid, fft_executor=None, nthreads=None):
+        self.fft_executor = fft_executor
+        super().__init__(grid, fft_executor, nthreads)
 
         self.a1, self.a2 = [
             pyfftw.zeros_aligned(self.grid_shape, dtype=config.CDTYPE) for _ in range(2)
@@ -195,7 +178,7 @@ class MaxwellMultiple(MaxwellField):
             _logger.info(f"    {field_type}: {cls.__name__}")
             ini_field = cls(field_params, self.grid_xyz)
             self.t0 = ini_field.t0
-            a1, a2 = ini_field.get_a12(ini_field.t0)
+            a1, a2 = ini_field.get_a12(ini_field.t0, self.fft_executor)
         else:
             raise NotImplementedError(
                 f"`{field_type}` is not implemented, use"

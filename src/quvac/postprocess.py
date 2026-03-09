@@ -29,6 +29,7 @@ from quvac.field.external_field import ExternalField
 from quvac.field.maxwell import MaxwellMultiple
 from quvac.grid import GridXYZ, get_pol_basis, setup_grids
 from quvac.log import sph_interp_warn
+from quvac.pyfftw_executor import FFTExecutor
 from quvac.utils import read_yaml
 
 _logger = logging.getLogger("simulation")
@@ -452,6 +453,9 @@ class VacuumEmissionAnalyzer:
         # Update local dict with variables from GridXYZ class
         self.__dict__.update(self.grid_xyz.__dict__)
 
+        # Set up FFT executor
+        self.fft_executor = FFTExecutor(self.grid_xyz.vector_shape)
+
         for ax in "xyz":
             kx = getattr(self, f"k{ax}")
             setattr(self, f"k{ax}", np.fft.fftshift(kx))
@@ -480,7 +484,7 @@ class VacuumEmissionAnalyzer:
             Tuple containing the polarization components (efx, efy, efz).
         """
         perp_field_params = self.fields_params[self.perp_field_idx]
-        field = MaxwellMultiple([perp_field_params], self.grid_xyz)
+        field = MaxwellMultiple([perp_field_params], self.grid_xyz, self.fft_executor)
         a1, a2 = field.a1, field.a2
         Ex = ne.evaluate("e1x*a1 + e2x*a2", global_dict=self.__dict__)
         Ey = ne.evaluate("e1y*a1 + e2y*a2", global_dict=self.__dict__)
@@ -662,9 +666,11 @@ class VacuumEmissionAnalyzer:
             Background field spectra.
         """
         if bgr_idx is not None:
-            bgr_field = MaxwellMultiple(self.fields_params[bgr_idx], self.grid_xyz)
+            bgr_field = MaxwellMultiple(self.fields_params[bgr_idx], self.grid_xyz, 
+                                        self.fft_executor)
         else:
-            bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
+            bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz,
+                                        self.fft_executor)
         bgr_N_xyz = get_photon_spectrum_from_a12(
             bgr_field.a1, bgr_field.a2, self.kabs
         )
@@ -745,7 +751,8 @@ class VacuumEmissionAnalyzer:
         """
         self.a1_sig, self.a2_sig = transform_S12_to_a12(self.S1, self.S2, self.kabs)
         if add_signal_bg:
-            bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz)
+            bgr_field = MaxwellMultiple(self.fields_params, self.grid_xyz, 
+                                        self.fft_executor)
             a1_bgr, a2_bgr = bgr_field.a1, bgr_field.a2
             self.a1_mix, self.a2_mix = self.a1_sig + a1_bgr, self.a2_sig + a2_bgr
             self.a1_mix, self.a2_mix = [np.fft.fftshift(a) for a 
