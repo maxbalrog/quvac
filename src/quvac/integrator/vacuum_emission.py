@@ -28,6 +28,21 @@ BS = m_e**2 * c**2 / (hbar * e)  # Schwinger magnetic field
 
 
 def determine_integration_scheme(Nt, integration_method):
+    """
+    Determine integration weights based on the integration scheme.
+
+    Parameters
+    ----------
+    Nt : int
+        Number of time points in a discretized time integral.
+    integration_method: 'trapezoid' or 'simpson'
+        Quadrature rule to use.
+
+    Returns
+    -------
+    np.ndarray of length Nt
+        Integration weights for a given time interval.
+    """
     integration_weights = np.ones(Nt)
     match integration_method:
         case "trapezoid":
@@ -67,7 +82,6 @@ class VacuumEmission:
     channels : bool, optional
         Whether to calculate a particular channel in vacuum emission amplitude. 
         Default is False.
-
     """
 
     def __init__(self, field, grid, fft_executor=None, nthreads=None, channels=False):

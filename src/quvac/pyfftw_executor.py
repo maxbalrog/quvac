@@ -78,7 +78,7 @@ class FFTExecutor:
 def setup_fftw_executor(fft_executor, grid_shape, nthreads=None):
     """
     Unified function to:
-        - (Optional )Set up FFTExecutor if it was not already.
+        - (Optional) Set up FFTExecutor if it was not already.
         - Allocate buffer arrays and FFT executors.
     """
     if fft_executor is None:

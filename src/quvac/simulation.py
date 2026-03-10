@@ -173,6 +173,9 @@ def set_pyfftw_flag(flag):
 
 
 def create_basic_logger(filename):
+    """
+    Set up basic logger configuration.
+    """
     logging.basicConfig(
         filename=filename,
         filemode="w",

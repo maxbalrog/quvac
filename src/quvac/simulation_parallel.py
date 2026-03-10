@@ -34,7 +34,7 @@ from quvac.utils import get_maxrss, read_yaml, write_yaml
 _logger = logging.getLogger("simulation")
 
 
-def setup_integration_scheme(ini_config):
+def _setup_integration_scheme(ini_config):
     integrator_params = ini_config.get("integrator", {})
     integrator_params["load_integration_weights"] = True
     ini_config["integrator"] = integrator_params
@@ -58,6 +58,8 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
         Number of parallel jobs.
     save_path : str
         Path to save the initialization files.
+    integration_weights : np.ndarray
+        Integration weights for a given temporal grid.
 
     Returns
     -------
@@ -70,7 +72,7 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
     ini_job = deepcopy(ini_config)
     ini_job["mode"] = "simulation"
     ini_job["postprocess"] = {}
-    ini_job = setup_integration_scheme(ini_job)
+    ini_job = _setup_integration_scheme(ini_job)
 
     box_xyz = [float(-ax[0] * 2) for ax in grid_xyz.grid]
     Nxyz = [int(N) for N in grid_xyz.grid_shape]
