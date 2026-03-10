@@ -275,7 +275,7 @@ def estimate_memory_usage(ini_file):
     ini_config = read_yaml(ini_file)
     grid_xyz, _ = setup_grids(
         ini_config.get("fields", None), 
-        ini_config.get("grid_params", None),
+        ini_config.get("grid", None),
     )
 
     required_memory = estimate_max_required_memory(grid_xyz.grid_shape)
