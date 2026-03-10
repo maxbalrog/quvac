@@ -27,6 +27,28 @@ from quvac.pyfftw_executor import setup_fftw_executor
 BS = m_e**2 * c**2 / (hbar * e)  # Schwinger magnetic field
 
 
+def determine_integration_scheme(Nt, integration_method):
+    integration_weights = np.ones(Nt)
+    match integration_method:
+        case "trapezoid":
+            integration_weights[0] = 0.5
+            integration_weights[-1] = 0.5
+        case "simpson":
+            number_of_intervals = Nt - 1
+            integration_weights /= 3.
+            idx_even = [2*i for i in range(1, number_of_intervals//2-1)]
+            idx_odd = [2*i-1 for i in range(1, number_of_intervals//2)]
+            integration_weights[idx_even] *= 2
+            integration_weights[idx_odd] *= 4
+        case _:
+            err_msg = (
+                "integration_method should be one of ['trapezoid', 'simpson'] but you "
+                f"passed {integration_method}"
+            )
+            raise NotImplementedError(err_msg)
+    return integration_weights
+
+
 class VacuumEmission:
     """
     Calculator of Vacuum Emission amplitude from given fields
@@ -197,13 +219,13 @@ class VacuumEmission:
                     out=self.prefactor)
 
         # Evaluate U1 and U2 expressions
-        for U_acc, U_expr in self.U_pairs: # noqa: B905
+        for U_acc, U_expr in self.U_pairs:
             ne.evaluate(U_expr, global_dict=self.U_dict, out=self.fft_executor.tmp)
             self.fft_executor.forward_fftw.execute()
 
-            self.U_acc_dict.update({"U_acc": U_acc})
+            self.U_acc_dict.update({"U_acc": U_acc, "weight": weight})
             ne.evaluate(
-                "U_acc + U*prefactor",
+                "U_acc + U*prefactor*weight",
                 local_dict=self.U_acc_dict,
                 out=U_acc,
             )
@@ -224,7 +246,7 @@ class VacuumEmission:
             ne.evaluate("acc*prefactor", global_dict={"prefactor": self.prefactor},
                         out=acc)
 
-    def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
+    def calculate_time_integral(self, t_grid, integration_weights):
         """
         Calculate the time integral.
         """
@@ -241,18 +263,8 @@ class VacuumEmission:
             "exp(1j*kabs*c*dt)", local_dict=self.prefactor_dict, out=self.prefactor_step
         )
 
-        if integration_method == "trapezoid":
-            # end_pts = (0, len(t_grid) - 1)
-            for _, t in enumerate(t_grid):
-                # weight = 0.5 if i in end_pts else 1.
-                weight = 1
-                self.calculate_one_time_step(t, weight=weight)
-        else:
-            err_msg = (
-                "integration_method should be one of ['trapezoid'] but you "
-                f"passed {integration_method}"
-            )
-            raise NotImplementedError(err_msg)
+        for t,weight in zip(t_grid, integration_weights, strict=True):
+            self.calculate_one_time_step(t, weight=weight)
         
         # finish calculation
         self.multiply_integration_result(t_grid)
@@ -273,15 +285,21 @@ class VacuumEmission:
         ).astype(config.CDTYPE)
 
     def calculate_amplitudes(
-        self, t_grid, integration_method="trapezoid", save_path=None
+        self, t_grid, integration_method="trapezoid", integration_weights=None,
+        save_path=None
     ):
         """
         Calculate the vacuum emission amplitudes and save the result.
         """
         self._allocate_resources()
 
+        if integration_weights is None:
+            integration_weights = determine_integration_scheme(
+                len(t_grid), integration_method,
+            )
+
         time_integral_start = time.perf_counter()
-        self.calculate_time_integral(t_grid, integration_method)
+        self.calculate_time_integral(t_grid, integration_weights)
         time_integral_end = time.perf_counter()
         time_integral = time_integral_end - time_integral_start
 
