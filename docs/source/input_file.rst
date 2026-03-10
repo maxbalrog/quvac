@@ -130,6 +130,10 @@ Keys:
                 Indices of the probe field, by default [0].
             - ``pump``: list of int
                 Indices of the pump field, by default [1].
+    - ``integration_method``: ``'trapezoid'`` or ``'simpson'``
+        Quadrature rule for discretized time integral.
+    - ``load_integration_weights``: bool
+        Whether to load integration weights from a separate file (usefule for parallel simulation).
 
 ``performance`` (optional)
 ----------------------
@@ -146,6 +150,9 @@ Keys:
         Number of timesteps for a test run, by default 5.
     - ``use_wisdom``: bool
         Whether to use existing wisdom file for ``pyfftw`` planning.
+    - ``pyfftw_flag``: str
+        How much to plan the optimal execution of FFT with ``pyfftw``. One of 
+        ``'FFTW_ESTIMATE'``, ``'FFTW_MEASURE'``, ``'FFTW_PATIENT'`` and ``'FFTW_EXHAUSTIVE'``.
 
 
 ``postprocessing`` (optional)
@@ -207,6 +214,8 @@ Keys:
             Maximal number of submitted jobs in parallel.
         - ``sbatch_params``: dict
             Submission parameters for a single job.
+        - ``estimate_memory_usage``: bool
+            Whether to estimame memory usage for each job separately.
 
 ``optimization`` (for ``quvac-optimization``)
 -----------------------------------------
