@@ -303,8 +303,49 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.pyfftw_executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_fftw_executor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">free_memory</span>
 
 <span class="n">BS</span> <span class="o">=</span> <span class="n">m_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">hbar</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span>  <span class="c1"># Schwinger magnetic field</span>
+
+
+<div class="viewcode-block" id="determine_integration_scheme">
+<a class="viewcode-back" href="../../../autoapi/quvac/integrator/vacuum_emission/index.html#quvac.integrator.vacuum_emission.determine_integration_scheme">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">determine_integration_scheme</span><span class="p">(</span><span class="n">Nt</span><span class="p">,</span> <span class="n">integration_method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine integration weights based on the integration scheme.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Nt : int</span>
+<span class="sd">        Number of time points in a discretized time integral.</span>
+<span class="sd">    integration_method: &#39;trapezoid&#39; or &#39;simpson&#39;</span>
+<span class="sd">        Quadrature rule to use.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray of length Nt</span>
+<span class="sd">        Integration weights for a given time interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">Nt</span><span class="p">)</span>
+    <span class="k">match</span> <span class="n">integration_method</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;trapezoid&quot;</span><span class="p">:</span>
+            <span class="n">integration_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+            <span class="n">integration_weights</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="k">case</span> <span class="s2">&quot;simpson&quot;</span><span class="p">:</span>
+            <span class="n">number_of_intervals</span> <span class="o">=</span> <span class="n">Nt</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">integration_weights</span> <span class="o">/=</span> <span class="mf">3.</span>
+            <span class="n">idx_even</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_intervals</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="n">idx_odd</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_intervals</span><span class="o">//</span><span class="mi">2</span><span class="p">)]</span>
+            <span class="n">integration_weights</span><span class="p">[</span><span class="n">idx_even</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+            <span class="n">integration_weights</span><span class="p">[</span><span class="n">idx_odd</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">4</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;integration_method should be one of [&#39;trapezoid&#39;, &#39;simpson&#39;] but you &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;passed </span><span class="si">{</span><span class="n">integration_method</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">integration_weights</span></div>
+
 
 
 <div class="viewcode-block" id="VacuumEmission">
@@ -327,7 +368,6 @@
 <span class="sd">    channels : bool, optional</span>
 <span class="sd">        Whether to calculate a particular channel in vacuum emission amplitude. </span>
 <span class="sd">        Default is False.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -351,8 +391,8 @@
         <span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">U1</span> <span class="o">=</span> <span class="s2">&quot;(4*E*F + 7*B*G)&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">U2</span> <span class="o">=</span> <span class="s2">&quot;(4*B*F - 7*E*G)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">U1_expr</span> <span class="o">=</span> <span class="s2">&quot;(4*E*F + 7*B*G)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">U2_expr</span> <span class="o">=</span> <span class="s2">&quot;(4*B*F - 7*E*G)&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_define_channel_variables</span><span class="p">()</span>
 
@@ -376,8 +416,8 @@
             <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">U1</span> <span class="o">=</span> <span class="s2">&quot;(4*(Ep*F + E*F_B_Bp) + 7*(Bp*G + B*(G_Ep_B + G_E_Bp)))&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">U2</span> <span class="o">=</span> <span class="s2">&quot;(4*(Bp*F + B*F_B_Bp) - 7*(Ep*G + E*(G_Ep_B + G_E_Bp)))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">U1_expr</span> <span class="o">=</span> <span class="s2">&quot;(4*(Ep*F + E*F_B_Bp) + 7*(Bp*G + B*(G_Ep_B + G_E_Bp)))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">U2_expr</span> <span class="o">=</span> <span class="s2">&quot;(4*(Bp*F + B*F_B_Bp) - 7*(Ep*G + E*(G_Ep_B + G_E_Bp)))&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_allocate_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -399,12 +439,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">U2_acc_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U2_acc_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U2_acc_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">U2_acc</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">U_pairs</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U1_acc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U1</span><span class="p">),</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U2_acc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U1_acc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U1_expr</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U2_acc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">U2_expr</span><span class="p">),</span>
         <span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;complex128&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;complex128&quot;</span><span class="p">)</span>
+        <span class="c1"># During the main loop calculation these arrays serve as buffers for calculation</span>
+        <span class="c1"># of prefactor and prefactor_step. When the calculation is finished, this space</span>
+        <span class="c1"># is used to store the transition amplitudes. It seems that Python garbage </span>
+        <span class="c1"># collector doesn&#39;t manage to quickly clean the arrays that are not used.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">U_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">}</span>
 
@@ -434,6 +478,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">E_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_out</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">E_probe</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_probe</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_B_Bp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G_Ep_B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">G_E_Bp</span>
+        <span class="n">free_memory</span><span class="p">()</span>
 
 <div class="viewcode-block" id="VacuumEmission.calculate_one_time_step">
 <a class="viewcode-back" href="../../../autoapi/quvac/integrator/vacuum_emission/index.html#quvac.integrator.vacuum_emission.VacuumEmission.calculate_one_time_step">[docs]</a>
@@ -462,8 +511,8 @@
                             <span class="s2">&quot;Bx&quot;</span><span class="p">:</span> <span class="n">Bx</span><span class="p">,</span> <span class="s2">&quot;By&quot;</span><span class="p">:</span> <span class="n">By</span><span class="p">,</span> <span class="s2">&quot;Bz&quot;</span><span class="p">:</span> <span class="n">Bz</span><span class="p">,})</span>
 
         <span class="c1"># Evaluate F and G</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F_expr</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">G_expr</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F_expr</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">U_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">G_expr</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">U_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
             <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F_B_Bp_expr</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">F_B_Bp</span><span class="p">)</span>
@@ -481,13 +530,13 @@
                     <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">)</span>
 
         <span class="c1"># Evaluate U1 and U2 expressions</span>
-        <span class="k">for</span> <span class="n">U_acc</span><span class="p">,</span> <span class="n">U_expr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">U_pairs</span><span class="p">:</span> <span class="c1"># noqa: B905</span>
+        <span class="k">for</span> <span class="n">U_acc</span><span class="p">,</span> <span class="n">U_expr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">U_pairs</span><span class="p">:</span>
             <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">U_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">U_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="o">.</span><span class="n">tmp</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="o">.</span><span class="n">forward_fftw</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">U_acc_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;U_acc&quot;</span><span class="p">:</span> <span class="n">U_acc</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">U_acc_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;U_acc&quot;</span><span class="p">:</span> <span class="n">U_acc</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="n">weight</span><span class="p">})</span>
             <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-                <span class="s2">&quot;U_acc + U*prefactor&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;U_acc + U*prefactor*weight&quot;</span><span class="p">,</span>
                 <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">U_acc_dict</span><span class="p">,</span>
                 <span class="n">out</span><span class="o">=</span><span class="n">U_acc</span><span class="p">,</span>
             <span class="p">)</span></div>
@@ -514,7 +563,7 @@
 
 <div class="viewcode-block" id="VacuumEmission.calculate_time_integral">
 <a class="viewcode-back" href="../../../autoapi/quvac/integrator/vacuum_emission/index.html#quvac.integrator.vacuum_emission.VacuumEmission.calculate_time_integral">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_time_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_method</span><span class="o">=</span><span class="s2">&quot;trapezoid&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_time_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_weights</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the time integral.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -531,18 +580,8 @@
             <span class="s2">&quot;exp(1j*kabs*c*dt)&quot;</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_step</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">integration_method</span> <span class="o">==</span> <span class="s2">&quot;trapezoid&quot;</span><span class="p">:</span>
-            <span class="c1"># end_pts = (0, len(t_grid) - 1)</span>
-            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t_grid</span><span class="p">):</span>
-                <span class="c1"># weight = 0.5 if i in end_pts else 1.</span>
-                <span class="n">weight</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_one_time_step</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;integration_method should be one of [&#39;trapezoid&#39;] but you &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;passed </span><span class="si">{</span><span class="n">integration_method</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_weights</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculate_one_time_step</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
         
         <span class="c1"># finish calculation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">multiply_integration_result</span><span class="p">(</span><span class="n">t_grid</span><span class="p">)</span></div>
@@ -554,27 +593,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dims</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">BS</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">hbar</span><span class="o">**</span><span class="mi">2</span>
         <span class="n">prefactor</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">/</span> <span class="mi">45</span> <span class="o">*</span> <span class="n">dims</span> <span class="c1"># noqa: F841</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">S1</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;prefactor * (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">I_11_expr</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">I_22_expr</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">S2</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">S1</span>
+        <span class="p">)</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;prefactor * (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">I_12_expr</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">I_21_expr</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
+            <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">S2</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="VacuumEmission.calculate_amplitudes">
 <a class="viewcode-back" href="../../../autoapi/quvac/integrator/vacuum_emission/index.html#quvac.integrator.vacuum_emission.VacuumEmission.calculate_amplitudes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_amplitudes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_method</span><span class="o">=</span><span class="s2">&quot;trapezoid&quot;</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_method</span><span class="o">=</span><span class="s2">&quot;trapezoid&quot;</span><span class="p">,</span> <span class="n">integration_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the vacuum emission amplitudes and save the result.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_resources</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="n">integration_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">determine_integration_scheme</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">t_grid</span><span class="p">),</span> <span class="n">integration_method</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">time_integral_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_integral</span><span class="p">(</span><span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_method</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_integral</span><span class="p">(</span><span class="n">t_grid</span><span class="p">,</span> <span class="n">integration_weights</span><span class="p">)</span>
         <span class="n">time_integral_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">time_integral</span> <span class="o">=</span> <span class="n">time_integral_end</span> <span class="o">-</span> <span class="n">time_integral_start</span>
 

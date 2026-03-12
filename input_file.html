@@ -511,6 +511,16 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </dd>
 </dl>
 </li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">integration_method</span></code>: <code class="docutils literal notranslate"><span class="pre">'trapezoid'</span></code> or <code class="docutils literal notranslate"><span class="pre">'simpson'</span></code></dt><dd><p>Quadrature rule for discretized time integral.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">load_integration_weights</span></code>: bool</dt><dd><p>Whether to load integration weights from a separate file (usefule for parallel simulation).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -546,6 +556,12 @@ to use the dipole pulse expression for initialization and use linear Maxwell equ
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">use_wisdom</span></code>: bool</dt><dd><p>Whether to use existing wisdom file for <code class="docutils literal notranslate"><span class="pre">pyfftw</span></code> planning.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">pyfftw_flag</span></code>: str</dt><dd><p>How much to plan the optimal execution of FFT with <code class="docutils literal notranslate"><span class="pre">pyfftw</span></code>. One of
+<code class="docutils literal notranslate"><span class="pre">'FFTW_ESTIMATE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'FFTW_MEASURE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'FFTW_PATIENT'</span></code> and <code class="docutils literal notranslate"><span class="pre">'FFTW_EXHAUSTIVE'</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -680,6 +696,11 @@ by default False.</p>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">sbatch_params</span></code>: dict</dt><dd><p>Submission parameters for a single job.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">estimate_memory_usage</span></code>: bool</dt><dd><p>Whether to estimame memory usage for each job separately.</p>
 </dd>
 </dl>
 </li>

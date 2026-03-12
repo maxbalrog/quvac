@@ -24,6 +24,10 @@ Functions
    quvac.utils.zip_directory_shutil
    quvac.utils.find_classes_in_package
    quvac.utils.round_to_n
+   quvac.utils.size_to_Gb
+   quvac.utils.estimate_max_required_memory
+   quvac.utils.estimate_memory_usage
+   quvac.utils.free_memory
 
 
 Module Contents
@@ -125,4 +129,38 @@ Module Contents
 
 
 .. py:function:: round_to_n(x, n)
+
+   Round up to n significant digits.
+
+   :param x: Number to round up.
+   :type x: int or float
+   :param n: Number of digits to round up to.
+   :type n: int
+
+   :returns: Rounded number.
+   :rtype: int or float
+
+
+.. py:function:: size_to_Gb(size)
+
+   Convert the size of float64 array to GBs.
+
+
+.. py:function:: estimate_max_required_memory(size)
+
+   Estimate max requred memory based on the grid size.
+
+
+.. py:function:: estimate_memory_usage(ini_file)
+
+   Estimate potential memory usage for a given ini file.
+
+   :param ini_file: Path to the initialization file
+   :type ini_file: str
+
+   :returns: Required memory in format '<number>GB'.
+   :rtype: str
+
+
+.. py:function:: free_memory()
 

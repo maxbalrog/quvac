@@ -28,8 +28,29 @@ Classes
    quvac.integrator.vacuum_emission.VacuumEmission
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   quvac.integrator.vacuum_emission.determine_integration_scheme
+
+
 Module Contents
 ---------------
+
+.. py:function:: determine_integration_scheme(Nt, integration_method)
+
+   Determine integration weights based on the integration scheme.
+
+   :param Nt: Number of time points in a discretized time integral.
+   :type Nt: int
+   :param integration_method: Quadrature rule to use.
+   :type integration_method: 'trapezoid' or 'simpson'
+
+   :returns: Integration weights for a given time interval.
+   :rtype: np.ndarray of length Nt
+
 
 .. py:class:: VacuumEmission(field, grid, fft_executor=None, nthreads=None, channels=False)
 
@@ -61,13 +82,13 @@ Module Contents
 
 
 
-   .. py:method:: calculate_time_integral(t_grid, integration_method='trapezoid')
+   .. py:method:: calculate_time_integral(t_grid, integration_weights)
 
       Calculate the time integral.
 
 
 
-   .. py:method:: calculate_amplitudes(t_grid, integration_method='trapezoid', save_path=None)
+   .. py:method:: calculate_amplitudes(t_grid, integration_method='trapezoid', integration_weights=None, save_path=None)
 
       Calculate the vacuum emission amplitudes and save the result.
 

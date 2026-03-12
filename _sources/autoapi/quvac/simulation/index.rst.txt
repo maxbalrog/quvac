@@ -107,6 +107,9 @@ Module Contents
 
 .. py:function:: create_basic_logger(filename)
 
+   Set up basic logger configuration.
+
+
 .. py:function:: run_simulation(ini_config, fields_params, files, timings, memory)
 
    Run the vacuum emission simulation.

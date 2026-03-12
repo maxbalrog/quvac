@@ -297,6 +297,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyfftw</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
@@ -313,7 +314,14 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumEmissionAnalyzer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.pyfftw_executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">FFTExecutor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_maxrss</span><span class="p">,</span> <span class="n">load_wisdom</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">save_wisdom</span><span class="p">,</span> <span class="n">write_yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">free_memory</span><span class="p">,</span>
+    <span class="n">get_maxrss</span><span class="p">,</span>
+    <span class="n">load_wisdom</span><span class="p">,</span>
+    <span class="n">read_yaml</span><span class="p">,</span>
+    <span class="n">save_wisdom</span><span class="p">,</span>
+    <span class="n">write_yaml</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 
@@ -393,14 +401,16 @@
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;simulation_postprocess&#39;</span><span class="p">)</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;save_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_path</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;ini&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ini_file</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;wisdom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wisdom_file</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;amplitudes.npz&quot;</span><span class="p">)</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;spectra&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;spectra.npz&quot;</span><span class="p">)</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;performance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_performance.yml&quot;</span><span class="p">)</span>
-    <span class="n">files</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;save_path&quot;</span><span class="p">:</span> <span class="n">save_path</span><span class="p">,</span>
+        <span class="s2">&quot;ini&quot;</span><span class="p">:</span> <span class="n">ini_file</span><span class="p">,</span>
+        <span class="s2">&quot;wisdom&quot;</span><span class="p">:</span> <span class="n">wisdom_file</span><span class="p">,</span>
+        <span class="s2">&quot;amplitudes&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;amplitudes.npz&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;spectra&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;spectra.npz&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_performance.yml&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;integration_weights&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;integration_weights.npy&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
     <span class="k">return</span> <span class="n">files</span></div>
 
 
@@ -470,6 +480,9 @@
 <div class="viewcode-block" id="create_basic_logger">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.create_basic_logger">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_basic_logger</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set up basic logger configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
         <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
@@ -516,6 +529,14 @@
     <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
         <span class="n">probe_pump_idx</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;probe_pump_idx&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
+    <span class="c1"># Determine time quadrature rule</span>
+    <span class="n">integration_method</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integration_method&quot;</span><span class="p">,</span> <span class="s2">&quot;trapezoid&quot;</span><span class="p">)</span>
+    <span class="n">load_integration_weights</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;load_integration_weights&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">load_integration_weights</span><span class="p">:</span>
+        <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;integration_weights&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">integration_weights</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="c1"># Set up number of threads</span>
     <span class="n">nthreads</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nthreads&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
     <span class="n">ne</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="n">nthreads</span><span class="p">)</span>
@@ -545,7 +566,6 @@
         <span class="n">expected_timesteps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
         <span class="n">grid_t</span> <span class="o">=</span> <span class="n">grid_t</span><span class="p">[:</span><span class="n">test_timesteps</span><span class="p">]</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing test run for </span><span class="si">{</span><span class="n">test_timesteps</span><span class="si">}</span><span class="s2"> timesteps</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
 
     <span class="c1"># Field setup</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -580,8 +600,14 @@
     <span class="n">vacem</span> <span class="o">=</span> <span class="n">VacuumEmission</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span> 
                            <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;vacem_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span><span class="n">grid_t</span><span class="p">,</span> 
-                                                     <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">])</span>
+    
+    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span>
+        <span class="n">grid_t</span><span class="p">,</span>
+        <span class="n">integration_method</span><span class="o">=</span><span class="n">integration_method</span><span class="p">,</span>
+        <span class="n">integration_weights</span><span class="o">=</span><span class="n">integration_weights</span><span class="p">,</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    
     <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">memory</span><span class="p">[</span><span class="s1">&#39;maxrss_amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Amplitudes are calculated&quot;</span><span class="p">)</span>
@@ -701,6 +727,7 @@
     <span class="k">if</span> <span class="n">do_simulation</span><span class="p">:</span>
         <span class="n">timings</span><span class="p">,</span> <span class="n">memory</span> <span class="o">=</span> <span class="n">run_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> 
                                          <span class="n">files</span><span class="p">,</span> <span class="n">timings</span><span class="p">,</span> <span class="n">memory</span><span class="p">)</span>
+        <span class="n">free_memory</span><span class="p">()</span>
     <span class="c1"># Calculate spectra</span>
     <span class="k">if</span> <span class="n">do_postprocess</span><span class="p">:</span>
         <span class="n">postprocess_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">)</span>

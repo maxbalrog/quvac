@@ -18,6 +18,7 @@ Functions
    quvac.parallel.slurm_to_submitit_params
    quvac.parallel.create_job_executor
    quvac.parallel.setup_job_executor_from_params
+   quvac.parallel.submit_jobs_with_memory_estimation
    quvac.parallel.run_simulations_with_job_executor
 
 
@@ -76,6 +77,20 @@ Module Contents
 
    :returns: Executor for running jobs.
    :rtype: submitit.AutoExecutor
+
+
+.. py:function:: submit_jobs_with_memory_estimation(executor, ini_files)
+
+   Submit jobs for a list of initialization files estimating memory usage
+   for each of them.
+
+   :param executor: Executor for running jobs.
+   :type executor: submitit.AutoExecutor
+   :param ini_files: List of paths to the initialization files for each job.
+   :type ini_files: list of str
+
+   :returns: Submitted jobs.
+   :rtype: list of submitit jobs
 
 
 .. py:function:: run_simulations_with_job_executor(ini_files, cluster_params, save_path, max_parallel_jobs_default=2)

@@ -288,6 +288,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SLURM_PARAMS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">quvac_simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">estimate_memory_usage</span>
 
 <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
 
@@ -410,10 +411,39 @@
 
 
 
+<div class="viewcode-block" id="submit_jobs_with_memory_estimation">
+<a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.submit_jobs_with_memory_estimation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Submit jobs for a list of initialization files estimating memory usage</span>
+<span class="sd">    for each of them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    executor : submitit.AutoExecutor</span>
+<span class="sd">        Executor for running jobs.</span>
+<span class="sd">    ini_files : list of str</span>
+<span class="sd">        List of paths to the initialization files for each job.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of submitit jobs</span>
+<span class="sd">        Submitted jobs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ini_file</span> <span class="ow">in</span> <span class="n">ini_files</span><span class="p">:</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+        <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">slurm_mem</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_file</span><span class="p">)</span>
+        <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jobs</span></div>
+
+
+
 <div class="viewcode-block" id="run_simulations_with_job_executor">
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.run_simulations_with_job_executor">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_simulations_with_job_executor</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span>
-                                      <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+                                      <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">,):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run simulations for a list of ini files with job executor.</span>
 
@@ -432,8 +462,12 @@
                                               <span class="n">max_parallel_jobs_default</span><span class="p">)</span>
 
     <span class="c1"># Submit jobs</span>
+    <span class="n">estimate_memory_usage</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimate_memory_usage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Submitting jobs...&quot;</span><span class="p">)</span>
-    <span class="n">jobs</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">estimate_memory_usage</span><span class="p">:</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="n">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs submitted, waiting for results...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Wait till all jobs end</span>

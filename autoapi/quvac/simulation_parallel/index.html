@@ -305,10 +305,13 @@ and measure performance.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation_parallel.collect_results" title="quvac.simulation_parallel.collect_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_results</span></code></a>(ini_files, amplitudes_file)</p></td>
 <td><p>Collect results from parallel jobs and combine them.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation_parallel.quvac_simulation_parallel" title="quvac.simulation_parallel.quvac_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation_parallel</span></code></a>(ini_file[, save_path, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation_parallel.configure_integration_weights" title="quvac.simulation_parallel.configure_integration_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_integration_weights</span></code></a>(ini_config, Nt)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation_parallel.quvac_simulation_parallel" title="quvac.simulation_parallel.quvac_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quvac_simulation_parallel</span></code></a>(ini_file[, save_path, ...])</p></td>
 <td><p>Launch a single quvac simulation for given &lt;ini&gt;.yml file in parallel.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.simulation_parallel.main_simulation_parallel" title="quvac.simulation_parallel.main_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation_parallel</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.simulation_parallel.main_simulation_parallel" title="quvac.simulation_parallel.main_simulation_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main_simulation_parallel</span></code></a>()</p></td>
 <td><p>Main function to run the simulation in parallel.</p></td>
 </tr>
 </tbody>
@@ -319,7 +322,7 @@ and measure performance.</p>
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation_parallel.create_ini_files_for_parallel">
-<span class="sig-prename descclassname"><span class="pre">quvac.simulation_parallel.</span></span><span class="sig-name descname"><span class="pre">create_ini_files_for_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation_parallel.html#create_ini_files_for_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation_parallel.create_ini_files_for_parallel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation_parallel.</span></span><span class="sig-name descname"><span class="pre">create_ini_files_for_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integration_weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation_parallel.html#create_ini_files_for_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation_parallel.create_ini_files_for_parallel" title="Link to this definition">¶</a></dt>
 <dd><p>Create initialization files for parallel jobs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -329,6 +332,7 @@ and measure performance.</p>
 <li><p><strong>grid_t</strong> (<em>numpy.ndarray</em>) – The temporal grid array.</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – Number of parallel jobs.</p></li>
 <li><p><strong>save_path</strong> (<em>str</em>) – Path to save the initialization files.</p></li>
+<li><p><strong>integration_weights</strong> (<em>np.ndarray</em>) – Integration weights for a given temporal grid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -353,6 +357,11 @@ and measure performance.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.simulation_parallel.configure_integration_weights">
+<span class="sig-prename descclassname"><span class="pre">quvac.simulation_parallel.</span></span><span class="sig-name descname"><span class="pre">configure_integration_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/simulation_parallel.html#configure_integration_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.simulation_parallel.configure_integration_weights" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.simulation_parallel.quvac_simulation_parallel">
@@ -442,6 +451,7 @@ Then we gather all S1 and S2 in the main process and do main postprocessing.</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#quvac.simulation_parallel.create_ini_files_for_parallel"><code class="docutils literal notranslate"><span class="pre">create_ini_files_for_parallel()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation_parallel.collect_results"><code class="docutils literal notranslate"><span class="pre">collect_results()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.simulation_parallel.configure_integration_weights"><code class="docutils literal notranslate"><span class="pre">configure_integration_weights()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation_parallel.quvac_simulation_parallel"><code class="docutils literal notranslate"><span class="pre">quvac_simulation_parallel()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.simulation_parallel.main_simulation_parallel"><code class="docutils literal notranslate"><span class="pre">main_simulation_parallel()</span></code></a></li>
 </ul>

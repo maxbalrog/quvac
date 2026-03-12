@@ -378,7 +378,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_k_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">):</span>
             <span class="n">Nx</span><span class="p">,</span> <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dxyz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -412,21 +412,8 @@
 
         <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 0, -ky / kperp)&quot;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 1, kx / kperp)&quot;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="c1"># self.e2y = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 2*(kz&gt;0)-1, kx / kperp)&quot;)</span>
-        <span class="c1"># self.e2z = 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e2x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span></div>
 
-
-        <span class="c1"># self.e1x = ne.evaluate(</span>
-        <span class="c1">#     &quot;where((kx==0) &amp; (ky==0), 2*(kz&gt;0)-1, kx * kz / (kperp*kabs))&quot;</span>
-        <span class="c1"># )</span>
-        <span class="c1"># self.e1y = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 0, ky * kz / (kperp*kabs))&quot;)</span>
-        <span class="c1"># self.e1z = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 0, -kperp / kabs)&quot;)</span>
-
-        <span class="c1"># self.e2x = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 0, -ky / kperp)&quot;)</span>
-        <span class="c1"># self.e2y = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 1, kx / kperp)&quot;)</span>
-        <span class="c1"># # self.e2y = ne.evaluate(&quot;where((kx==0) &amp; (ky==0), 2*(kz&gt;0)-1, kx / kperp)&quot;)</span>
-        <span class="c1"># self.e2z = 0</span>
 
 
 <div class="viewcode-block" id="get_ek">

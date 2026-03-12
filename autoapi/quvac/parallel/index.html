@@ -304,7 +304,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.parallel.setup_job_executor_from_params" title="quvac.parallel.setup_job_executor_from_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_job_executor_from_params</span></code></a>(cluster_params, save_path)</p></td>
 <td><p>Setup job executor from unified cluster parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.parallel.run_simulations_with_job_executor" title="quvac.parallel.run_simulations_with_job_executor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulations_with_job_executor</span></code></a>(ini_files, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.parallel.submit_jobs_with_memory_estimation" title="quvac.parallel.submit_jobs_with_memory_estimation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit_jobs_with_memory_estimation</span></code></a>(executor, ini_files)</p></td>
+<td><p>Submit jobs for a list of initialization files estimating memory usage</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.parallel.run_simulations_with_job_executor" title="quvac.parallel.run_simulations_with_job_executor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_simulations_with_job_executor</span></code></a>(ini_files, ...[, ...])</p></td>
 <td><p>Run simulations for a list of ini files with job executor.</p></td>
 </tr>
 </tbody>
@@ -391,6 +394,27 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="quvac.parallel.submit_jobs_with_memory_estimation">
+<span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">submit_jobs_with_memory_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ini_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#submit_jobs_with_memory_estimation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.submit_jobs_with_memory_estimation" title="Link to this definition">¶</a></dt>
+<dd><p>Submit jobs for a list of initialization files estimating memory usage
+for each of them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>executor</strong> (<em>submitit.AutoExecutor</em>) – Executor for running jobs.</p></li>
+<li><p><strong>ini_files</strong> (<em>list</em><em> of </em><em>str</em>) – List of paths to the initialization files for each job.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Submitted jobs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of submitit jobs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="quvac.parallel.run_simulations_with_job_executor">
 <span class="sig-prename descclassname"><span class="pre">quvac.parallel.</span></span><span class="sig-name descname"><span class="pre">run_simulations_with_job_executor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_parallel_jobs_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/parallel.html#run_simulations_with_job_executor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.parallel.run_simulations_with_job_executor" title="Link to this definition">¶</a></dt>
 <dd><p>Run simulations for a list of ini files with job executor.</p>
@@ -471,6 +495,7 @@
 <li><a class="reference internal" href="#quvac.parallel.slurm_to_submitit_params"><code class="docutils literal notranslate"><span class="pre">slurm_to_submitit_params()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.parallel.create_job_executor"><code class="docutils literal notranslate"><span class="pre">create_job_executor()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.parallel.setup_job_executor_from_params"><code class="docutils literal notranslate"><span class="pre">setup_job_executor_from_params()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.parallel.submit_jobs_with_memory_estimation"><code class="docutils literal notranslate"><span class="pre">submit_jobs_with_memory_estimation()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.parallel.run_simulations_with_job_executor"><code class="docutils literal notranslate"><span class="pre">run_simulations_with_job_executor()</span></code></a></li>
 </ul>
 </li>

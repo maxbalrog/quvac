@@ -25,6 +25,7 @@ Functions
 
    quvac.simulation_parallel.create_ini_files_for_parallel
    quvac.simulation_parallel.collect_results
+   quvac.simulation_parallel.configure_integration_weights
    quvac.simulation_parallel.quvac_simulation_parallel
    quvac.simulation_parallel.main_simulation_parallel
 
@@ -32,7 +33,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path)
+.. py:function:: create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path, integration_weights)
 
    Create initialization files for parallel jobs.
 
@@ -46,6 +47,8 @@ Module Contents
    :type n_jobs: int
    :param save_path: Path to save the initialization files.
    :type save_path: str
+   :param integration_weights: Integration weights for a given temporal grid.
+   :type integration_weights: np.ndarray
 
    :returns: **ini_files** -- List of paths to the initialization files for each job.
    :rtype: list of str
@@ -60,6 +63,8 @@ Module Contents
    :param amplitudes_file: Path to save the combined amplitudes.
    :type amplitudes_file: str
 
+
+.. py:function:: configure_integration_weights(ini_config, Nt)
 
 .. py:function:: quvac_simulation_parallel(ini_file, save_path=None, wisdom_file='wisdom/fftw-wisdom')
 

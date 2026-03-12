@@ -320,6 +320,18 @@
 <td><p>Find all class names in a given package.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.utils.round_to_n" title="quvac.utils.round_to_n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_to_n</span></code></a>(x, n)</p></td>
+<td><p>Round up to n significant digits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.utils.size_to_Gb" title="quvac.utils.size_to_Gb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size_to_Gb</span></code></a>(size)</p></td>
+<td><p>Convert the size of float64 array to GBs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.utils.estimate_max_required_memory" title="quvac.utils.estimate_max_required_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">estimate_max_required_memory</span></code></a>(size)</p></td>
+<td><p>Estimate max requred memory based on the grid size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.utils.estimate_memory_usage" title="quvac.utils.estimate_memory_usage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">estimate_memory_usage</span></code></a>(ini_file)</p></td>
+<td><p>Estimate potential memory usage for a given ini file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.utils.free_memory" title="quvac.utils.free_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">free_memory</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -473,6 +485,55 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.utils.round_to_n">
 <span class="sig-prename descclassname"><span class="pre">quvac.utils.</span></span><span class="sig-name descname"><span class="pre">round_to_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/utils.html#round_to_n"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.utils.round_to_n" title="Link to this definition">¶</a></dt>
+<dd><p>Round up to n significant digits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em><em> or </em><em>float</em>) – Number to round up.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of digits to round up to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rounded number.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.utils.size_to_Gb">
+<span class="sig-prename descclassname"><span class="pre">quvac.utils.</span></span><span class="sig-name descname"><span class="pre">size_to_Gb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/utils.html#size_to_Gb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.utils.size_to_Gb" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the size of float64 array to GBs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.utils.estimate_max_required_memory">
+<span class="sig-prename descclassname"><span class="pre">quvac.utils.</span></span><span class="sig-name descname"><span class="pre">estimate_max_required_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/utils.html#estimate_max_required_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.utils.estimate_max_required_memory" title="Link to this definition">¶</a></dt>
+<dd><p>Estimate max requred memory based on the grid size.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.utils.estimate_memory_usage">
+<span class="sig-prename descclassname"><span class="pre">quvac.utils.</span></span><span class="sig-name descname"><span class="pre">estimate_memory_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/utils.html#estimate_memory_usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.utils.estimate_memory_usage" title="Link to this definition">¶</a></dt>
+<dd><p>Estimate potential memory usage for a given ini file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<em>str</em>) – Path to the initialization file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Required memory in format ‘&lt;number&gt;GB’.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.utils.free_memory">
+<span class="sig-prename descclassname"><span class="pre">quvac.utils.</span></span><span class="sig-name descname"><span class="pre">free_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/utils.html#free_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.utils.free_memory" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -538,6 +599,10 @@
 <li><a class="reference internal" href="#quvac.utils.zip_directory_shutil"><code class="docutils literal notranslate"><span class="pre">zip_directory_shutil()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.utils.find_classes_in_package"><code class="docutils literal notranslate"><span class="pre">find_classes_in_package()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.utils.round_to_n"><code class="docutils literal notranslate"><span class="pre">round_to_n()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.utils.size_to_Gb"><code class="docutils literal notranslate"><span class="pre">size_to_Gb()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.utils.estimate_max_required_memory"><code class="docutils literal notranslate"><span class="pre">estimate_max_required_memory()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.utils.estimate_memory_usage"><code class="docutils literal notranslate"><span class="pre">estimate_memory_usage()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.utils.free_memory"><code class="docutils literal notranslate"><span class="pre">free_memory()</span></code></a></li>
 </ul>
 </li>
 </ul>
