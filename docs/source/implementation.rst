@@ -148,7 +148,7 @@ References
 ^^^^^^^^^^
 
 .. [1] F. Karbstein. "Probing vacuum polarization effects with high-intensity lasers." 
-    Particles 3.1 (2020): 39-61.
+    Particles 3.1 (2020): 39-61 `(article) <https://arxiv.org/abs/1912.11698>`_.
 
 .. [2] A. Blinne, et al. "All-optical signatures of quantum vacuum nonlinearities 
-    in generic laser fields." PRD 99.1 (2019): 016006.
+    in generic laser fields." PRD 99.1 (2019): 016006 `(article) <https://arxiv.org/abs/1811.08895>`_.

@@ -71,6 +71,8 @@ def test_precision(tmp_path):
     quvac_simulation(ini_file)
 
 
+
+
 ##########################################################################################
 # POSTPROCESS
 ##########################################################################################
@@ -164,6 +166,24 @@ def test_mix_bg_and_signal(tmp_path):
     quvac_simulation(ini_file)
 
 
+def test_integration_methods(tmp_path):
+    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    integration_schemes = ["trapezoid", "simpson"]
+
+    N_totals = []
+    for integration_scheme in integration_schemes:
+        ini_data["integrator"]["integration_scheme"] = integration_scheme
+        ini_file = save_ini(tmp_path, ini_data)
+        quvac_simulation(ini_file)
+
+        folder = os.path.dirname(ini_file)
+        data = np.load(os.path.join(folder, "spectra_total.npz"))
+        N_totals.append(data["N_total"])
+    
+    err_msg = "Different integration schemes do not give the same result"
+    assert np.isclose(N_totals[0], N_totals[1]), err_msg
+
+
 ##########################################################################################
 # SIMULATION PARALLEL
 ##########################################################################################
@@ -185,7 +205,29 @@ def test_parallel_simulation(tmp_path):
     data = np.load(os.path.join(folder, "spectra_total.npz"))
     N_total_parallel = data["N_total"]
 
-    assert np.isclose(N_total, N_total_parallel), "Sequential and parallel results "
-    "should be the same."
+    err_msg = "Sequential and parallel results should be the same."
+    assert np.isclose(N_total, N_total_parallel), err_msg
 
+
+def test_parallel_integration_schemes(tmp_path):
+    integration_scheme = "simpson"
+    # run usual simulation
+    ini_data = read_yaml(DEFAULT_CONFIG_PATH)
+    ini_data["integrator"]["integration_scheme"] = integration_scheme
+    ini_file = save_ini(tmp_path, ini_data)
+    quvac_simulation(ini_file)
+    
+    folder = os.path.dirname(ini_file)
+    data = np.load(os.path.join(folder, "spectra_total.npz"))
+    N_total = data["N_total"]
+
+    ini_data["performance"]["nthreads"] = 2
+    ini_file = save_ini(tmp_path, ini_data)
+    quvac_simulation_parallel(ini_file)
+    data = np.load(os.path.join(folder, "spectra_total.npz"))
+    N_total_parallel = data["N_total"]
+
+    err_msg = (f"Sequential and parallel results for {integration_scheme} "
+               "should be the same.")
+    assert np.isclose(N_total, N_total_parallel), err_msg
 

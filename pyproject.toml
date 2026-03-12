@@ -39,7 +39,7 @@ quvac-optimization = "quvac.cluster.optimization:main_optimization"
 
 [project.optional-dependencies]
 optimization = [
-    "ax-platform",
+    "ax-platform>=1.2.3",
 ]
 plot = [
     "matplotlib>=3.10.1",
@@ -48,6 +48,9 @@ plot = [
 test = [
     "pytest>=8.3.5",
     "pytest-cov>=6.1.0",
+    "scalene>=2.1.4",
+    "memray>=1.19",
+    "pytest-memray",
 ]
 docs = [
     "astroid==3.3.8",

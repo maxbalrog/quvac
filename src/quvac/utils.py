@@ -2,18 +2,23 @@
 Useful generic utilities.
 """
 
+import gc
 import importlib
 import inspect
+import math
 import os
 from pathlib import Path
 import pkgutil
 import platform
 import resource
 import shutil
+import sys
 
 import numpy as np
 import pyfftw
 import yaml
+
+from quvac.grid import setup_grids
 
 
 def read_yaml(yaml_file):
@@ -215,4 +220,72 @@ def find_classes_in_package(package_name):
 
 
 def round_to_n(x, n):
+    """
+    Round up to n significant digits.
+
+    Parameters
+    ----------
+    x : int or float
+        Number to round up.
+    n : int
+        Number of digits to round up to.
+
+    Returns
+    -------
+    int or float:
+        Rounded number.
+    """
     return round(x, -int(np.floor(np.sign(x) * np.log10(abs(x)))) + n)
+
+
+def size_to_Gb(size):
+    """
+    Convert the size of float64 array to GBs.
+    """
+    return size*8 / 1024**3
+
+
+def estimate_max_required_memory(size):
+    """
+    Estimate max requred memory based on the grid size.
+    """
+    # this value is estimated by running the simulation with different grid sizes,
+    # looking at the max used memory and fitting a line to the dependency
+    # max memory vs grid size
+    MEMORY_SCALING = 56
+    estimated_mem = size_to_Gb(math.prod(size))*MEMORY_SCALING
+
+    # memory buffer just in case
+    SAFE_BUFFER = 10
+    return int(np.ceil(estimated_mem + SAFE_BUFFER))
+
+
+def estimate_memory_usage(ini_file):
+    """
+    Estimate potential memory usage for a given ini file.
+
+    Parameters
+    ----------
+    ini_file: str
+        Path to the initialization file
+
+    Returns
+    -------
+    str
+        Required memory in format '<number>GB'.
+    """
+    ini_config = read_yaml(ini_file)
+    grid_xyz, _ = setup_grids(
+        ini_config.get("fields", None), 
+        ini_config.get("grid", None),
+    )
+
+    required_memory = estimate_max_required_memory(grid_xyz.grid_shape)
+    return f"{required_memory}GB"
+
+
+def free_memory():
+    gc.collect()
+    if sys.platform == "linux":
+        import ctypes
+        ctypes.CDLL("libc.so.6").malloc_trim(0)

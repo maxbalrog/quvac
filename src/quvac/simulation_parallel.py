@@ -20,6 +20,7 @@ import time
 import numpy as np
 
 from quvac.grid import setup_grids
+from quvac.integrator.vacuum_emission import determine_integration_scheme
 from quvac.log import get_parallel_performance_stats, log_time
 from quvac.parallel import run_simulations_with_job_executor
 from quvac.simulation import (
@@ -33,7 +34,15 @@ from quvac.utils import get_maxrss, read_yaml, write_yaml
 _logger = logging.getLogger("simulation")
 
 
-def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path):
+def _setup_integration_scheme(ini_config):
+    integrator_params = ini_config.get("integrator", {})
+    integrator_params["load_integration_weights"] = True
+    ini_config["integrator"] = integrator_params
+    return ini_config
+
+
+def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_path,
+                                  integration_weights):
     """
     Create initialization files for parallel jobs.
 
@@ -49,6 +58,8 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
         Number of parallel jobs.
     save_path : str
         Path to save the initialization files.
+    integration_weights : np.ndarray
+        Integration weights for a given temporal grid.
 
     Returns
     -------
@@ -61,6 +72,7 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
     ini_job = deepcopy(ini_config)
     ini_job["mode"] = "simulation"
     ini_job["postprocess"] = {}
+    ini_job = _setup_integration_scheme(ini_job)
 
     box_xyz = [float(-ax[0] * 2) for ax in grid_xyz.grid]
     Nxyz = [int(N) for N in grid_xyz.grid_shape]
@@ -80,9 +92,16 @@ def create_ini_files_for_parallel(ini_config, grid_xyz, grid_t, n_jobs, save_pat
             "Nt": Nt,
         }
         ini_job["grid"].update(grid_params_job)
-        ini_path_job = os.path.join(save_path, f"job_{str(idx).zfill(2)}", "ini.yml")
+        job_folder = os.path.join(save_path, f"job_{str(idx).zfill(2)}")
+        ini_path_job = os.path.join(job_folder, "ini.yml")
         Path(os.path.dirname(ini_path_job)).mkdir(parents=True, exist_ok=True)
         write_yaml(ini_path_job, ini_job)
+
+        # write integration weights to a file
+        weights_for_job = integration_weights[idx_start:idx_end+1]
+        weights_path = os.path.join(job_folder, "integration_weights.npy")
+        np.save(weights_path, weights_for_job)
+
         ini_files.append(ini_path_job)
     return ini_files
 
@@ -111,6 +130,13 @@ def collect_results(ini_files, amplitudes_file):
         S2 += data["S2"]
     amplitude_total = {"x": x, "y": y, "z": z, "S1": S1, "S2": S2}
     np.savez(amplitudes_file, **amplitude_total)
+
+
+def configure_integration_weights(ini_config, Nt):
+    integrator_params = ini_config.get("integrator", {})
+    integration_method = integrator_params.get("integration_method", "trapezoid")
+    integration_weights = determine_integration_scheme(Nt, integration_method)
+    return integration_weights
 
 
 def quvac_simulation_parallel(
@@ -163,8 +189,12 @@ def quvac_simulation_parallel(
     # Get grids
     grid_xyz, grid_t = setup_grids(fields_params, grid_params)
 
+    # Configure integration weights
+    integration_weights = configure_integration_weights(ini_config, len(grid_t))
+
     ini_files = create_ini_files_for_parallel(
-        ini_config, grid_xyz, grid_t, number_of_time_intervals, files['save_path']
+        ini_config, grid_xyz, grid_t, number_of_time_intervals, files['save_path'],
+        integration_weights,
     )
 
     run_simulations_with_job_executor(

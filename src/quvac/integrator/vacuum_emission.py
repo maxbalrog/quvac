@@ -23,8 +23,46 @@ from scipy.constants import alpha, c, e, hbar, m_e, pi
 
 from quvac import config
 from quvac.pyfftw_executor import setup_fftw_executor
+from quvac.utils import free_memory
 
 BS = m_e**2 * c**2 / (hbar * e)  # Schwinger magnetic field
+
+
+def determine_integration_scheme(Nt, integration_method):
+    """
+    Determine integration weights based on the integration scheme.
+
+    Parameters
+    ----------
+    Nt : int
+        Number of time points in a discretized time integral.
+    integration_method: 'trapezoid' or 'simpson'
+        Quadrature rule to use.
+
+    Returns
+    -------
+    np.ndarray of length Nt
+        Integration weights for a given time interval.
+    """
+    integration_weights = np.ones(Nt)
+    match integration_method:
+        case "trapezoid":
+            integration_weights[0] = 0.5
+            integration_weights[-1] = 0.5
+        case "simpson":
+            number_of_intervals = Nt - 1
+            integration_weights /= 3.
+            idx_even = [2*i for i in range(1, number_of_intervals//2-1)]
+            idx_odd = [2*i-1 for i in range(1, number_of_intervals//2)]
+            integration_weights[idx_even] *= 2
+            integration_weights[idx_odd] *= 4
+        case _:
+            err_msg = (
+                "integration_method should be one of ['trapezoid', 'simpson'] but you "
+                f"passed {integration_method}"
+            )
+            raise NotImplementedError(err_msg)
+    return integration_weights
 
 
 class VacuumEmission:
@@ -45,7 +83,6 @@ class VacuumEmission:
     channels : bool, optional
         Whether to calculate a particular channel in vacuum emission amplitude. 
         Default is False.
-
     """
 
     def __init__(self, field, grid, fft_executor=None, nthreads=None, channels=False):
@@ -69,8 +106,8 @@ class VacuumEmission:
         ]
 
         if not self.channels:
-            self.U1 = "(4*E*F + 7*B*G)"
-            self.U2 = "(4*B*F - 7*E*G)"
+            self.U1_expr = "(4*E*F + 7*B*G)"
+            self.U2_expr = "(4*B*F - 7*E*G)"
         else:
             self._define_channel_variables()
 
@@ -94,8 +131,8 @@ class VacuumEmission:
             np.zeros(self.grid_shape, dtype=config.FDTYPE) for _ in range(3)
         ]
 
-        self.U1 = "(4*(Ep*F + E*F_B_Bp) + 7*(Bp*G + B*(G_Ep_B + G_E_Bp)))"
-        self.U2 = "(4*(Bp*F + B*F_B_Bp) - 7*(Ep*G + E*(G_Ep_B + G_E_Bp)))"
+        self.U1_expr = "(4*(Ep*F + E*F_B_Bp) + 7*(Bp*G + B*(G_Ep_B + G_E_Bp)))"
+        self.U2_expr = "(4*(Bp*F + B*F_B_Bp) - 7*(Ep*G + E*(G_Ep_B + G_E_Bp)))"
 
     def _allocate_fields(self):
         """
@@ -117,12 +154,16 @@ class VacuumEmission:
         self.U2_acc_x, self.U2_acc_y, self.U2_acc_z = self.U2_acc
 
         self.U_pairs = [
-            (self.U1_acc, self.U1),
-            (self.U2_acc, self.U2),
+            (self.U1_acc, self.U1_expr),
+            (self.U2_acc, self.U2_expr),
         ]
 
-        self.prefactor = np.ones(self.grid_shape, dtype="complex128")
-        self.prefactor_step = np.zeros(self.grid_shape, dtype="complex128")
+        # During the main loop calculation these arrays serve as buffers for calculation
+        # of prefactor and prefactor_step. When the calculation is finished, this space
+        # is used to store the transition amplitudes. It seems that Python garbage 
+        # collector doesn't manage to quickly clean the arrays that are not used.
+        self.prefactor = self.S1 = np.ones(self.grid_shape, dtype=config.CDTYPE)
+        self.prefactor_step = self.S2 = np.zeros(self.grid_shape, dtype=config.CDTYPE)
 
         self.U_dict = {"F": self.F, "G": self.G}
 
@@ -152,6 +193,11 @@ class VacuumEmission:
         """
         del self.E_out, self.B_out
         del self.fft_executor
+        del self.F, self.G
+        if self.channels:
+            del self.E_probe, self.B_probe
+            del self.F_B_Bp, self.G_Ep_B, self.G_E_Bp
+        free_memory()
 
     def calculate_one_time_step(self, t, weight=1):
         """
@@ -178,8 +224,8 @@ class VacuumEmission:
                             "Bx": Bx, "By": By, "Bz": Bz,})
 
         # Evaluate F and G
-        ne.evaluate(self.F_expr, out=self.F)
-        ne.evaluate(self.G_expr, out=self.G)
+        ne.evaluate(self.F_expr, local_dict=self.U_dict, out=self.F)
+        ne.evaluate(self.G_expr, local_dict=self.U_dict, out=self.G)
 
         if self.channels:
             ne.evaluate(self.F_B_Bp_expr, out=self.F_B_Bp)
@@ -197,13 +243,13 @@ class VacuumEmission:
                     out=self.prefactor)
 
         # Evaluate U1 and U2 expressions
-        for U_acc, U_expr in self.U_pairs: # noqa: B905
+        for U_acc, U_expr in self.U_pairs:
             ne.evaluate(U_expr, global_dict=self.U_dict, out=self.fft_executor.tmp)
             self.fft_executor.forward_fftw.execute()
 
-            self.U_acc_dict.update({"U_acc": U_acc})
+            self.U_acc_dict.update({"U_acc": U_acc, "weight": weight})
             ne.evaluate(
-                "U_acc + U*prefactor",
+                "U_acc + U*prefactor*weight",
                 local_dict=self.U_acc_dict,
                 out=U_acc,
             )
@@ -224,7 +270,7 @@ class VacuumEmission:
             ne.evaluate("acc*prefactor", global_dict={"prefactor": self.prefactor},
                         out=acc)
 
-    def calculate_time_integral(self, t_grid, integration_method="trapezoid"):
+    def calculate_time_integral(self, t_grid, integration_weights):
         """
         Calculate the time integral.
         """
@@ -241,18 +287,8 @@ class VacuumEmission:
             "exp(1j*kabs*c*dt)", local_dict=self.prefactor_dict, out=self.prefactor_step
         )
 
-        if integration_method == "trapezoid":
-            # end_pts = (0, len(t_grid) - 1)
-            for _, t in enumerate(t_grid):
-                # weight = 0.5 if i in end_pts else 1.
-                weight = 1
-                self.calculate_one_time_step(t, weight=weight)
-        else:
-            err_msg = (
-                "integration_method should be one of ['trapezoid'] but you "
-                f"passed {integration_method}"
-            )
-            raise NotImplementedError(err_msg)
+        for t,weight in zip(t_grid, integration_weights, strict=True):
+            self.calculate_one_time_step(t, weight=weight)
         
         # finish calculation
         self.multiply_integration_result(t_grid)
@@ -263,25 +299,31 @@ class VacuumEmission:
         """
         dims = 1 / BS**3 * m_e**2 * c**3 / hbar**2
         prefactor = -1j * np.sqrt(alpha * self.kabs) / (2 * pi) ** 1.5 / 45 * dims # noqa: F841
-        self.S1 = ne.evaluate(
+        ne.evaluate(
             f"prefactor * ({self.I_11_expr} - {self.I_22_expr})",
-            global_dict=self.__dict__,
-        ).astype(config.CDTYPE)
-        self.S2 = ne.evaluate(
+            global_dict=self.__dict__, out=self.S1
+        )
+        ne.evaluate(
             f"prefactor * ({self.I_12_expr} + {self.I_21_expr})",
-            global_dict=self.__dict__,
-        ).astype(config.CDTYPE)
+            global_dict=self.__dict__, out=self.S2
+        )
 
     def calculate_amplitudes(
-        self, t_grid, integration_method="trapezoid", save_path=None
+        self, t_grid, integration_method="trapezoid", integration_weights=None,
+        save_path=None
     ):
         """
         Calculate the vacuum emission amplitudes and save the result.
         """
         self._allocate_resources()
 
+        if integration_weights is None:
+            integration_weights = determine_integration_scheme(
+                len(t_grid), integration_method,
+            )
+
         time_integral_start = time.perf_counter()
-        self.calculate_time_integral(t_grid, integration_method)
+        self.calculate_time_integral(t_grid, integration_weights)
         time_integral_end = time.perf_counter()
         time_integral = time_integral_end - time_integral_start
 

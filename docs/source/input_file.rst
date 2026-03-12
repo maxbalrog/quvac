@@ -120,7 +120,7 @@ Keys for ``dynamic`` mode:
 
 
 ``integrator`` (optional)
----------------------
+-------------------------
 Keys:
     - ``type``: str
         ``vacuum_emission`` (calculate the total vacuum emission amplitude) or ``vacuum_emission_channels`` (calculate the amplitude linearized in the probe field)
@@ -130,9 +130,13 @@ Keys:
                 Indices of the probe field, by default [0].
             - ``pump``: list of int
                 Indices of the pump field, by default [1].
+    - ``integration_method``: ``'trapezoid'`` or ``'simpson'``
+        Quadrature rule for discretized time integral.
+    - ``load_integration_weights``: bool
+        Whether to load integration weights from a separate file (usefule for parallel simulation).
 
 ``performance`` (optional)
-----------------------
+--------------------------
 Keys:
     - ``precision``: str
         Numerical precision for calculations: ``float32`` or (by default) ``float64``.
@@ -146,10 +150,13 @@ Keys:
         Number of timesteps for a test run, by default 5.
     - ``use_wisdom``: bool
         Whether to use existing wisdom file for ``pyfftw`` planning.
+    - ``pyfftw_flag``: str
+        How much to plan the optimal execution of FFT with ``pyfftw``. One of 
+        ``'FFTW_ESTIMATE'``, ``'FFTW_MEASURE'``, ``'FFTW_PATIENT'`` and ``'FFTW_EXHAUSTIVE'``.
 
 
 ``postprocessing`` (optional)
--------------------------
+-----------------------------
 This section is relevant only when ``mode`` is ``postprocess`` or ``simulation_postprocess``. Relevant keys for the polarization-insensitive signals:
     - ``calculate_xyz_background`` : bool, optional
         Whether to calculate the background spectra on Cartesian grid, 
@@ -180,7 +187,7 @@ Relevant keys for the polarization-sensitive signals:
         Whether to calculate Stokes parameters, by default False.
 
 ``cluster_params`` (for ``quvac-simulation-parallel``)
---------------------------------------------------
+------------------------------------------------------
 Keys:
     - ``cluster_type``: str,
         Where perform calculations, ``local`` or ``slurm``.
@@ -194,7 +201,7 @@ Keys:
         ``quvac.config.DEFAULT_SLURM_PARAMS``.
 
 ``gridscan`` (for ``quvac-gridscan``)
-----------------------------------
+--------------------------------------
 Keys:
     - ``create_grids``: bool
         Flag to create grids given [start, end, n_steps].
@@ -207,9 +214,11 @@ Keys:
             Maximal number of submitted jobs in parallel.
         - ``sbatch_params``: dict
             Submission parameters for a single job.
+        - ``estimate_memory_usage``: bool
+            Whether to estimame memory usage for each job separately.
 
 ``optimization`` (for ``quvac-optimization``)
------------------------------------------
+---------------------------------------------
 Keys:
     - ``name``: str
         Optimization name.

@@ -17,6 +17,7 @@ from pathlib import Path
 import time
 
 import numexpr as ne
+import numpy as np
 import pyfftw
 
 from quvac import config
@@ -33,7 +34,14 @@ from quvac.log import (
 )
 from quvac.postprocess import VacuumEmissionAnalyzer
 from quvac.pyfftw_executor import FFTExecutor
-from quvac.utils import get_maxrss, load_wisdom, read_yaml, save_wisdom, write_yaml
+from quvac.utils import (
+    free_memory,
+    get_maxrss,
+    load_wisdom,
+    read_yaml,
+    save_wisdom,
+    write_yaml,
+)
 
 _logger = logging.getLogger("simulation")
 
@@ -105,14 +113,16 @@ def get_filenames(ini_file, save_path, wisdom_file, mode=None):
     ini_config = read_yaml(ini_file)
     if mode is None:
         mode = ini_config.get('mode', 'simulation_postprocess')
-    files = {}
-    files['save_path'] = save_path
-    files['ini'] = ini_file
-    files['wisdom'] = wisdom_file
-    files['amplitudes'] = os.path.join(save_path, "amplitudes.npz")
-    files['spectra'] = os.path.join(save_path, "spectra.npz")
-    files['performance'] = os.path.join(save_path, f"{mode}_performance.yml")
-    files['logger'] = os.path.join(save_path, f"{mode}.log")
+    files = {
+        "save_path": save_path,
+        "ini": ini_file,
+        "wisdom": wisdom_file,
+        "amplitudes": os.path.join(save_path, "amplitudes.npz"),
+        "spectra": os.path.join(save_path, "spectra.npz"),
+        "performance": os.path.join(save_path, f"{mode}_performance.yml"),
+        "logger": os.path.join(save_path, f"{mode}.log"),
+        "integration_weights": os.path.join(save_path, "integration_weights.npy"),
+    }
     return files
 
 
@@ -170,6 +180,9 @@ def set_pyfftw_flag(flag):
 
 
 def create_basic_logger(filename):
+    """
+    Set up basic logger configuration.
+    """
     logging.basicConfig(
         filename=filename,
         filemode="w",
@@ -213,6 +226,14 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     if channels:
         probe_pump_idx = integrator_params.get("probe_pump_idx", None)
 
+    # Determine time quadrature rule
+    integration_method = integrator_params.get("integration_method", "trapezoid")
+    load_integration_weights = integrator_params.get("load_integration_weights", False)
+    if load_integration_weights:
+        integration_weights = np.load(files["integration_weights"])
+    else:
+        integration_weights = None
+
     # Set up number of threads
     nthreads = perf_params.get("nthreads", os.cpu_count())
     ne.set_num_threads(nthreads)
@@ -242,7 +263,6 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
         expected_timesteps = len(grid_t)
         grid_t = grid_t[:test_timesteps]
         _logger.info(f"Performing test run for {test_timesteps} timesteps\n")
-
 
     # Field setup
     _logger.info(
@@ -277,8 +297,14 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
     vacem = VacuumEmission(field, grid_xyz, fft_executor, nthreads=pyfftw_threads, 
                            channels=channels)
     timings['vacem_setup'] = time.perf_counter()
-    timings['integral'] = vacem.calculate_amplitudes(grid_t, 
-                                                     save_path=files['amplitudes'])
+    
+    timings['integral'] = vacem.calculate_amplitudes(
+        grid_t,
+        integration_method=integration_method,
+        integration_weights=integration_weights,
+        save_path=files['amplitudes']
+    )
+    
     timings['amplitudes'] = time.perf_counter()
     memory['maxrss_amplitudes'] = get_maxrss()
     _logger.info("MILESTONE: Amplitudes are calculated")
@@ -392,6 +418,7 @@ def quvac_simulation(ini_file, save_path=None, wisdom_file="wisdom/fftw-wisdom")
     if do_simulation:
         timings, memory = run_simulation(ini_config, fields_params, 
                                          files, timings, memory)
+        free_memory()
     # Calculate spectra
     if do_postprocess:
         postprocess_simulation(ini_config, files, fields_params)

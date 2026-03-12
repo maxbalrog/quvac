@@ -8,6 +8,7 @@ import submitit
 
 from quvac.config import DEFAULT_SLURM_PARAMS
 from quvac.simulation import quvac_simulation
+from quvac.utils import estimate_memory_usage
 
 _logger = logging.getLogger("simulation")
 
@@ -118,8 +119,34 @@ def setup_job_executor_from_params(cluster_params, save_path,
     return executor
 
 
+def submit_jobs_with_memory_estimation(executor, ini_files):
+    """
+    Submit jobs for a list of initialization files estimating memory usage
+    for each of them.
+
+    Parameters
+    ----------
+    executor : submitit.AutoExecutor
+        Executor for running jobs.
+    ini_files : list of str
+        List of paths to the initialization files for each job.
+
+    Returns
+    -------
+    list of submitit jobs
+        Submitted jobs.
+    """
+    jobs = []
+    for ini_file in ini_files:
+        memory = estimate_memory_usage(ini_file)
+        executor.update_parameters(slurm_mem=memory)
+        job = executor.submit(quvac_simulation, ini_file)
+        jobs.append(job)
+    return jobs
+
+
 def run_simulations_with_job_executor(ini_files, cluster_params, save_path,
-                                      max_parallel_jobs_default=2):
+                                      max_parallel_jobs_default=2,):
     """
     Run simulations for a list of ini files with job executor.
 
@@ -138,8 +165,12 @@ def run_simulations_with_job_executor(ini_files, cluster_params, save_path,
                                               max_parallel_jobs_default)
 
     # Submit jobs
+    estimate_memory_usage = cluster_params.get("estimate_memory_usage", False)
     _logger.info("MILESTONE: Submitting jobs...")
-    jobs = executor.map_array(quvac_simulation, ini_files)
+    if estimate_memory_usage:
+        jobs = submit_jobs_with_memory_estimation(executor, ini_files)
+    else:
+        jobs = executor.map_array(quvac_simulation, ini_files)
     _logger.info("MILESTONE: Jobs submitted, waiting for results...")
 
     # Wait till all jobs end
