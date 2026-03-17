@@ -388,29 +388,29 @@ def get_spectra_from_Stokes(P0, P1, P2, P3, basis="linear"):
 
 
 def get_photon_spectrum_from_a12(a1, a2, k):
-        """
-        Calculates the photon spectrum from spectral coefficients a1 and a2.
+    """
+    Calculates the photon spectrum from spectral coefficients a1 and a2.
 
-        Parameters
-        ----------
-        a1 : numpy.ndarray
-            Spectral coefficient a1.
-        a2 : numpy.ndarray
-            Spectral coefficient a2.
-        k : numpy.ndarray
-            Wavevector
+    Parameters
+    ----------
+    a1 : numpy.ndarray
+        Spectral coefficient a1.
+    a2 : numpy.ndarray
+        Spectral coefficient a2.
+    k : numpy.ndarray
+        Wavevector
 
-        Returns
-        -------
-        numpy.ndarray
-            Photon spectrum.
-        """
-        prefactor = 0.5 * epsilon_0 * c / hbar
-        N_xyz = ne.evaluate(
-            "prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k"
-        )
-        N_xyz[0, 0, 0] = 0.0
-        return np.fft.fftshift(N_xyz / (2*pi)**3)
+    Returns
+    -------
+    numpy.ndarray
+        Photon spectrum.
+    """
+    prefactor = 0.5 * epsilon_0 * c / hbar
+    N_xyz = ne.evaluate(
+        "prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k"
+    )
+    N_xyz[0, 0, 0] = 0.0
+    return np.fft.fftshift(N_xyz / (2*pi)**3)
 
 
 class VacuumEmissionAnalyzer:
@@ -703,7 +703,7 @@ class VacuumEmissionAnalyzer:
         _, bgr_N_sph = cartesian_to_spherical_array(
             bgr_N_xyz,
             self.grid_xyz,
-            spherical_grid=self.__dict__.get('spherical_grid', None),
+            spherical_grid=getattr(self, 'spherical_grid', None),
             **interp_kwargs,
         )
 

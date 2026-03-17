@@ -245,22 +245,20 @@ def size_to_Gb(size):
     return size*8 / 1024**3
 
 
-def estimate_max_required_memory(size):
+def estimate_max_required_memory(size, memory_buffer=10):
     """
     Estimate max requred memory based on the grid size.
     """
     # this value is estimated by running the simulation with different grid sizes,
     # looking at the max used memory and fitting a line to the dependency
     # max memory vs grid size
-    MEMORY_SCALING = 56
+    MEMORY_SCALING = 52
     estimated_mem = size_to_Gb(math.prod(size))*MEMORY_SCALING
 
-    # memory buffer just in case
-    SAFE_BUFFER = 10
-    return int(np.ceil(estimated_mem + SAFE_BUFFER))
+    return int(np.ceil(estimated_mem + memory_buffer))
 
 
-def estimate_memory_usage(ini_file):
+def estimate_memory_usage(ini_file, memory_buffer=10):
     """
     Estimate potential memory usage for a given ini file.
 
@@ -280,7 +278,7 @@ def estimate_memory_usage(ini_file):
         ini_config.get("grid", None),
     )
 
-    required_memory = estimate_max_required_memory(grid_xyz.grid_shape)
+    required_memory = estimate_max_required_memory(grid_xyz.grid_shape, memory_buffer)
     return f"{required_memory}GB"
 
 
