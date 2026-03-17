@@ -119,7 +119,7 @@ def setup_job_executor_from_params(cluster_params, save_path,
     return executor
 
 
-def submit_jobs_with_memory_estimation(executor, ini_files):
+def submit_jobs_with_memory_estimation(executor, ini_files, memory_buffer):
     """
     Submit jobs for a list of initialization files estimating memory usage
     for each of them.
@@ -138,7 +138,7 @@ def submit_jobs_with_memory_estimation(executor, ini_files):
     """
     jobs = []
     for ini_file in ini_files:
-        memory = estimate_memory_usage(ini_file)
+        memory = estimate_memory_usage(ini_file, memory_buffer)
         executor.update_parameters(slurm_mem=memory)
         job = executor.submit(quvac_simulation, ini_file)
         jobs.append(job)
@@ -168,12 +168,14 @@ def run_simulations_with_job_executor(ini_files, cluster_params, save_path,
     estimate_memory_usage = cluster_params.get("estimate_memory_usage", False)
     _logger.info("MILESTONE: Submitting jobs...")
     if estimate_memory_usage:
-        jobs = submit_jobs_with_memory_estimation(executor, ini_files)
+        memory_buffer = cluster_params.get("memory_buffer", 10)
+        jobs = submit_jobs_with_memory_estimation(executor, ini_files, memory_buffer)
     else:
         jobs = executor.map_array(quvac_simulation, ini_files)
     _logger.info("MILESTONE: Jobs submitted, waiting for results...")
 
     # Wait till all jobs end
-    _ = [job.result() for job in jobs]
+    for job in submitit.helpers.as_completed(jobs):
+        job.result()
     _logger.info("MILESTONE: Jobs are finished")
 
