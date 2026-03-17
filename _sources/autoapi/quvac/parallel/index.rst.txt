@@ -79,7 +79,7 @@ Module Contents
    :rtype: submitit.AutoExecutor
 
 
-.. py:function:: submit_jobs_with_memory_estimation(executor, ini_files)
+.. py:function:: submit_jobs_with_memory_estimation(executor, ini_files, memory_buffer)
 
    Submit jobs for a list of initialization files estimating memory usage
    for each of them.

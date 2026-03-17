@@ -413,7 +413,7 @@
 
 <div class="viewcode-block" id="submit_jobs_with_memory_estimation">
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.submit_jobs_with_memory_estimation">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Submit jobs for a list of initialization files estimating memory usage</span>
 <span class="sd">    for each of them.</span>
@@ -432,7 +432,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">ini_file</span> <span class="ow">in</span> <span class="n">ini_files</span><span class="p">:</span>
-        <span class="n">memory</span> <span class="o">=</span> <span class="n">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
         <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">slurm_mem</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
         <span class="n">job</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_file</span><span class="p">)</span>
         <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
@@ -465,13 +465,15 @@
     <span class="n">estimate_memory_usage</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimate_memory_usage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Submitting jobs...&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">estimate_memory_usage</span><span class="p">:</span>
-        <span class="n">jobs</span> <span class="o">=</span> <span class="n">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
+        <span class="n">memory_buffer</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_buffer&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="n">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">jobs</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs submitted, waiting for results...&quot;</span><span class="p">)</span>
 
     <span class="c1"># Wait till all jobs end</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">submitit</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">jobs</span><span class="p">):</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs are finished&quot;</span><span class="p">)</span></div>
 
 

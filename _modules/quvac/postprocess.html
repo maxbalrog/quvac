@@ -697,29 +697,29 @@
 <div class="viewcode-block" id="get_photon_spectrum_from_a12">
 <a class="viewcode-back" href="../../autoapi/quvac/postprocess/index.html#quvac.postprocess.get_photon_spectrum_from_a12">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_photon_spectrum_from_a12</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the photon spectrum from spectral coefficients a1 and a2.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the photon spectrum from spectral coefficients a1 and a2.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        a1 : numpy.ndarray</span>
-<span class="sd">            Spectral coefficient a1.</span>
-<span class="sd">        a2 : numpy.ndarray</span>
-<span class="sd">            Spectral coefficient a2.</span>
-<span class="sd">        k : numpy.ndarray</span>
-<span class="sd">            Wavevector</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a1 : numpy.ndarray</span>
+<span class="sd">        Spectral coefficient a1.</span>
+<span class="sd">    a2 : numpy.ndarray</span>
+<span class="sd">        Spectral coefficient a2.</span>
+<span class="sd">    k : numpy.ndarray</span>
+<span class="sd">        Wavevector</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            Photon spectrum.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">hbar</span>
-        <span class="n">N_xyz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k&quot;</span>
-        <span class="p">)</span>
-        <span class="n">N_xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">N_xyz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Photon spectrum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="n">hbar</span>
+    <span class="n">N_xyz</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="s2">&quot;prefactor * (a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2) / k&quot;</span>
+    <span class="p">)</span>
+    <span class="n">N_xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">N_xyz</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
 
 
 
@@ -1035,7 +1035,7 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">bgr_N_sph</span> <span class="o">=</span> <span class="n">cartesian_to_spherical_array</span><span class="p">(</span>
             <span class="n">bgr_N_xyz</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">,</span>
-            <span class="n">spherical_grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spherical_grid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">spherical_grid</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spherical_grid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="o">**</span><span class="n">interp_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 

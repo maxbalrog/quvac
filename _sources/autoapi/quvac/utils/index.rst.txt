@@ -146,12 +146,12 @@ Module Contents
    Convert the size of float64 array to GBs.
 
 
-.. py:function:: estimate_max_required_memory(size)
+.. py:function:: estimate_max_required_memory(size, memory_buffer=10)
 
    Estimate max requred memory based on the grid size.
 
 
-.. py:function:: estimate_memory_usage(ini_file)
+.. py:function:: estimate_memory_usage(ini_file, memory_buffer=10)
 
    Estimate potential memory usage for a given ini file.
 

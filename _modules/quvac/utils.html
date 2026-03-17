@@ -560,25 +560,23 @@
 
 <div class="viewcode-block" id="estimate_max_required_memory">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.estimate_max_required_memory">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">estimate_max_required_memory</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">estimate_max_required_memory</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Estimate max requred memory based on the grid size.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># this value is estimated by running the simulation with different grid sizes,</span>
     <span class="c1"># looking at the max used memory and fitting a line to the dependency</span>
     <span class="c1"># max memory vs grid size</span>
-    <span class="n">MEMORY_SCALING</span> <span class="o">=</span> <span class="mi">56</span>
+    <span class="n">MEMORY_SCALING</span> <span class="o">=</span> <span class="mi">52</span>
     <span class="n">estimated_mem</span> <span class="o">=</span> <span class="n">size_to_Gb</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">size</span><span class="p">))</span><span class="o">*</span><span class="n">MEMORY_SCALING</span>
 
-    <span class="c1"># memory buffer just in case</span>
-    <span class="n">SAFE_BUFFER</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">estimated_mem</span> <span class="o">+</span> <span class="n">SAFE_BUFFER</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">estimated_mem</span> <span class="o">+</span> <span class="n">memory_buffer</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="estimate_memory_usage">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.estimate_memory_usage">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Estimate potential memory usage for a given ini file.</span>
 
@@ -598,7 +596,7 @@
         <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="n">required_memory</span> <span class="o">=</span> <span class="n">estimate_max_required_memory</span><span class="p">(</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">)</span>
+    <span class="n">required_memory</span> <span class="o">=</span> <span class="n">estimate_max_required_memory</span><span class="p">(</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">required_memory</span><span class="si">}</span><span class="s2">GB&quot;</span></div>
 
 
