@@ -109,7 +109,7 @@ def xyz2idx(xyz, xyz_grid):
 
 def cartesian_to_spherical_array(
     arr, xyz_grid, spherical_grid=None, angular_resolution=None,
-    **interp_kwargs
+    angular_resolution_factor=None,
 ):
     """
     Transform an array with data on Cartesian grid to the array with data 
@@ -126,9 +126,8 @@ def cartesian_to_spherical_array(
         by default None.
     angular_resolution : float, optional
         Angular resolution, by default None.
-    **interp_kwargs : dict
-        Additional interpolation parameters. Currently not used, implement 
-        in the future.
+    angular_resolution_factor : float, optional
+        Factor that multiplies default angular resolution given by dk / kmax.
 
     Returns
     -------
@@ -141,8 +140,10 @@ def cartesian_to_spherical_array(
     if not spherical_grid:
         dk = np.min(xyz_grid.dkxkykz)
         kmax = np.max(xyz_grid.kabs)
-        # without the prefactor it results in too high default resolution 
-        default_resolution = 3 * dk / kmax
+        # without the prefactor it results in too high default resolution
+        if angular_resolution_factor is None:
+            angular_resolution_factor = 3
+        default_resolution = angular_resolution_factor * dk / kmax
         dangle = angular_resolution if angular_resolution else default_resolution
 
         k = np.arange(0.0, kmax, dk, dtype=config.FDTYPE)
@@ -600,7 +601,7 @@ class VacuumEmissionAnalyzer:
 
     def get_signal_on_sph_grid(
         self, key="N_xyz", spherical_grid=None, angular_resolution=None,
-        check_total=False, **interp_kwargs
+        angular_resolution_factor=None, check_total=False,
     ):
         """
         Transforms an array with data on Cartesian grid to the array with 
@@ -617,8 +618,6 @@ class VacuumEmissionAnalyzer:
             Angular resolution, by default None.
         check_total : bool, optional
             Whether to check the total signal, by default False.
-        **interp_kwargs : dict
-            Additional interpolation parameters.
         """
         arr = getattr(self, key)
         spherical_grid, N_sph = cartesian_to_spherical_array(
@@ -626,7 +625,7 @@ class VacuumEmissionAnalyzer:
             self.grid_xyz,
             spherical_grid=spherical_grid,
             angular_resolution=angular_resolution,
-            **interp_kwargs,
+            angular_resolution_factor=angular_resolution_factor,
         )
         if "xyz" in key:
             sph_key = key.replace("xyz", "sph")
@@ -680,8 +679,7 @@ class VacuumEmissionAnalyzer:
             self.background_xyz = bgr_N_xyz
         return bgr_N_xyz
 
-    def get_background(self, discernibility="angular", bgr_idx=None,
-                       **interp_kwargs):
+    def get_background(self, discernibility="angular", bgr_idx=None,):
         """
         Calculates the background field spectra.
 
@@ -691,8 +689,6 @@ class VacuumEmissionAnalyzer:
             Type of discernibility, by default "angular".
         bgr_idx : int, optional
             Index of the background field, by default None.
-        **interp_kwargs : dict
-            Additional interpolation parameters.
 
         Returns
         -------
@@ -706,7 +702,6 @@ class VacuumEmissionAnalyzer:
             bgr_N_xyz,
             self.grid_xyz,
             spherical_grid=getattr(self, 'spherical_grid', None),
-            **interp_kwargs,
         )
 
         # Integrate over k if needed
