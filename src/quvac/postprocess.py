@@ -141,7 +141,9 @@ def cartesian_to_spherical_array(
     if not spherical_grid:
         dk = np.min(xyz_grid.dkxkykz)
         kmax = np.max(xyz_grid.kabs)
-        dangle = angular_resolution if angular_resolution else 1.0 * pi / 180
+        # dangle = angular_resolution if angular_resolution else 1.0 * pi / 180
+        default_resolution = dk / kmax
+        dangle = angular_resolution if angular_resolution else default_resolution
 
         k = np.arange(0.0, kmax, dk, dtype=config.FDTYPE)
         theta = np.arange(0.0, pi, dangle, dtype=config.FDTYPE)
