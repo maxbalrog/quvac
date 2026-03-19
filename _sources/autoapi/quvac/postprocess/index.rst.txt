@@ -92,7 +92,7 @@ Module Contents
    :rtype: numpy.ndarray
 
 
-.. py:function:: cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None, angular_resolution=None, **interp_kwargs)
+.. py:function:: cartesian_to_spherical_array(arr, xyz_grid, spherical_grid=None, angular_resolution=None, angular_resolution_factor=None)
 
    Transform an array with data on Cartesian grid to the array with data
    on spherical grid.
@@ -106,9 +106,8 @@ Module Contents
    :type spherical_grid: tuple or str, optional
    :param angular_resolution: Angular resolution, by default None.
    :type angular_resolution: float, optional
-   :param \*\*interp_kwargs: Additional interpolation parameters. Currently not used, implement
-                             in the future.
-   :type \*\*interp_kwargs: dict
+   :param angular_resolution_factor: Factor that multiplies default angular resolution given by dk / kmax.
+   :type angular_resolution_factor: float, optional
 
    :returns: * **spherical_grid** (*tuple*) -- Spherical grid.
              * **arr_sph** (*numpy.ndarray*) -- Array with data on spherical grid.
@@ -333,7 +332,7 @@ Module Contents
 
 
 
-   .. py:method:: get_signal_on_sph_grid(key='N_xyz', spherical_grid=None, angular_resolution=None, check_total=False, **interp_kwargs)
+   .. py:method:: get_signal_on_sph_grid(key='N_xyz', spherical_grid=None, angular_resolution=None, angular_resolution_factor=None, check_total=False)
 
       Transforms an array with data on Cartesian grid to the array with
       data on spherical grid.
@@ -347,8 +346,6 @@ Module Contents
       :type angular_resolution: float, optional
       :param check_total: Whether to check the total signal, by default False.
       :type check_total: bool, optional
-      :param \*\*interp_kwargs: Additional interpolation parameters.
-      :type \*\*interp_kwargs: dict
 
 
 
@@ -367,7 +364,7 @@ Module Contents
 
 
 
-   .. py:method:: get_background(discernibility='angular', bgr_idx=None, **interp_kwargs)
+   .. py:method:: get_background(discernibility='angular', bgr_idx=None)
 
       Calculates the background field spectra.
 
@@ -375,8 +372,6 @@ Module Contents
       :type discernibility: str, optional
       :param bgr_idx: Index of the background field, by default None.
       :type bgr_idx: int, optional
-      :param \*\*interp_kwargs: Additional interpolation parameters.
-      :type \*\*interp_kwargs: dict
 
       :returns: Background field spectra.
       :rtype: numpy.ndarray
