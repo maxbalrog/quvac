@@ -694,10 +694,11 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
 
     # Prepare parameters for optimization in ax style
     params_for_ax = prepare_params_for_ax(optimization_params["parameters"])
-    number_of_optimized_params = len(params_for_ax)
+    num_parameters = len(params_for_ax)
 
     # custom generation strategy
-    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 5)
+    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 
+                                                   max(5, 2 * num_parameters))
     experiment_name = optimization_params.get("experiment_name", "test_optimization")
 
     # Set up optimization client
@@ -739,7 +740,7 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
         )
     elif generation_strategy_type == "custom":
         generation_strategy = construct_generation_strategy(
-            number_of_optimized_params, 
+            num_parameters, 
             node_name="Custom-GP", 
             num_random_trials=number_of_ini_trials, 
             gs_random_seed=gs_initialization_random_seed,
