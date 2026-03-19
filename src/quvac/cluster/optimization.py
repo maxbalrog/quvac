@@ -734,6 +734,9 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
             method=generation_strategy_type,
             initialization_budget=number_of_ini_trials,
         )
+        _logger.info(
+            f"Using default generation strategy with {generation_strategy_type} option."
+        )
     elif generation_strategy_type == "custom":
         generation_strategy = construct_generation_strategy(
             number_of_optimized_params, 
@@ -743,6 +746,9 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
         )
         ax_client.set_generation_strategy(
             generation_strategy=generation_strategy,
+        )
+        _logger.info(
+            "Using custom generation strategy with Matern(2.5) kernel."
         )
     else:
         err_msg = (
