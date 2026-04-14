@@ -97,9 +97,10 @@ def restructure_variables_grid(variables):
             List of parameter grids corresponding to each parameter.
     """
     variables_grid = {}
-    for key, val in variables["fields"].items():
-        variables[key] = val
-    variables.pop("fields")
+    if variables.get("fields", {}):
+        for key, val in variables["fields"].items():
+            variables[key] = val
+        variables.pop("fields")
 
     for category_key, category in variables.items():
         for param_key, param in category.items():
