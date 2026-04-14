@@ -146,8 +146,7 @@ def create_ini_files_for_gridscan(ini_default, param_names, param_grids, save_pa
                 ini_current[category][param_name] = float(param)
 
             param = int(param) if np.isclose(param, int(param)) else param
-            param_str = str(param) if isinstance(param, int) else f"{param:.2e}"
-            param_str = f"{category}:{param_name}_{param_str}"
+            param_str = f"{category}:{param_name}_{param:.3g}"
             name_local = "#".join([name_local, param_str])
         save_path_local = os.path.join(save_path, name_local, "ini.yml")
         Path(os.path.dirname(save_path_local)).mkdir(parents=True, exist_ok=True)
