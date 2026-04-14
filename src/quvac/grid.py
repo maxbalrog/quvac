@@ -577,7 +577,7 @@ def create_dynamic_grid(fields_params, grid_params):
 
     # Number of temporal pts
     grid_params_upd["box_t"] = t0
-    grid_params_upd["Nt"] = Nt * grid_params.get("time_resolution", 1)
+    grid_params_upd["Nt"] = int(Nt * grid_params.get("time_resolution", 1))
     return grid_params_upd
 
 
