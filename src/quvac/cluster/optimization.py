@@ -830,9 +830,15 @@ class SurrogateModel:
     """
     def __init__(self, ax_client, metric="N_total"):
         self.experiment_data = ax_client._experiment.fetch_data()
+        # extract custom generation strategy
+        gs_kwargs = ax_client._generation_strategy._nodes[-1].generator_spec.generator_kwargs 
+        if gs_kwargs is None:
+            gs_kwargs = {}
+        # refit the model
         self.model = Generators.BOTORCH_MODULAR(
             experiment=ax_client._experiment,
             data=self.experiment_data,
+            **gs_kwargs,
         )
         self.metric = metric
 
