@@ -52,8 +52,8 @@ def determine_integration_scheme(Nt, integration_method):
         case "simpson":
             number_of_intervals = Nt - 1
             integration_weights /= 3.
-            idx_even = [2*i for i in range(1, number_of_intervals//2-1)]
-            idx_odd = [2*i-1 for i in range(1, number_of_intervals//2)]
+            idx_even = [2*i for i in range(1, number_of_intervals//2)]
+            idx_odd = [2*i-1 for i in range(1, number_of_intervals//2+1)]
             integration_weights[idx_even] *= 2
             integration_weights[idx_odd] *= 4
         case _:
