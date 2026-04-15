@@ -309,7 +309,7 @@ class VacuumEmission:
         )
 
     def save_weights(self, integration_weights, save_path):
-        weights_path = os.path.join(save_path, "integration_weights.npy")
+        weights_path = os.path.join(os.path.dirname(save_path), "integration_weights.npy")
         np.save(weights_path, integration_weights)
 
     def calculate_amplitudes(
