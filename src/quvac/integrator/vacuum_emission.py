@@ -308,6 +308,10 @@ class VacuumEmission:
             global_dict=self.__dict__, out=self.S2
         )
 
+    def save_weights(self, integration_weights, save_path):
+        weights_path = os.path.join(save_path, "integration_weights.npy")
+        np.save(weights_path, integration_weights)
+
     def calculate_amplitudes(
         self, t_grid, integration_method="trapezoid", integration_weights=None,
         save_path=None
@@ -321,6 +325,9 @@ class VacuumEmission:
             integration_weights = determine_integration_scheme(
                 len(t_grid), integration_method,
             )
+            # this is for debugging purposes
+            self.save_weights(integration_weights)
+
 
         time_integral_start = time.perf_counter()
         self.calculate_time_integral(t_grid, integration_weights)

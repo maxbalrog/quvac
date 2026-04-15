@@ -298,6 +298,7 @@ def run_simulation(ini_config, fields_params, files, timings, memory):
                            channels=channels)
     timings['vacem_setup'] = time.perf_counter()
     
+    _logger.info(f"Using {integration_method} quadrature for time integration.")
     timings['integral'] = vacem.calculate_amplitudes(
         grid_t,
         integration_method=integration_method,
