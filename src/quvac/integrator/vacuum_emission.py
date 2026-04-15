@@ -326,7 +326,7 @@ class VacuumEmission:
                 len(t_grid), integration_method,
             )
             # this is for debugging purposes
-            self.save_weights(integration_weights)
+            self.save_weights(integration_weights, save_path)
 
 
         time_integral_start = time.perf_counter()
