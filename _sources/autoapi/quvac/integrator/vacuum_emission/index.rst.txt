@@ -88,6 +88,9 @@ Module Contents
 
 
 
+   .. py:method:: save_weights(integration_weights, save_path)
+
+
    .. py:method:: calculate_amplitudes(t_grid, integration_method='trapezoid', integration_weights=None, save_path=None)
 
       Calculate the vacuum emission amplitudes and save the result.
