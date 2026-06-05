@@ -966,6 +966,7 @@ class SurrogateModelFromNPZ(SurrogateModel):
 
     def create_ax_client(self, optimization_params):
         params_for_ax = prepare_params_for_ax(self.parameter_space)
+        self.parameter_names = [param.name for param in params_for_ax]
         experiment_name = optimization_params.get("experiment_name", "imported_data")
         parameter_constraints = optimization_params.get("parameter_constraints", None)
         # Set up optimization client
@@ -983,7 +984,7 @@ class SurrogateModelFromNPZ(SurrogateModel):
         for i in range(n_trials):
             trials.append(
                 (
-                    {key: data[key][i] for key in self.parameter_space.keys()},
+                    {key: data[key][i] for key in self.parameter_names},
                     {metric: data[metric][i]},
                 )
             )
