@@ -850,14 +850,16 @@ class SurrogateModel:
         model_input = [ObservationFeatures(parameters=pt) for pt in model_input]
         return model_input
     
-    def _make_model_prediction(self, model_input, fixed_params):
+    def _make_model_prediction(self, model_input, fixed_params, ci=False):
         model_input = self._update_input_parameters(model_input, fixed_params)
         mean, covariance = self.model.predict(model_input)
         mean = np.array(mean[self.metric])
         covariance = np.array(covariance[self.metric][self.metric])
+        if ci:
+            covariance = 1.96*np.sqrt(covariance)
         return mean, covariance
 
-    def predict_at_point(self, param_name, param_value, fixed_params=None):
+    def predict_at_point(self, param_name, param_value, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -869,17 +871,20 @@ class SurrogateModel:
             Parameter value (prediction point).
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
         (np.ndarray, np.ndarray)
-            Mean and covariance values at a given parameter point.
+            Mean and covariance (or confidence interval) values at a given parameter 
+            point.
         """
         model_input = [{param_name: param_value}]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         return mean, covariance
 
-    def predict_1d(self, param_name, param_values, fixed_params=None):
+    def predict_1d(self, param_name, param_values, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -891,6 +896,8 @@ class SurrogateModel:
             Array of parameter values.
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
@@ -900,10 +907,10 @@ class SurrogateModel:
         err_msg = "Method `predict_1d` works only with sequences"
         assert isinstance(param_values, Iterable), err_msg
         model_input = [{param_name: value} for value in param_values]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         return mean, covariance
 
-    def predict_2d(self, param_names, param_values, fixed_params=None):
+    def predict_2d(self, param_names, param_values, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -915,6 +922,8 @@ class SurrogateModel:
             Two arrays of parameter values.
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
@@ -929,7 +938,7 @@ class SurrogateModel:
             {param_name_1: value1, param_name_2: value2}
             for value1,value2 in itertools.product(*param_values)
         ]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         mean, covariance = mean.reshape((n1,n2)), covariance.reshape((n1,n2))
         return mean, covariance
 
