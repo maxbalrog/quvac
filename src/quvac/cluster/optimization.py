@@ -991,7 +991,7 @@ class SurrogateModelFromNPZ(SurrogateModel):
         return trials
     
     def attach_data(self, trials):
-        for parameters, raw_data in trials.items():
+        for parameters, raw_data in trials:
             # First attach the trial and note the trial index
             trial_index = self.ax_client.attach_trial(
                 parameters=parameters,
