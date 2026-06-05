@@ -934,6 +934,65 @@ class SurrogateModel:
         return mean, covariance
 
 
+class SurrogateModelFromNPZ(SurrogateModel):
+    """
+    Main info is taken from this guide
+    https://ax.dev/docs/recipes/existing-data
+    """
+    def __init__(self, data, optimization_params, metric="N_total"):
+        self.metric = metric
+
+        self.parameter_space = optimization_params["parameters"]
+        self.ax_client = self.create_ax_client(optimization_params)
+
+        trials = self.prepare_data(data)
+        self.attach_data(trials)
+
+        self.experiment_data = self.ax_client._experiment.fetch_data()
+        # refit the model
+        self.model = Generators.BOTORCH_MODULAR(
+            experiment=self.ax_client._experiment,
+            data=self.experiment_data,
+        )
+
+    def create_ax_client(self, optimization_params):
+        params_for_ax = prepare_params_for_ax(self.parameter_space)
+        experiment_name = optimization_params.get("experiment_name", "imported_data")
+        parameter_constraints = optimization_params.get("parameter_constraints", None)
+        # Set up optimization client
+        ax_client = _create_new_ax_client(
+            experiment_name,
+            params_for_ax,
+            parameter_constraints,
+        )
+        return ax_client
+
+    def prepare_data(self, data):
+        metric = self.metric
+        n_trials = len(data[metric])
+        trials = []
+        for i in range(n_trials):
+            trials.append(
+                (
+                    {key: data[key][i] for key in self.parameter_space.keys()},
+                    {metric: data[metric][i]},
+                )
+            )
+        return trials
+    
+    def attach_data(self, trials):
+        for parameters, raw_data in trials.items():
+            # First attach the trial and note the trial index
+            trial_index = self.ax_client.attach_trial(
+                parameters=parameters,
+            )
+
+            # Then complete the trial with the existing data
+            self.ax_client.complete_trial(
+                trial_index=trial_index, raw_data=raw_data,
+            )
+
+
 def main_optimization():
     """
     Main function to run the optimization.
