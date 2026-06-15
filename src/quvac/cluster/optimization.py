@@ -651,6 +651,51 @@ def setup_ax_client(
     return ax_client
 
 
+def choose_generation_strategy(ax_client, optimization_params, num_parameters):
+    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 
+                                                   max(5, 2 * num_parameters))
+    gs_initialization_random_seed = optimization_params.get(
+        "gs_initialization_random_seed", None
+    )
+    if gs_initialization_random_seed is None:
+        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
+    _logger.info(
+        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
+    )
+
+    generation_strategy_type = optimization_params.get("generation_strategy_type", 
+                                                       "fast")
+    
+    if generation_strategy_type in ["fast", "quality"]:
+        ax_client.configure_generation_strategy(
+            method=generation_strategy_type,
+            initialization_budget=number_of_ini_trials,
+        )
+        _logger.info(
+            f"Using default generation strategy with {generation_strategy_type} option."
+        )
+    elif generation_strategy_type == "custom":
+        generation_strategy = construct_generation_strategy(
+            num_parameters, 
+            node_name="Custom-GP", 
+            num_random_trials=number_of_ini_trials, 
+            gs_random_seed=gs_initialization_random_seed,
+        )
+        ax_client.set_generation_strategy(
+            generation_strategy=generation_strategy,
+        )
+        _logger.info(
+            "Using custom generation strategy with Matern(2.5) kernel."
+        )
+    else:
+        err_msg = (
+            "Only generation strategy types ['fast', 'quality', 'custom'] are supported"
+            f"but you passed {generation_strategy_type}."
+        )
+        raise NotImplementedError(err_msg)
+    return ax_client
+
+
 def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     """
     Launch optimization of quvac simulation for a given initial configuration file.
@@ -698,9 +743,6 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     params_for_ax = prepare_params_for_ax(optimization_params["parameters"])
     num_parameters = len(params_for_ax)
 
-    # custom generation strategy
-    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 
-                                                   max(5, 2 * num_parameters))
     experiment_name = optimization_params.get("experiment_name", "test_optimization")
 
     # Set up optimization client
@@ -721,44 +763,8 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     if metrics_to_track:
         ax_client.configure_tracking_metrics(metrics_to_track)
 
-    gs_initialization_random_seed = optimization_params.get(
-        "gs_initialization_random_seed", None
-    )
-    if gs_initialization_random_seed is None:
-        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
-    _logger.info(
-        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
-    )
-
-    generation_strategy_type = optimization_params.get("generation_strategy_type", 
-                                                       "fast")
-    if generation_strategy_type in ["fast", "quality"]:
-        ax_client.configure_generation_strategy(
-            method=generation_strategy_type,
-            initialization_budget=number_of_ini_trials,
-        )
-        _logger.info(
-            f"Using default generation strategy with {generation_strategy_type} option."
-        )
-    elif generation_strategy_type == "custom":
-        generation_strategy = construct_generation_strategy(
-            num_parameters, 
-            node_name="Custom-GP", 
-            num_random_trials=number_of_ini_trials, 
-            gs_random_seed=gs_initialization_random_seed,
-        )
-        ax_client.set_generation_strategy(
-            generation_strategy=generation_strategy,
-        )
-        _logger.info(
-            "Using custom generation strategy with Matern(2.5) kernel."
-        )
-    else:
-        err_msg = (
-            "Only generation strategy types ['fast', 'quality', 'custom'] are supported"
-            f"but you passed {generation_strategy_type}."
-        )
-        raise NotImplementedError(err_msg)
+    # generation strategy
+    ax_client = choose_generation_strategy(ax_client, optimization_params, num_parameters)
 
     max_parallel_jobs = cluster_params.get("max_parallel_jobs", 3)
     executor = setup_job_executor_from_params(cluster_params, save_path,
@@ -952,7 +958,17 @@ class SurrogateModelFromNPZ(SurrogateModel):
         self.metric = metric
 
         self.parameter_space = optimization_params["parameters"]
-        self.ax_client = self.create_ax_client(optimization_params)
+        self.noiseless_observations = optimization_params.get("noiseless_observations", False)
+        ax_client = self.create_ax_client(optimization_params)
+
+        # define generation strategy to have the ability to choose a different kernel
+        self.ax_client = choose_generation_strategy(
+            ax_client, optimization_params, len(self.parameter_names)
+        )
+        gs = ax_client._generation_strategy._nodes[-1].generator_spec
+        gs_kwargs = gs.generator_kwargs
+        if gs_kwargs is None:
+            gs_kwargs = {}
 
         trials = self.prepare_data(data)
         self.attach_data(trials)
@@ -962,6 +978,7 @@ class SurrogateModelFromNPZ(SurrogateModel):
         self.model = Generators.BOTORCH_MODULAR(
             experiment=self.ax_client._experiment,
             data=self.experiment_data,
+            **gs_kwargs
         )
 
     def create_ax_client(self, optimization_params):
@@ -975,17 +992,26 @@ class SurrogateModelFromNPZ(SurrogateModel):
             params_for_ax,
             parameter_constraints,
         )
+        objective = optimization_params.get("parameter_constraints", "N_disc")
+        ax_client.configure_optimization(
+            objective=f"{objective}",
+            outcome_constraints=optimization_params.get("outcome_constraints", None),
+        )
         return ax_client
 
     def prepare_data(self, data):
         metric = self.metric
         n_trials = len(data[metric])
         trials = []
-        for i in range(n_trials):
+        for i in range(n_trials): 
+            if self.noiseless_observations:
+                metric_outcome = (data[metric][i],0.0)
+            else:
+                metric_outcome = data[metric][i]
             trials.append(
                 (
                     {key: data[key][i] for key in self.parameter_names},
-                    {metric: data[metric][i]},
+                    {metric: metric_outcome},
                 )
             )
         return trials
