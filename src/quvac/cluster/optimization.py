@@ -651,6 +651,51 @@ def setup_ax_client(
     return ax_client
 
 
+def choose_generation_strategy(ax_client, optimization_params, num_parameters):
+    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 
+                                                   max(5, 2 * num_parameters))
+    gs_initialization_random_seed = optimization_params.get(
+        "gs_initialization_random_seed", None
+    )
+    if gs_initialization_random_seed is None:
+        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
+    _logger.info(
+        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
+    )
+
+    generation_strategy_type = optimization_params.get("generation_strategy_type", 
+                                                       "fast")
+    
+    if generation_strategy_type in ["fast", "quality"]:
+        ax_client.configure_generation_strategy(
+            method=generation_strategy_type,
+            initialization_budget=number_of_ini_trials,
+        )
+        _logger.info(
+            f"Using default generation strategy with {generation_strategy_type} option."
+        )
+    elif generation_strategy_type == "custom":
+        generation_strategy = construct_generation_strategy(
+            num_parameters, 
+            node_name="Custom-GP", 
+            num_random_trials=number_of_ini_trials, 
+            gs_random_seed=gs_initialization_random_seed,
+        )
+        ax_client.set_generation_strategy(
+            generation_strategy=generation_strategy,
+        )
+        _logger.info(
+            "Using custom generation strategy with Matern(2.5) kernel."
+        )
+    else:
+        err_msg = (
+            "Only generation strategy types ['fast', 'quality', 'custom'] are supported"
+            f"but you passed {generation_strategy_type}."
+        )
+        raise NotImplementedError(err_msg)
+    return ax_client
+
+
 def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     """
     Launch optimization of quvac simulation for a given initial configuration file.
@@ -698,9 +743,6 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     params_for_ax = prepare_params_for_ax(optimization_params["parameters"])
     num_parameters = len(params_for_ax)
 
-    # custom generation strategy
-    number_of_ini_trials = optimization_params.get("number_of_ini_trials", 
-                                                   max(5, 2 * num_parameters))
     experiment_name = optimization_params.get("experiment_name", "test_optimization")
 
     # Set up optimization client
@@ -721,44 +763,10 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
     if metrics_to_track:
         ax_client.configure_tracking_metrics(metrics_to_track)
 
-    gs_initialization_random_seed = optimization_params.get(
-        "gs_initialization_random_seed", None
+    # generation strategy
+    ax_client = choose_generation_strategy(
+        ax_client, optimization_params, num_parameters
     )
-    if gs_initialization_random_seed is None:
-        gs_initialization_random_seed = int(np.random.randint(low=0, high=1000000))
-    _logger.info(
-        f"Initial random seed for generation strategy: {gs_initialization_random_seed}"
-    )
-
-    generation_strategy_type = optimization_params.get("generation_strategy_type", 
-                                                       "fast")
-    if generation_strategy_type in ["fast", "quality"]:
-        ax_client.configure_generation_strategy(
-            method=generation_strategy_type,
-            initialization_budget=number_of_ini_trials,
-        )
-        _logger.info(
-            f"Using default generation strategy with {generation_strategy_type} option."
-        )
-    elif generation_strategy_type == "custom":
-        generation_strategy = construct_generation_strategy(
-            num_parameters, 
-            node_name="Custom-GP", 
-            num_random_trials=number_of_ini_trials, 
-            gs_random_seed=gs_initialization_random_seed,
-        )
-        ax_client.set_generation_strategy(
-            generation_strategy=generation_strategy,
-        )
-        _logger.info(
-            "Using custom generation strategy with Matern(2.5) kernel."
-        )
-    else:
-        err_msg = (
-            "Only generation strategy types ['fast', 'quality', 'custom'] are supported"
-            f"but you passed {generation_strategy_type}."
-        )
-        raise NotImplementedError(err_msg)
 
     max_parallel_jobs = cluster_params.get("max_parallel_jobs", 3)
     executor = setup_job_executor_from_params(cluster_params, save_path,
@@ -850,14 +858,16 @@ class SurrogateModel:
         model_input = [ObservationFeatures(parameters=pt) for pt in model_input]
         return model_input
     
-    def _make_model_prediction(self, model_input, fixed_params):
+    def _make_model_prediction(self, model_input, fixed_params, ci=False):
         model_input = self._update_input_parameters(model_input, fixed_params)
         mean, covariance = self.model.predict(model_input)
         mean = np.array(mean[self.metric])
         covariance = np.array(covariance[self.metric][self.metric])
+        if ci:
+            covariance = 1.96*np.sqrt(covariance)
         return mean, covariance
 
-    def predict_at_point(self, param_name, param_value, fixed_params=None):
+    def predict_at_point(self, param_name, param_value, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -869,17 +879,20 @@ class SurrogateModel:
             Parameter value (prediction point).
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
         (np.ndarray, np.ndarray)
-            Mean and covariance values at a given parameter point.
+            Mean and covariance (or confidence interval) values at a given parameter 
+            point.
         """
         model_input = [{param_name: param_value}]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         return mean, covariance
 
-    def predict_1d(self, param_name, param_values, fixed_params=None):
+    def predict_1d(self, param_name, param_values, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -891,6 +904,8 @@ class SurrogateModel:
             Array of parameter values.
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
@@ -900,10 +915,10 @@ class SurrogateModel:
         err_msg = "Method `predict_1d` works only with sequences"
         assert isinstance(param_values, Iterable), err_msg
         model_input = [{param_name: value} for value in param_values]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         return mean, covariance
 
-    def predict_2d(self, param_names, param_values, fixed_params=None):
+    def predict_2d(self, param_names, param_values, fixed_params=None, ci=False):
         """
         Make a prediction for a particular parameter value.
 
@@ -915,6 +930,8 @@ class SurrogateModel:
             Two arrays of parameter values.
         fixed_params: dict of {param_name: param_value}, optional
             Fixed values of other parameters (useful for high-dimentional optimization).
+        ci: bool
+            Return 95% confidence interval instead of covariance.
 
         Returns
         -------
@@ -929,9 +946,91 @@ class SurrogateModel:
             {param_name_1: value1, param_name_2: value2}
             for value1,value2 in itertools.product(*param_values)
         ]
-        mean, covariance = self._make_model_prediction(model_input, fixed_params)
+        mean, covariance = self._make_model_prediction(model_input, fixed_params, ci=ci)
         mean, covariance = mean.reshape((n1,n2)), covariance.reshape((n1,n2))
         return mean, covariance
+
+
+class SurrogateModelFromNPZ(SurrogateModel):
+    """
+    Main info is taken from this guide
+    https://ax.dev/docs/recipes/existing-data
+    """
+    def __init__(self, data, optimization_params, metric="N_total"):
+        self.metric = metric
+
+        self.parameter_space = optimization_params["parameters"]
+        self.noiseless_observations = optimization_params.get(
+            "noiseless_observations", False
+        )
+        ax_client = self.create_ax_client(optimization_params)
+
+        # define generation strategy to have the ability to choose a different kernel
+        self.ax_client = choose_generation_strategy(
+            ax_client, optimization_params, len(self.parameter_names)
+        )
+        gs = ax_client._generation_strategy._nodes[-1].generator_spec
+        gs_kwargs = gs.generator_kwargs
+        if gs_kwargs is None:
+            gs_kwargs = {}
+
+        trials = self.prepare_data(data)
+        self.attach_data(trials)
+
+        self.experiment_data = self.ax_client._experiment.fetch_data()
+        # refit the model
+        self.model = Generators.BOTORCH_MODULAR(
+            experiment=self.ax_client._experiment,
+            data=self.experiment_data,
+            **gs_kwargs
+        )
+
+    def create_ax_client(self, optimization_params):
+        params_for_ax = prepare_params_for_ax(self.parameter_space)
+        self.parameter_names = [param.name for param in params_for_ax]
+        experiment_name = optimization_params.get("experiment_name", "imported_data")
+        parameter_constraints = optimization_params.get("parameter_constraints", None)
+        # Set up optimization client
+        ax_client = _create_new_ax_client(
+            experiment_name,
+            params_for_ax,
+            parameter_constraints,
+        )
+        objective = optimization_params.get("parameter_constraints", "N_disc")
+        ax_client.configure_optimization(
+            objective=f"{objective}",
+            outcome_constraints=optimization_params.get("outcome_constraints", None),
+        )
+        return ax_client
+
+    def prepare_data(self, data):
+        metric = self.metric
+        n_trials = len(data[metric])
+        trials = []
+        for i in range(n_trials): 
+            if self.noiseless_observations:
+                metric_outcome = (data[metric][i],0.0)
+            else:
+                metric_outcome = data[metric][i]
+            trials.append(
+                (
+                    {key: data[key][i] for key in self.parameter_names},
+                    {metric: metric_outcome},
+                )
+            )
+        return trials
+    
+    def attach_data(self, trials):
+        for parameters, raw_data in trials:
+            # First attach the trial and note the trial index
+            trial_index = self.ax_client.attach_trial(
+                parameters=parameters,
+            )
+
+            # Then complete the trial with the existing data
+            self.ax_client.complete_trial(
+                trial_index=trial_index, raw_data=raw_data,
+            )
 
 
 def main_optimization():
