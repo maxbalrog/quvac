@@ -764,7 +764,9 @@ def cluster_optimization(ini_file, save_path=None, wisdom_file=None):
         ax_client.configure_tracking_metrics(metrics_to_track)
 
     # generation strategy
-    ax_client = choose_generation_strategy(ax_client, optimization_params, num_parameters)
+    ax_client = choose_generation_strategy(
+        ax_client, optimization_params, num_parameters
+    )
 
     max_parallel_jobs = cluster_params.get("max_parallel_jobs", 3)
     executor = setup_job_executor_from_params(cluster_params, save_path,
@@ -958,7 +960,9 @@ class SurrogateModelFromNPZ(SurrogateModel):
         self.metric = metric
 
         self.parameter_space = optimization_params["parameters"]
-        self.noiseless_observations = optimization_params.get("noiseless_observations", False)
+        self.noiseless_observations = optimization_params.get(
+            "noiseless_observations", False
+        )
         ax_client = self.create_ax_client(optimization_params)
 
         # define generation strategy to have the ability to choose a different kernel
