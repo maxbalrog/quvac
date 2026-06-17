@@ -106,7 +106,7 @@ def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
 
 
 def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None,
-                   add_colorbar=True, return_image=False):
+                   fontsize=18, add_colorbar=True, return_image=False):
     """
     Plot data on a Mollweide projection.
 
@@ -126,6 +126,8 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None,
         Colormap, by default 'coolwarm'.
     norm : matplotlib.colors.Normalize, optional
         Normalization for the colormap, by default None.
+    fontsize : int
+        Fontsize for tick labels
     add_colorbar : bool, optional
         Whether to add colorbar to the plot or not, by default True.
     return_image : bool, optional
@@ -157,7 +159,7 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None,
     ytick_labels = np.linspace(0, 180, 7, endpoint=True, dtype=int)[::-1]
     ax.yaxis.set_ticklabels(f'${num}^{{\\circ}}$' for num in ytick_labels)
     for item in ax.xaxis.get_ticklabels() + ax.yaxis.get_ticklabels():
-        item.set_fontsize(18)
+        item.set_fontsize(fontsize)
     ax.grid()
     if return_image:
         return im, ax, cbar
