@@ -152,8 +152,8 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None,
     else:
         cbar = None
 
-    ax.set_xticks([-2, -1, 0, 1, 2])
-    ax.set_yticks([-1.5, -1, -0.5, 0, 0.5, 1, 1.5])
+    ax.set_xticks([pi/3*i for i in range(-2,3)])
+    ax.set_yticks([pi/6*i for i in range(-3,4)])
     xtick_labels = np.linspace(60, 360, 5, endpoint=False, dtype=int)
     ax.xaxis.set_ticklabels(f'${num}^{{\\circ}}$' for num in xtick_labels)
     ytick_labels = np.linspace(0, 180, 7, endpoint=True, dtype=int)[::-1]
