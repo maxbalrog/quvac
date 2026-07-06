@@ -74,7 +74,7 @@ Module Contents
    height 2*dy.
 
 
-.. py:function:: plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None)
+.. py:function:: plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None, fontsize=18, add_colorbar=True, return_image=False)
 
    Plot data on a Mollweide projection.
 
@@ -92,6 +92,12 @@ Module Contents
    :type cmap: str, optional
    :param norm: Normalization for the colormap, by default None.
    :type norm: matplotlib.colors.Normalize, optional
+   :param fontsize: Fontsize for tick labels
+   :type fontsize: int
+   :param add_colorbar: Whether to add colorbar to the plot or not, by default True.
+   :type add_colorbar: bool, optional
+   :param return_image: Return pcolormesh image for further use, by default False.
+   :type return_image: bool, optional
 
    :returns: **ax** -- Axes object with the plot.
    :rtype: matplotlib.axes.Axes

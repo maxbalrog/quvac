@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.postprocess" href="../postprocess/index.html" /><link rel="prev" title="quvac.parallel" href="../parallel/index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.plotting - quvac 1.0.0 documentation</title>
+        <title>quvac.plotting - quvac 1.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.0 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -301,7 +301,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.plotting.plot_roi" title="quvac.plotting.plot_roi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_roi</span></code></a>(ax, x0, y0, dx, dy, line_kwargs)</p></td>
 <td><p>Plot a rectangular region of interest (ROI) on a given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.plotting.plot_mollweide" title="quvac.plotting.plot_mollweide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_mollweide</span></code></a>(fig, ax, phi, theta, data[, cmap, norm])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.plotting.plot_mollweide" title="quvac.plotting.plot_mollweide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_mollweide</span></code></a>(fig, ax, phi, theta, data[, cmap, ...])</p></td>
 <td><p>Plot data on a Mollweide projection.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.plotting.plot_fields" title="quvac.plotting.plot_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fields</span></code></a>(field, t[, plot_keys, cmap, cnorm, ...])</p></td>
@@ -377,7 +377,7 @@ height 2*dy.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="quvac.plotting.plot_mollweide">
-<span class="sig-prename descclassname"><span class="pre">quvac.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_mollweide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/plotting.html#plot_mollweide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.plotting.plot_mollweide" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">quvac.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_mollweide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">18</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/plotting.html#plot_mollweide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.plotting.plot_mollweide" title="Link to this definition">¶</a></dt>
 <dd><p>Plot data on a Mollweide projection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -389,6 +389,9 @@ height 2*dy.</p>
 <li><p><strong>data</strong> (<em>numpy.ndarray</em>) – Data to be plotted.</p></li>
 <li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>optional</em>) – Colormap, by default ‘coolwarm’.</p></li>
 <li><p><strong>norm</strong> (<em>matplotlib.colors.Normalize</em><em>, </em><em>optional</em>) – Normalization for the colormap, by default None.</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em>) – Fontsize for tick labels</p></li>
+<li><p><strong>add_colorbar</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add colorbar to the plot or not, by default True.</p></li>
+<li><p><strong>return_image</strong> (<em>bool</em><em>, </em><em>optional</em>) – Return pcolormesh image for further use, by default False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -507,7 +510,7 @@ height 2*dy.</p>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=8d563738"></script>
+</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
