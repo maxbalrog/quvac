@@ -110,7 +110,7 @@ def objective_signal_in_detector(data, obj_params, discernible=False):
                                          align_to_max=False)
     
     N_detector_disc = 0
-    if discernible:
+    if discernible and "discernible" in list(data.keys()):
         discernible_mask = data["discernible"]
         for detector in detectors:
             N_detector_disc += signal_in_detector(

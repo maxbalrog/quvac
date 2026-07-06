@@ -105,7 +105,8 @@ def plot_roi(ax, x0, y0, dx, dy, line_kwargs):
     return ax
 
 
-def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
+def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None,
+                   fontsize=18, add_colorbar=True, return_image=False):
     """
     Plot data on a Mollweide projection.
 
@@ -125,6 +126,12 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
         Colormap, by default 'coolwarm'.
     norm : matplotlib.colors.Normalize, optional
         Normalization for the colormap, by default None.
+    fontsize : int
+        Fontsize for tick labels
+    add_colorbar : bool, optional
+        Whether to add colorbar to the plot or not, by default True.
+    return_image : bool, optional
+        Return pcolormesh image for further use, by default False.
 
     Returns
     -------
@@ -140,17 +147,24 @@ def plot_mollweide(fig, ax, phi, theta, data, cmap='coolwarm', norm=None):
     
     im = ax.pcolormesh(phi_mesh, theta_mesh, data, cmap=cmap,
                        shading='gouraud', rasterized=True, norm=norm)
-    cbar = fig.colorbar(im, ax=ax, shrink=0.5)
+    if add_colorbar:
+        cbar = fig.colorbar(im, ax=ax, shrink=0.5)
+    else:
+        cbar = None
 
-    ax.set_xticks([-2, -1, 0, 1, 2])
-    ax.set_yticks([-1.5, -1, -0.5, 0, 0.5, 1, 1.5])
+    ax.set_yticks([pi/6*i for i in range(-2,3)])
+    ytick_labels = np.linspace(30, 150, 5, endpoint=True, dtype=int)[::-1]
+    ax.yaxis.set_ticklabels([f'${num}^{{\\circ}}$' for num in ytick_labels])
+
+    ax.set_xticks([pi/3*i for i in range(-2,3)])
     xtick_labels = np.linspace(60, 360, 5, endpoint=False, dtype=int)
     ax.xaxis.set_ticklabels(f'${num}^{{\\circ}}$' for num in xtick_labels)
-    ytick_labels = np.linspace(0, 180, 7, endpoint=True, dtype=int)[::-1]
-    ax.yaxis.set_ticklabels(f'${num}^{{\\circ}}$' for num in ytick_labels)
+
     for item in ax.xaxis.get_ticklabels() + ax.yaxis.get_ticklabels():
-        item.set_fontsize(18)
+        item.set_fontsize(fontsize)
     ax.grid()
+    if return_image:
+        return im, ax, cbar
     return ax, cbar
 
 
