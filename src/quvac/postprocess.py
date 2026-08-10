@@ -83,6 +83,30 @@ def sph2cart(r, theta, phi):
     return x, y, z
 
 
+def cyl2cart(r, phi, z):
+    """
+    Convert cylindrical coordinates to Cartesian coordinates.
+
+    Parameters
+        ----------
+    r : numpy.ndarray
+        Radial distance.
+    phi : numpy.ndarray
+        Azimuthal angle.
+    z : numpy.ndarray
+        Radial distance.
+
+    Returns
+    -------
+    x, y, z : numpy.ndarray
+        Cartesian coordinates.
+    """
+    x = r * np.cos(phi)
+    y = r * np.sin(phi)
+    z = z
+    return x, y, z
+
+
 def xyz2idx(xyz, xyz_grid):
     """
     Convert Cartesian coordinates to array indices.
@@ -166,6 +190,67 @@ def cartesian_to_spherical_array(
     # interpolation_kwargs should be implemented here
     arr_sph = map_coordinates(arr, idxs, order=1)
     return spherical_grid, arr_sph
+
+
+def cartesian_to_cylindrical_array(
+    arr, xyz_grid, cylindrical_grid=None, angular_resolution=None,
+    angular_resolution_factor=None,
+):
+    """
+    Transform an array with data on Cartesian grid to the array with data 
+    on cylindrical grid.
+
+    Parameters
+    ----------
+    arr : numpy.ndarray
+        Array with data on Cartesian grid.
+    xyz_grid : quvac.grid.GridXYZ
+        Cartesian grid object.
+    cylindrical_grid : tuple or str, optional
+        Cylindrical grid or path to the file containing the cylindrical grid, 
+        by default None.
+    angular_resolution : float, optional
+        Angular resolution, by default None.
+    angular_resolution_factor : float, optional
+        Factor that multiplies default angular resolution given by dk / kmax.
+
+    Returns
+    -------
+    cylindrical_grid : tuple
+        Spherical grid.
+    arr_cyl : numpy.ndarray
+        Array with data on cylindrical grid.
+    """
+    # Calculate cylindrical grid if not given
+    if not cylindrical_grid:
+        dk = np.min(xyz_grid.dkxkykz[:2])
+        kmax = np.max(xyz_grid.kabs)
+        # without the prefactor it results in too high default resolution
+        if angular_resolution_factor is None:
+            angular_resolution_factor = 3
+        default_resolution = angular_resolution_factor * dk / kmax
+        dangle = angular_resolution if angular_resolution else default_resolution
+
+        k = np.arange(0.0, kmax, dk, dtype=config.FDTYPE)
+        phi = np.arange(0.0, 2 * pi, dangle, dtype=config.FDTYPE)
+        kz = xyz_grid.kgrid_shifted[-1]
+        cylindrical_grid = (k, phi, kz)
+    elif isinstance(cylindrical_grid, str) and os.path.isfile(cylindrical_grid):
+        data = np.load(cylindrical_grid)
+        cylindrical_grid = (data["k"], data["phi"], data["kz"])
+    cylindrical_mesh = np.meshgrid(*cylindrical_grid, indexing="ij", sparse=True)
+
+    # Find corresponding cartesian coordinates of cylindrical mesh:
+    # (r,phi,z) -> (x, y, z)
+    xyz_for_cyl = cyl2cart(*cylindrical_mesh)
+
+    # Convert cartesian coordinates to array idx
+    idxs = xyz2idx(xyz_for_cyl, xyz_grid.kgrid_shifted)
+
+    # Interpolate data on a desired grid
+    # interpolation_kwargs should be implemented here
+    arr_cyl = map_coordinates(arr, idxs, order=1)
+    return cylindrical_grid, arr_cyl
 
 
 def integrate_spherical(arr, axs, axs_names=("k", "theta", "phi"),
