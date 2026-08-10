@@ -387,7 +387,7 @@ class SpectralField(Field):
         )
         _logger.info(f'    Energy after "correction":          {W_corrected:.3f} J')
 
-    def get_a12(self, t0=None):
+    def get_a12(self, t0=None, fft_executor=None):
         """
         Calculates the a1 and a2 coefficients at a given time step.
 
