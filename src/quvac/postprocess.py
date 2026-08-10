@@ -310,6 +310,39 @@ def integrate_spherical(arr, axs, axs_names=("k", "theta", "phi"),
     return integrand
 
 
+def get_discernible_signal_in_frequency_band(
+    data, lam0=800e-9, freq_band=(1.5,2.5)
+):
+    """
+    Given a frequency band (for spectrum in spherical coordinates),
+    calculate the discernible signal there.
+
+    Parameters
+    ----------
+    data : result of np.load(...)
+        Simulation results.
+    lam0 : float
+        Fundamental wavelength, by default 800e-9.
+    freq_band : tuple
+        Frequency band in normalized values (by k0), by default (1.5, 2.5).
+
+    Returns
+    -------
+    Ndisc : float
+        Discernible signal.
+    """
+    k, theta, phi, discernible_mask, signal = [
+        data[key] for key in "k theta phi discernible N_sph".split()
+    ]
+    signal_discernible = signal * discernible_mask
+
+    k0 = 2*np.pi/lam0
+    idx_k = (k/k0 >= freq_band[0]) * (k/k0 <= freq_band[1])
+    k_filter, signal_filter = k[idx_k], signal_discernible[idx_k]
+    Ndisc = integrate_spherical(signal_filter, (k_filter,theta,phi))
+    return Ndisc
+
+
 def _get_detector_idx(phi, theta, phi0, theta0, dphi, dtheta):
     # consider detector regions that lie on the line phi=0 or phi=2*pi
     if phi0-dphi < 0:
