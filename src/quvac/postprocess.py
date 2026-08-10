@@ -83,7 +83,7 @@ def sph2cart(r, theta, phi):
     return x, y, z
 
 
-def cyl2cart(r, phi, z):
+def cyl2cart(r, phi, zcyl):
     """
     Convert cylindrical coordinates to Cartesian coordinates.
 
@@ -101,9 +101,9 @@ def cyl2cart(r, phi, z):
     x, y, z : numpy.ndarray
         Cartesian coordinates.
     """
-    x = r * np.cos(phi)
-    y = r * np.sin(phi)
-    z = z
+    x = r * np.cos(phi) * np.ones_like(zcyl)
+    y = r * np.sin(phi) * np.ones_like(zcyl)
+    z = zcyl * np.ones_like(r) * np.ones_like(phi)
     return x, y, z
 
 
@@ -217,7 +217,7 @@ def cartesian_to_cylindrical_array(
     Returns
     -------
     cylindrical_grid : tuple
-        Spherical grid.
+        Cylindrical grid.
     arr_cyl : numpy.ndarray
         Array with data on cylindrical grid.
     """
