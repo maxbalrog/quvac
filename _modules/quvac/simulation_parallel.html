@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.simulation_parallel - quvac 1.0.1 documentation</title>
+        <title>quvac.simulation_parallel - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -279,7 +279,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.simulation_parallel</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">Script to launch Vacuum Emission simulation IN PARALLEL </span>
 <span class="sd">(using submitit for semi-slurm submission type), do postprocessing</span>
 <span class="sd">and measure performance.</span>
@@ -290,7 +290,7 @@
 
 <span class="sd">    python simulation_parallel.py -i &lt;input&gt;.yml -o &lt;output_dir&gt; </span>
 <span class="sd">    --wisdom &lt;wisdom_file&gt;</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -311,13 +311,13 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_maxrss</span><span class="p">,</span> <span class="n">read_yaml</span><span class="p">,</span> <span class="n">write_yaml</span>
 
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"simulation"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_integration_scheme</span><span class="p">(</span><span class="n">ini_config</span><span class="p">):</span>
-    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integrator&quot;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">integrator_params</span><span class="p">[</span><span class="s2">&quot;load_integration_weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;integrator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrator_params</span>
+    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"integrator"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">integrator_params</span><span class="p">[</span><span class="s2">"load_integration_weights"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ini_config</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrator_params</span>
     <span class="k">return</span> <span class="n">ini_config</span>
 
 
@@ -325,7 +325,7 @@
 <a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.create_ini_files_for_parallel">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_ini_files_for_parallel</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span>
                                   <span class="n">integration_weights</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create initialization files for parallel jobs.</span>
 
 <span class="sd">    Parameters</span>
@@ -347,19 +347,19 @@
 <span class="sd">    -------</span>
 <span class="sd">    ini_files : list of str</span>
 <span class="sd">        List of paths to the initialization files for each job.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">Nt_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
     <span class="n">Nt_per_job</span> <span class="o">=</span> <span class="n">Nt_total</span> <span class="o">//</span> <span class="n">n_jobs</span>
 
     <span class="n">ini_job</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">ini_config</span><span class="p">)</span>
-    <span class="n">ini_job</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;simulation&quot;</span>
-    <span class="n">ini_job</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ini_job</span><span class="p">[</span><span class="s2">"mode"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"simulation"</span>
+    <span class="n">ini_job</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">ini_job</span> <span class="o">=</span> <span class="n">_setup_integration_scheme</span><span class="p">(</span><span class="n">ini_job</span><span class="p">)</span>
 
     <span class="n">box_xyz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid</span><span class="p">]</span>
     <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">]</span>
-    <span class="n">grid_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;direct&quot;</span><span class="p">,</span> <span class="s2">&quot;box_xyz&quot;</span><span class="p">:</span> <span class="n">box_xyz</span><span class="p">,</span> <span class="s2">&quot;Nxyz&quot;</span><span class="p">:</span> <span class="n">Nxyz</span><span class="p">}</span>
-    <span class="n">ini_job</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_params</span><span class="p">)</span>
+    <span class="n">grid_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"mode"</span><span class="p">:</span> <span class="s2">"direct"</span><span class="p">,</span> <span class="s2">"box_xyz"</span><span class="p">:</span> <span class="n">box_xyz</span><span class="p">,</span> <span class="s2">"Nxyz"</span><span class="p">:</span> <span class="n">Nxyz</span><span class="p">}</span>
+    <span class="n">ini_job</span><span class="p">[</span><span class="s2">"grid"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_params</span><span class="p">)</span>
     <span class="c1"># Create ini files for all jobs</span>
     <span class="n">ini_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">):</span>
@@ -370,18 +370,18 @@
             <span class="n">Nt</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">box_t</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">grid_t</span><span class="p">[</span><span class="n">idx_start</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">grid_t</span><span class="p">[</span><span class="n">idx_end</span><span class="p">])]</span>
         <span class="n">grid_params_job</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;box_t&quot;</span><span class="p">:</span> <span class="n">box_t</span><span class="p">,</span>
-            <span class="s2">&quot;Nt&quot;</span><span class="p">:</span> <span class="n">Nt</span><span class="p">,</span>
+            <span class="s2">"box_t"</span><span class="p">:</span> <span class="n">box_t</span><span class="p">,</span>
+            <span class="s2">"Nt"</span><span class="p">:</span> <span class="n">Nt</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">ini_job</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_params_job</span><span class="p">)</span>
-        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;job_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">ini_path_job</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_folder</span><span class="p">,</span> <span class="s2">&quot;ini.yml&quot;</span><span class="p">)</span>
+        <span class="n">ini_job</span><span class="p">[</span><span class="s2">"grid"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grid_params_job</span><span class="p">)</span>
+        <span class="n">job_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"job_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">ini_path_job</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_folder</span><span class="p">,</span> <span class="s2">"ini.yml"</span><span class="p">)</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ini_path_job</span><span class="p">))</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">write_yaml</span><span class="p">(</span><span class="n">ini_path_job</span><span class="p">,</span> <span class="n">ini_job</span><span class="p">)</span>
 
         <span class="c1"># write integration weights to a file</span>
         <span class="n">weights_for_job</span> <span class="o">=</span> <span class="n">integration_weights</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">weights_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_folder</span><span class="p">,</span> <span class="s2">&quot;integration_weights.npy&quot;</span><span class="p">)</span>
+        <span class="n">weights_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_folder</span><span class="p">,</span> <span class="s2">"integration_weights.npy"</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">weights_path</span><span class="p">,</span> <span class="n">weights_for_job</span><span class="p">)</span>
 
         <span class="n">ini_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ini_path_job</span><span class="p">)</span>
@@ -392,7 +392,7 @@
 <div class="viewcode-block" id="collect_results">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.collect_results">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">collect_results</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">amplitudes_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Collect results from parallel jobs and combine them.</span>
 
 <span class="sd">    Parameters</span>
@@ -401,19 +401,19 @@
 <span class="sd">        List of paths to the initialization files for each job.</span>
 <span class="sd">    amplitudes_file : str</span>
 <span class="sd">        Path to save the combined amplitudes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">amplitude_files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ini_file</span><span class="p">),</span> <span class="s2">&quot;amplitudes.npz&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ini_file</span><span class="p">),</span> <span class="s2">"amplitudes.npz"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ini_file</span> <span class="ow">in</span> <span class="n">ini_files</span>
     <span class="p">]</span>
     <span class="n">amplitude_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">amplitude_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="n">amplitude_0</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">&quot;xyz&quot;</span><span class="p">]</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="n">amplitude_0</span><span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="s2">"xyz"</span><span class="p">]</span>
     <span class="n">S1</span><span class="p">,</span> <span class="n">S2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">amplitude</span> <span class="ow">in</span> <span class="n">amplitude_files</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span>
-        <span class="n">S1</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">]</span>
-        <span class="n">S2</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span>
-    <span class="n">amplitude_total</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s2">&quot;S1&quot;</span><span class="p">:</span> <span class="n">S1</span><span class="p">,</span> <span class="s2">&quot;S2&quot;</span><span class="p">:</span> <span class="n">S2</span><span class="p">}</span>
+        <span class="n">S1</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"S1"</span><span class="p">]</span>
+        <span class="n">S2</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"S2"</span><span class="p">]</span>
+    <span class="n">amplitude_total</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s2">"S1"</span><span class="p">:</span> <span class="n">S1</span><span class="p">,</span> <span class="s2">"S2"</span><span class="p">:</span> <span class="n">S2</span><span class="p">}</span>
     <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">amplitudes_file</span><span class="p">,</span> <span class="o">**</span><span class="n">amplitude_total</span><span class="p">)</span></div>
 
 
@@ -421,8 +421,8 @@
 <div class="viewcode-block" id="configure_integration_weights">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.configure_integration_weights">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">configure_integration_weights</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">Nt</span><span class="p">):</span>
-    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integrator&quot;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">integration_method</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integration_method&quot;</span><span class="p">,</span> <span class="s2">&quot;trapezoid&quot;</span><span class="p">)</span>
+    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"integrator"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">integration_method</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"integration_method"</span><span class="p">,</span> <span class="s2">"trapezoid"</span><span class="p">)</span>
     <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">determine_integration_scheme</span><span class="p">(</span><span class="n">Nt</span><span class="p">,</span> <span class="n">integration_method</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">integration_weights</span></div>
 
@@ -431,9 +431,9 @@
 <div class="viewcode-block" id="quvac_simulation_parallel">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.quvac_simulation_parallel">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">quvac_simulation_parallel</span><span class="p">(</span>
-    <span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="o">=</span><span class="s2">&quot;wisdom/fftw-wisdom&quot;</span>
+    <span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="o">=</span><span class="s2">"wisdom/fftw-wisdom"</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Launch a single quvac simulation for given &lt;ini&gt;.yml file in parallel.</span>
 
 <span class="sd">    Depending on available jobs, we split the total time interval</span>
@@ -448,34 +448,34 @@
 <span class="sd">    save_path : str, optional</span>
 <span class="sd">        Path to save simulation results to, by default None.</span>
 <span class="sd">    wisdom_file : str, optional</span>
-<span class="sd">        Path to save pyfftw-wisdom, by default &quot;wisdom/fftw-wisdom&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".</span>
+<span class="sd">    """</span>
     <span class="c1"># Check that ini file and save_path exists</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">get_dirs</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">)</span>
 
     <span class="c1"># Load and parse ini yaml file</span>
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="c1"># One can choose either to perform just simulation, just postprocess or both</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;simulation_postprocess&#39;</span><span class="p">)</span>
-    <span class="n">do_postprocess</span> <span class="o">=</span> <span class="s1">&#39;postprocess&#39;</span> <span class="ow">in</span> <span class="n">mode</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'mode'</span><span class="p">,</span> <span class="s1">'simulation_postprocess'</span><span class="p">)</span>
+    <span class="n">do_postprocess</span> <span class="o">=</span> <span class="s1">'postprocess'</span> <span class="ow">in</span> <span class="n">mode</span>
 
     <span class="c1"># Setup logger</span>
-    <span class="n">create_basic_logger</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;logger&quot;</span><span class="p">])</span>
+    <span class="n">create_basic_logger</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">"logger"</span><span class="p">])</span>
 
     <span class="c1"># Start time</span>
-    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"start"</span><span class="p">)</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
     <span class="c1"># Load and parse ini yaml file</span>
-    <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+    <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">"fields"</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">fields_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">grid_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span>
-    <span class="n">cluster_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cluster_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">grid_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">"grid"</span><span class="p">]</span>
+    <span class="n">cluster_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cluster_params"</span><span class="p">,</span> <span class="p">{})</span>
 
     <span class="c1"># Get parallelization params</span>
-    <span class="n">number_of_time_intervals</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;number_of_time_intervals&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">number_of_time_intervals</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"number_of_time_intervals"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Get grids</span>
     <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span> <span class="o">=</span> <span class="n">setup_grids</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">)</span>
@@ -484,21 +484,21 @@
     <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">configure_integration_weights</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">))</span>
 
     <span class="n">ini_files</span> <span class="o">=</span> <span class="n">create_ini_files_for_parallel</span><span class="p">(</span>
-        <span class="n">ini_config</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">,</span> <span class="n">number_of_time_intervals</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;save_path&#39;</span><span class="p">],</span>
+        <span class="n">ini_config</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">,</span> <span class="n">number_of_time_intervals</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s1">'save_path'</span><span class="p">],</span>
         <span class="n">integration_weights</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">run_simulations_with_job_executor</span><span class="p">(</span>
         <span class="n">ini_files</span><span class="p">,</span> 
         <span class="n">cluster_params</span><span class="p">,</span> 
-        <span class="n">files</span><span class="p">[</span><span class="s1">&#39;save_path&#39;</span><span class="p">],</span>
+        <span class="n">files</span><span class="p">[</span><span class="s1">'save_path'</span><span class="p">],</span>
         <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="n">number_of_time_intervals</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Collect all results</span>
-    <span class="n">collect_results</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">])</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Results from individual jobs are collected&quot;</span><span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;jobs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">collect_results</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">])</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Results from individual jobs are collected"</span><span class="p">)</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'jobs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
     <span class="n">maxrss_jobs</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
 
@@ -506,39 +506,39 @@
     <span class="k">if</span> <span class="n">do_postprocess</span><span class="p">:</span>
         <span class="n">postprocess_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">)</span>
 
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;postprocess&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;postprocess&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'postprocess'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'postprocess'</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span>
 
     <span class="n">maxrss_total</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
 
-    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;maxrss_jobs&quot;</span><span class="p">:</span> <span class="n">maxrss_jobs</span><span class="p">,</span> <span class="s2">&quot;maxrss_total&quot;</span><span class="p">:</span> <span class="n">maxrss_total</span><span class="p">}</span>
-    <span class="n">perf_stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;timings&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">,</span> <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="n">memory</span><span class="p">}</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"maxrss_jobs"</span><span class="p">:</span> <span class="n">maxrss_jobs</span><span class="p">,</span> <span class="s2">"maxrss_total"</span><span class="p">:</span> <span class="n">maxrss_total</span><span class="p">}</span>
+    <span class="n">perf_stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"timings"</span><span class="p">:</span> <span class="n">timings</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="n">memory</span><span class="p">}</span>
 
-    <span class="n">write_yaml</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;performance&#39;</span><span class="p">],</span> <span class="n">perf_stats</span><span class="p">)</span>
+    <span class="n">write_yaml</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">'performance'</span><span class="p">],</span> <span class="n">perf_stats</span><span class="p">)</span>
 
     <span class="n">perf_print</span> <span class="o">=</span> <span class="n">get_parallel_performance_stats</span><span class="p">(</span><span class="n">perf_stats</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">perf_print</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">perf_print</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation finished!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Simulation finished!"</span><span class="p">)</span>
 
     <span class="c1"># End time</span>
-    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span></div>
+    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"end"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="main_simulation_parallel">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation_parallel/index.html#quvac.simulation_parallel.main_simulation_parallel">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main_simulation_parallel</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Main function to run the simulation in parallel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
     <span class="n">quvac_simulation_parallel</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main_simulation_parallel</span><span class="p">()</span>
 </pre></div>
         </article>
@@ -572,7 +572,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

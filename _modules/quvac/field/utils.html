@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.field.utils - quvac 1.0.1 documentation</title>
+        <title>quvac.field.utils - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,9 +278,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.field.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Utility functions related to fields.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -290,7 +290,7 @@
 <div class="viewcode-block" id="get_field_energy">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/utils/index.html#quvac.field.utils.get_field_energy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_field_energy</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">dV</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the numerical energy of the field on a spatial grid.</span>
 
 <span class="sd">    Parameters</span>
@@ -312,19 +312,19 @@
 <span class="sd">    The energy is calculated using the formula:</span>
 
 <span class="sd">    W = sum(0.5 * epsilon_0 * c**2 * dV * abs(E)**2 + 0.5 / mu_0 * dV * abs(B)**2)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">Ex</span><span class="p">,</span> <span class="n">Ey</span><span class="p">,</span> <span class="n">Ez</span> <span class="o">=</span> <span class="n">E</span>
     <span class="n">Bx</span><span class="p">,</span> <span class="n">By</span><span class="p">,</span> <span class="n">Bz</span> <span class="o">=</span> <span class="n">B</span>
-    <span class="n">W</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dV</span> <span class="o">*</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sum(Ex**2 + Ey**2 + Ez**2)&quot;</span><span class="p">)</span>
-    <span class="n">W</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">mu_0</span> <span class="o">*</span> <span class="n">dV</span> <span class="o">*</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sum(Bx**2 + By**2 + Bz**2)&quot;</span><span class="p">)</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dV</span> <span class="o">*</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"sum(Ex**2 + Ey**2 + Ez**2)"</span><span class="p">)</span>
+    <span class="n">W</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">mu_0</span> <span class="o">*</span> <span class="n">dV</span> <span class="o">*</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"sum(Bx**2 + By**2 + Bz**2)"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">W</span></div>
 
 
 
 <div class="viewcode-block" id="get_field_energy_kspace">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/utils/index.html#quvac.field.utils.get_field_energy_kspace">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_field_energy_kspace</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;without 1/k&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_field_energy_kspace</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">dVk</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"without 1/k"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the numerical energy of the field on a spectral grid.</span>
 
 <span class="sd">    Parameters</span>
@@ -338,8 +338,8 @@
 <span class="sd">    dVk : float</span>
 <span class="sd">        Spectral volume element.</span>
 <span class="sd">    mode : str, optional</span>
-<span class="sd">        Convention for the definition of a1 and a2 (&#39;without 1/k&#39; or &#39;with 1/k&#39;).</span>
-<span class="sd">        Default is &#39;without 1/k&#39;.</span>
+<span class="sd">        Convention for the definition of a1 and a2 ('without 1/k' or 'with 1/k').</span>
+<span class="sd">        Default is 'without 1/k'.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -352,13 +352,13 @@
 
 <span class="sd">    W = 0.5 * epsilon_0 * c**2 * dVk / (2 * pi)**3 * sum(abs(a1)**2 + abs(a2)**2)</span>
 <span class="sd">    </span>
-<span class="sd">    If mode is &#39;with 1/k&#39;, the formula is:</span>
+<span class="sd">    If mode is 'with 1/k', the formula is:</span>
 <span class="sd">    </span>
 <span class="sd">    W = 0.5 * epsilon_0 * c**2 * dVk / (2 * pi)**3 * sum(k**2 * {abs(a1)**2 + </span>
 <span class="sd">    abs(a2)**2})</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;(a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2)&quot;</span>
-    <span class="n">expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sum(</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;without 1/k&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;sum(k**2 * </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="s2">"(a1.real**2 + a1.imag**2 + a2.real**2 + a2.imag**2)"</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"sum(</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">)"</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"without 1/k"</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"sum(k**2 * </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">)"</span>
     <span class="n">W</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">epsilon_0</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dVk</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">W</span></div>
 
@@ -366,8 +366,8 @@
 
 <div class="viewcode-block" id="convert_tau">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/utils/index.html#quvac.field.utils.convert_tau">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;1/e^2&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"1/e^2"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert between different pulse duration conventions.</span>
 
 <span class="sd">    Parameters</span>
@@ -375,43 +375,43 @@
 <span class="sd">    tau : float</span>
 <span class="sd">        Pulse duration.</span>
 <span class="sd">    mode : str, optional</span>
-<span class="sd">        The convention of the input pulse duration. Options are &#39;1/e^2&#39;,</span>
-<span class="sd">        &#39;FWHM&#39;, &#39;FWHM-Intensity&#39;, and &#39;std&#39;. Default is &#39;1/e^2&#39;.</span>
+<span class="sd">        The convention of the input pulse duration. Options are '1/e^2',</span>
+<span class="sd">        'FWHM', 'FWHM-Intensity', and 'std'. Default is '1/e^2'.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
 <span class="sd">        Dictionary containing the pulse duration in different conventions:</span>
-<span class="sd">            - &#39;1/e^2&#39; : float</span>
+<span class="sd">            - '1/e^2' : float</span>
 <span class="sd">                Pulse duration in 1/e^2 convention.</span>
-<span class="sd">            - &#39;FWHM&#39; : float</span>
+<span class="sd">            - 'FWHM' : float</span>
 <span class="sd">                Pulse duration in Full Width at Half Maximum (FWHM) convention.</span>
-<span class="sd">            - &#39;FWHM-Intensity&#39; : float</span>
+<span class="sd">            - 'FWHM-Intensity' : float</span>
 <span class="sd">                Pulse duration in FWHM-Intensity convention.</span>
-<span class="sd">            - &#39;std&#39; : float</span>
+<span class="sd">            - 'std' : float</span>
 <span class="sd">                Pulse duration in standard deviation convention.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The temporal envelope is assumed to have the form exp(-t**2/(tau/2)**2).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
-        <span class="k">case</span> <span class="s2">&quot;1/e^2&quot;</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1/e^2&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span> <span class="s1">&#39;FWHM&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
-                      <span class="s1">&#39;FWHM-Intensity&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
-                      <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))}</span>
-        <span class="k">case</span> <span class="s2">&quot;FWHM&quot;</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1/e^2&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">&#39;FWHM&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span>
-                      <span class="s1">&#39;FWHM-Intensity&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-                      <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)))}</span>
-        <span class="k">case</span> <span class="s2">&quot;FWHM-Intensity&quot;</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1/e^2&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;FWHM&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-                      <span class="s1">&#39;FWHM-Intensity&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)))}</span>
-        <span class="k">case</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1/e^2&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">tau</span><span class="p">,</span> <span class="s1">&#39;FWHM&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
-                      <span class="s1">&#39;FWHM-Intensity&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">tau</span><span class="p">}</span>
+        <span class="k">case</span> <span class="s2">"1/e^2"</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'1/e^2'</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span> <span class="s1">'FWHM'</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+                      <span class="s1">'FWHM-Intensity'</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                      <span class="s1">'std'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))}</span>
+        <span class="k">case</span> <span class="s2">"FWHM"</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'1/e^2'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">'FWHM'</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span>
+                      <span class="s1">'FWHM-Intensity'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+                      <span class="s1">'std'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)))}</span>
+        <span class="k">case</span> <span class="s2">"FWHM-Intensity"</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'1/e^2'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'FWHM'</span><span class="p">:</span> <span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+                      <span class="s1">'FWHM-Intensity'</span><span class="p">:</span> <span class="n">tau</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">:</span> <span class="n">tau</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)))}</span>
+        <span class="k">case</span> <span class="s2">"std"</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'1/e^2'</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">tau</span><span class="p">,</span> <span class="s1">'FWHM'</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+                      <span class="s1">'FWHM-Intensity'</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="s1">'std'</span><span class="p">:</span> <span class="n">tau</span><span class="p">}</span>
         <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2"> is not supported.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2"> is not supported."</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
@@ -420,7 +420,7 @@
 <div class="viewcode-block" id="get_max_edge_amplitude">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/utils/index.html#quvac.field.utils.get_max_edge_amplitude">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_max_edge_amplitude</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the maximum field amplitude at the edges of the grid.</span>
 
 <span class="sd">    Parameters</span>
@@ -436,7 +436,7 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Electric field is assumed to be complex.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">Ex</span><span class="p">,</span> <span class="n">Ey</span><span class="p">,</span> <span class="n">Ez</span> <span class="o">=</span> <span class="n">E</span>
     <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">Ex</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Ex</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Ey</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Ez</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -444,7 +444,7 @@
              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">amplitude</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">amplitude</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]),</span>
              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">amplitude</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">amplitude</span><span class="p">[:,:,</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
     <span class="n">amplitude_edge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max intensity at edges: </span><span class="si">{</span><span class="n">amplitude_edge</span><span class="o">/</span><span class="n">amplitude</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max intensity at edges: </span><span class="si">{</span><span class="n">amplitude_edge</span><span class="o">/</span><span class="n">amplitude</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">amplitude_edge</span></div>
 
 
@@ -452,7 +452,7 @@
 <div class="viewcode-block" id="get_intensity">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/utils/index.html#quvac.field.utils.get_intensity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_intensity</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the field intensity at a given time.</span>
 
 <span class="sd">    Parameters</span>
@@ -470,7 +470,7 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The intensity is calculated as (abs(E)**2 + abs(B)**2)/2</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">E</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">calculate_field</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     <span class="n">E</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">E</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
     <span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">E</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">E</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
@@ -508,7 +508,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

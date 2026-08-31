@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.field.model - quvac 1.0.1 documentation</title>
+        <title>quvac.field.model - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,7 +278,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.field.model</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Model fields.</span>
 
 <span class="sd">Currently implements:</span>
@@ -288,10 +288,10 @@
 
 <span class="sd">----</span>
 
-<span class="sd">.. [1] H. Gies, F. Karbstein, and N. Seegert. &quot;Quantum reflection</span>
-<span class="sd">   as a new signature of quantum vacuum nonlinearity.&quot; NJP 15.8 (2013): </span>
+<span class="sd">.. [1] H. Gies, F. Karbstein, and N. Seegert. "Quantum reflection</span>
+<span class="sd">   as a new signature of quantum vacuum nonlinearity." NJP 15.8 (2013): </span>
 <span class="sd">   083002.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">pi</span>
@@ -303,7 +303,7 @@
 <div class="viewcode-block" id="EBInhomogeneity">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/model/index.html#quvac.field.model.EBInhomogeneity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EBInhomogeneity</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model inhomogeneities of electric/magnetic field.</span>
 
 <span class="sd">    Field is of type B = B(z) * eB.</span>
@@ -312,56 +312,56 @@
 <span class="sd">    ----------</span>
 <span class="sd">    field_params : dict</span>
 <span class="sd">        Dictionary containing the field parameters. Required keys are:</span>
-<span class="sd">            - &#39;field_inhom&#39;: str</span>
-<span class="sd">                Field inhomogeneity, either &#39;electric&#39; or &#39;magnetic&#39;.</span>
-<span class="sd">            - &#39;theta&#39; : float</span>
+<span class="sd">            - 'field_inhom': str</span>
+<span class="sd">                Field inhomogeneity, either 'electric' or 'magnetic'.</span>
+<span class="sd">            - 'theta' : float</span>
 <span class="sd">                Polar angle of eB-vector (in degrees).</span>
-<span class="sd">            - &#39;phi&#39; : float</span>
+<span class="sd">            - 'phi' : float</span>
 <span class="sd">                Azimuthal angle of eB-vector (in degrees).</span>
-<span class="sd">            - &#39;E0&#39; : float</span>
+<span class="sd">            - 'E0' : float</span>
 <span class="sd">                Amplitude.</span>
-<span class="sd">            - &#39;envelope_type&#39; : str</span>
-<span class="sd">                Envelope type, by default &#39;gauss&#39;.</span>
+<span class="sd">            - 'envelope_type' : str</span>
+<span class="sd">                Envelope type, by default 'gauss'.</span>
 
 <span class="sd">        Envelope specific arguments:</span>
-<span class="sd">            For &#39;gauss&#39;:</span>
-<span class="sd">                - &#39;w0&#39; : float</span>
+<span class="sd">            For 'gauss':</span>
+<span class="sd">                - 'w0' : float</span>
 <span class="sd">                    Waist size.</span>
-<span class="sd">            For &#39;gauss-modulated&#39;:</span>
-<span class="sd">                - &#39;w0&#39; : float</span>
+<span class="sd">            For 'gauss-modulated':</span>
+<span class="sd">                - 'w0' : float</span>
 <span class="sd">                    Waist size.</span>
-<span class="sd">                - &#39;lam&#39;: float</span>
+<span class="sd">                - 'lam': float</span>
 <span class="sd">                    Wavelength of modulation.</span>
-<span class="sd">                - &#39;phase0&#39;: float, optional</span>
+<span class="sd">                - 'phase0': float, optional</span>
 <span class="sd">                    Initial phase</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and grid.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;field_inhom&quot;</span><span class="p">,</span> <span class="s2">&quot;magnetic&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"beta"</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"field_inhom"</span><span class="p">,</span> <span class="s2">"magnetic"</span><span class="p">)</span>
         
         <span class="c1"># create rotation matrices to transform the field orientation</span>
         <span class="c1"># without changing the grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotate_coordinates</span><span class="p">(</span><span class="n">rotate_grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">get_envelope</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;E0 * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"E0 * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="si">}</span><span class="s2">"</span>
 
-        <span class="n">EB_keys</span> <span class="o">=</span> <span class="s2">&quot;Ex Ey Ez Bx By Bz&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">EB_keys</span> <span class="o">=</span> <span class="s2">"Ex Ey Ez Bx By Bz"</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EB_keys</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"W"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">E0</span> <span class="o">=</span> <span class="mf">1.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_energy</span><span class="p">()</span>
     
 <div class="viewcode-block" id="EBInhomogeneity.get_envelope">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/model/index.html#quvac.field.model.EBInhomogeneity.get_envelope">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_envelope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Define the envelope function for the field.</span>
 
 <span class="sd">        The envelope function is defined based on the `envelope_type` parameter. </span>
@@ -371,25 +371,25 @@
 <span class="sd">        ------</span>
 <span class="sd">        NotImplementedError</span>
 <span class="sd">            If the `envelope_type` is not supported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope_type</span><span class="p">:</span>
-            <span class="k">case</span> <span class="s2">&quot;gauss&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="s2">&quot;exp(-(z/w0)**2)&quot;</span>
-            <span class="k">case</span> <span class="s2">&quot;gauss-modulated&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;phase0&quot;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s2">"gauss"</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="s2">"exp(-(z/w0)**2)"</span>
+            <span class="k">case</span> <span class="s2">"gauss-modulated"</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"phase0"</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">kz_m</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lam</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="s2">&quot;exp(-(z/w0)**2) * cos(kz_m*z + phase0)&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="s2">"exp(-(z/w0)**2) * cos(kz_m*z + phase0)"</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope_type</span><span class="si">}</span><span class="s2">` envelope type&quot;</span>
-                                          <span class="s2">&quot;is not supported&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope_type</span><span class="si">}</span><span class="s2">` envelope type"</span>
+                                          <span class="s2">"is not supported"</span><span class="p">)</span></div>
 
             
 <div class="viewcode-block" id="EBInhomogeneity.check_energy">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/model/index.html#quvac.field.model.EBInhomogeneity.check_energy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check and adjust the field energy.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_energy</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modify_energy</span><span class="p">:</span>
@@ -401,15 +401,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">==</span> <span class="s2">&quot;electric&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">==</span> <span class="s2">"electric"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="n">E</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">==</span> <span class="s2">&quot;magnetic&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span> <span class="o">==</span> <span class="s2">"magnetic"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="n">E</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span><span class="si">}</span><span class="s2">` field inhomogeneity&quot;</span>
-                                      <span class="s2">&quot;is not supported&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">field_inhom</span><span class="si">}</span><span class="s2">` field inhomogeneity"</span>
+                                      <span class="s2">"is not supported"</span><span class="p">)</span>
         
-        <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_fields_back</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;real&quot;</span><span class="p">)</span>
+        <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_fields_back</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"real"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span></div>
 </div>
 
@@ -445,7 +445,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

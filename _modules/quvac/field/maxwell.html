@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.field.maxwell - quvac 1.0.1 documentation</title>
+        <title>quvac.field.maxwell - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,10 +278,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.field.maxwell</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Basic linear Maxwell propagation class for a single field and </span>
 <span class="sd">a unified interface combining several Maxwell fields into one.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
@@ -295,13 +295,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.field.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.pyfftw_executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_fftw_executor</span>
 
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"simulation"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MaxwellField">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellField">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MaxwellField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Basic linear Maxwell propagation class for a single field.</span>
 
 <span class="sd">    For such fields, the initial field distribution (spectral coefficients)</span>
@@ -318,7 +318,7 @@
 <span class="sd">    nthreads : int, optional</span>
 <span class="sd">        Number of threads to use for calculations. If not provided, defaults to </span>
 <span class="sd">        the number of CPU cores.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">grid</span>
@@ -330,10 +330,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">norm_ifft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_expr</span> <span class="o">=</span> <span class="s2">&quot;exp(-1j*kabs*c*(t-t0)) * norm_ifft&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_expr</span> <span class="o">=</span> <span class="s2">"exp(-1j*kabs*c*(t-t0)) * norm_ifft"</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="s2">&quot;prefactor * (e1*a1 + e2*a2)&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">B_expr</span> <span class="o">=</span> <span class="s2">&quot;prefactor * (e2*a1 - e1*a2)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="s2">"prefactor * (e1*a1 + e2*a2)"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B_expr</span> <span class="o">=</span> <span class="s2">"prefactor * (e2*a1 - e1*a2)"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
@@ -341,36 +341,36 @@
         <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_allocate_ifft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Allocate memory for inverse FFT calculations and define dictionaries</span>
 <span class="sd">        for numexpr.evaluate().</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">setup_fftw_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> 
                                                 <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;kabs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span>
-            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
-            <span class="s2">&quot;t0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
-            <span class="s2">&quot;norm_ifft&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_ifft</span><span class="p">,</span>
+            <span class="s2">"kabs"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span><span class="p">,</span>
+            <span class="s2">"c"</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
+            <span class="s2">"t0"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+            <span class="s2">"norm_ifft"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_ifft</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;e1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span>
-            <span class="s2">&quot;e2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">,</span>
-            <span class="s2">&quot;a1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span>
-            <span class="s2">&quot;a2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span>
-            <span class="s2">&quot;prefactor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">,</span>
+            <span class="s2">"e1"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span>
+            <span class="s2">"e2"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">,</span>
+            <span class="s2">"a1"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a1</span><span class="p">,</span>
+            <span class="s2">"a2"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">a2</span><span class="p">,</span>
+            <span class="s2">"prefactor"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">,</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="MaxwellField.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellField.calculate_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">E_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">E_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
             <span class="n">B_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span><span class="p">)</span>
@@ -378,7 +378,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">EB_pairs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">B_out</span>
 
         <span class="c1"># Calculate prefactor at time t</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="n">t</span><span class="p">})</span>
         <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_expr</span><span class="p">,</span> <span class="n">local_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor_dict</span><span class="p">,</span> 
                     <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="p">)</span>
 
@@ -397,7 +397,7 @@
 <div class="viewcode-block" id="MaxwellMultiple">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MaxwellMultiple</span><span class="p">(</span><span class="n">MaxwellField</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Combine spectral coefficients from several fields and</span>
 <span class="sd">    propagate them as one field.</span>
 
@@ -423,7 +423,7 @@
 <span class="sd">        List of field parameter dictionaries.</span>
 <span class="sd">    t0 : float</span>
 <span class="sd">        Initial time for the field.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">fft_executor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span> <span class="o">=</span> <span class="n">fft_executor</span>
@@ -434,7 +434,7 @@
         <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">fields</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">):</span>
-            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting up field </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Setting up field </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
             <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_a12_from_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">+=</span> <span class="n">a1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">+=</span> <span class="n">a2</span>
@@ -444,7 +444,7 @@
 <div class="viewcode-block" id="MaxwellMultiple.get_a12_from_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple.get_a12_from_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_a12_from_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the spectral coefficients a1 and a2 from the field parameters.</span>
 
 <span class="sd">        Parameters</span>
@@ -461,18 +461,18 @@
 <span class="sd">        ------</span>
 <span class="sd">        NotImplementedError</span>
 <span class="sd">            If the field type is not supported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">field_type</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span>
+<span class="sd">        """</span>
+        <span class="n">field_type</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"field_type"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">SPATIAL_MODEL_FIELDS</span><span class="p">:</span>
             <span class="bp">cls</span> <span class="o">=</span> <span class="n">SPATIAL_MODEL_FIELDS</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
-            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">ini_field</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_xyz</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="n">ini_field</span><span class="o">.</span><span class="n">t0</span>
             <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">ini_field</span><span class="o">.</span><span class="n">get_a12</span><span class="p">(</span><span class="n">ini_field</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fft_executor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">` is not implemented, use&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SPATIAL_MODEL_FIELDS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`</span><span class="si">{</span><span class="n">field_type</span><span class="si">}</span><span class="s2">` is not implemented, use"</span>
+                <span class="sa">f</span><span class="s2">"one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SPATIAL_MODEL_FIELDS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span></div>
 
@@ -480,9 +480,9 @@
 <div class="viewcode-block" id="MaxwellMultiple.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/maxwell/index.html#quvac.field.maxwell.MaxwellMultiple.calculate_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">calculate_field</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">)</span></div>
 </div>
 
@@ -518,7 +518,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

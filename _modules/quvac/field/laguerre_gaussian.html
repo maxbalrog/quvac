@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.field.laguerre_gaussian - quvac 1.0.1 documentation</title>
+        <title>quvac.field.laguerre_gaussian - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,14 +278,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.field.laguerre_gaussian</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Analytic expression for Laguerre-Gaussian modes.</span>
 
 <span class="sd">----</span>
 
-<span class="sd">.. [1] L. Allen et al. &quot;Orbital angular momentum of light and the transformation of </span>
-<span class="sd">    Laguerre-Gaussian laser modes.&quot; PRA 45.11 (1992): 8185.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. [1] L. Allen et al. "Orbital angular momentum of light and the transformation of </span>
+<span class="sd">    Laguerre-Gaussian laser modes." PRA 45.11 (1992): 8185.</span>
+<span class="sd">"""</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">factorial</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
@@ -299,38 +299,38 @@
 <div class="viewcode-block" id="LaguerreGaussianAnalytic">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/laguerre_gaussian/index.html#quvac.field.laguerre_gaussian.LaguerreGaussianAnalytic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LaguerreGaussianAnalytic</span><span class="p">(</span><span class="n">ExplicitField</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Analytic expression for Laguerre-Gaussian modes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    field_params : dict</span>
 <span class="sd">        Dictionary containing the field parameters. Required keys are:</span>
-<span class="sd">            - &#39;focus_x&#39; : tuple of float</span>
+<span class="sd">            - 'focus_x' : tuple of float</span>
 <span class="sd">                Location of spatial focus (x, y, z).</span>
-<span class="sd">            - &#39;focus_t&#39; : float</span>
+<span class="sd">            - 'focus_t' : float</span>
 <span class="sd">                Location of temporal focus.</span>
-<span class="sd">            - &#39;theta&#39; : float</span>
+<span class="sd">            - 'theta' : float</span>
 <span class="sd">                Polar angle of k-vector (in degrees).</span>
-<span class="sd">            - &#39;phi&#39; : float</span>
+<span class="sd">            - 'phi' : float</span>
 <span class="sd">                Azimuthal angle of k-vector (in degrees).</span>
-<span class="sd">            - &#39;beta&#39; : float</span>
+<span class="sd">            - 'beta' : float</span>
 <span class="sd">                Polarization angle (in degrees).</span>
-<span class="sd">            - &#39;lam&#39; : float</span>
+<span class="sd">            - 'lam' : float</span>
 <span class="sd">                Wavelength of the pulse.</span>
-<span class="sd">            - &#39;w0&#39; : float</span>
+<span class="sd">            - 'w0' : float</span>
 <span class="sd">                Waist size.</span>
-<span class="sd">            - &#39;tau&#39; : float</span>
+<span class="sd">            - 'tau' : float</span>
 <span class="sd">                Duration.</span>
-<span class="sd">            - &#39;phase0&#39; : float</span>
+<span class="sd">            - 'phase0' : float</span>
 <span class="sd">                Phase delay at focus.</span>
-<span class="sd">            - &#39;p&#39; : int</span>
+<span class="sd">            - 'p' : int</span>
 <span class="sd">                Radial index of the Laguerre-Gaussian mode.</span>
-<span class="sd">            - &#39;l&#39; : int</span>
+<span class="sd">            - 'l' : int</span>
 <span class="sd">                Azimuthal index of the Laguerre-Gaussian mode.</span>
-<span class="sd">            - &#39;E0&#39; : float, optional</span>
+<span class="sd">            - 'E0' : float, optional</span>
 <span class="sd">                Amplitude (either E0 or W is required).</span>
-<span class="sd">            - &#39;W&#39; : float, optional</span>
+<span class="sd">            - 'W' : float, optional</span>
 <span class="sd">                Energy (either E0 or W is required).</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and spectral grid.</span>
@@ -340,17 +340,17 @@
 <span class="sd">    All field parameters are in SI units.</span>
 
 <span class="sd">    Analytic expression is from [1]_.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">+=</span> <span class="n">pi</span>
 
-        <span class="k">if</span> <span class="s2">&quot;E0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
-            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Field params need to have either W (energy) or&quot;</span>
-                       <span class="s2">&quot;E0 (amplitude) as key&quot;</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">err_msg</span>
+        <span class="k">if</span> <span class="s2">"E0"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Field params need to have either W (energy) or"</span>
+                       <span class="s2">"E0 (amplitude) as key"</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="s2">"W"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">err_msg</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">E0</span> <span class="o">=</span> <span class="mf">1.0e10</span>
 
         <span class="c1"># Define additional field variables</span>
@@ -367,33 +367,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rotate_coordinates</span><span class="p">()</span>
 
         <span class="c1"># Define variables not depending on time step</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="s2">&quot;(w0 * sqrt(1. + (z/zR)**2))&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;sqrt(x**2 + y**2)&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">r2</span> <span class="o">=</span> <span class="s2">&quot;(x**2 + y**2)&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">R_inv</span> <span class="o">=</span> <span class="s2">&quot;(z/(z**2 + zR**2))&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="s2">"(w0 * sqrt(1. + (z/zR)**2))"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="s2">"sqrt(x**2 + y**2)"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2</span> <span class="o">=</span> <span class="s2">"(x**2 + y**2)"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_inv</span> <span class="o">=</span> <span class="s2">"(z/(z**2 + zR**2))"</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">rw</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2">*sqrt(2)/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rw</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2">*sqrt(2)/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lag_poly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw</span><span class="o">**</span><span class="n">l_phi</span> <span class="o">*</span> <span class="n">genlaguerre</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">l_phi</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">rw</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;B0 * w0/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2"> * exp(-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">**2) * lag_poly&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"B0 * w0/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2"> * exp(-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">**2) * lag_poly"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phase_no_t</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;phase0 - k*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R_inv</span><span class="si">}</span><span class="s2">/2 + (2*p+l+1)*arctan(z/zR) + &quot;</span>
-             <span class="s2">&quot;l*arctan2(y,x)&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="sa">f</span><span class="s2">"phase0 - k*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R_inv</span><span class="si">}</span><span class="s2">/2 + (2*p+l+1)*arctan(z/zR) + "</span>
+             <span class="s2">"l*arctan2(y,x)"</span><span class="p">),</span>
             <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
         <span class="c1"># Set up correct field amplitude</span>
-        <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"W"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_energy</span><span class="p">()</span>
 
 <div class="viewcode-block" id="LaguerreGaussianAnalytic.check_energy">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/laguerre_gaussian/index.html#quvac.field.laguerre_gaussian.LaguerreGaussianAnalytic.check_energy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check and adjust the field energy.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_energy</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modify_energy</span><span class="p">:</span>
@@ -404,23 +404,23 @@
 
 <div class="viewcode-block" id="LaguerreGaussianAnalytic.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/laguerre_gaussian/index.html#quvac.field.laguerre_gaussian.LaguerreGaussianAnalytic.calculate_field">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;real&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"real"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">k</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="c1"># noqa: F841</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">psi_plane</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(omega*(t-t0) - k*z)&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;(phase_no_t + psi_plane)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psi_plane</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"(omega*(t-t0) - k*z)"</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">"(phase_no_t + psi_plane)"</span>
 
         <span class="n">Et</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;E * exp(-(2.*psi_plane/(omega*tau))**2) * exp(-1.j*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"E * exp(-(2.*psi_plane/(omega*tau))**2) * exp(-1.j*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
             <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="n">Et</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"real"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">convert_fields_to_real</span><span class="p">()</span>
 
         <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_fields_back</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -459,7 +459,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

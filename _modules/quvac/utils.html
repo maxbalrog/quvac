@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.utils - quvac 1.0.1 documentation</title>
+        <title>quvac.utils - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,9 +278,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Useful generic utilities.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
@@ -304,7 +304,7 @@
 <div class="viewcode-block" id="read_yaml">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.read_yaml">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read a YAML file and return its contents.</span>
 
 <span class="sd">    Parameters</span>
@@ -316,7 +316,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
 <span class="sd">        Contents of the YAML file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
@@ -330,7 +330,7 @@
 <div class="viewcode-block" id="write_yaml">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.write_yaml">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Write data to a YAML file.</span>
 
 <span class="sd">    Parameters</span>
@@ -339,8 +339,8 @@
 <span class="sd">        Path to the YAML file.</span>
 <span class="sd">    data : dict</span>
 <span class="sd">        Data to write to the YAML file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
@@ -348,7 +348,7 @@
 <div class="viewcode-block" id="format_time">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.format_time">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_time</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Format time in seconds to a human-readable string.</span>
 
 <span class="sd">    Parameters</span>
@@ -360,24 +360,24 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        Formatted time string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">days</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">86400</span><span class="p">)</span>
     <span class="n">hours</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">3600</span><span class="p">)</span>
     <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
     <span class="n">out_str</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">days</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> days&quot;</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">days</span><span class="p">),</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hours</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> h&quot;</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">hours</span><span class="p">),</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> min&quot;</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">minutes</span><span class="p">),</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">days</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> days"</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">days</span><span class="p">),</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">hours</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> h"</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">hours</span><span class="p">),</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">minutes</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> min"</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">(</span><span class="n">minutes</span><span class="p">),</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s"</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="format_memory">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.format_memory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_memory</span><span class="p">(</span><span class="n">mem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Format memory in kilobytes to a human-readable string.</span>
 
 <span class="sd">    Parameters</span>
@@ -389,20 +389,20 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        Formatted memory string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;KB MB GB TB&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="s2">"KB MB GB TB"</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="n">mem</span> <span class="o">&gt;</span> <span class="mi">1024</span><span class="p">:</span>
         <span class="n">mem</span> <span class="o">/=</span> <span class="mi">1024</span>
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mem</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">units</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mem</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">units</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="save_wisdom">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.save_wisdom">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_wisdom</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_host_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save FFTW wisdom to a file.</span>
 
 <span class="sd">    Parameters</span>
@@ -413,12 +413,12 @@
 <span class="sd">        Path to save the FFTW wisdom, by default None.</span>
 <span class="sd">    add_host_name : bool, optional</span>
 <span class="sd">        Whether to add the host name to the wisdom file name, by default False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">wisdom_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wisdom_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">wisdom_path</span><span class="p">):</span>
             <span class="n">Path</span><span class="p">(</span><span class="n">wisdom_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">wisdom_name</span> <span class="o">=</span> <span class="s2">&quot;fftw-wisdom&quot;</span>
+        <span class="n">wisdom_name</span> <span class="o">=</span> <span class="s2">"fftw-wisdom"</span>
         <span class="k">if</span> <span class="n">add_host_name</span><span class="p">:</span>
             <span class="n">wisdom_name</span> <span class="o">+=</span> <span class="n">platform</span><span class="o">.</span><span class="n">node</span><span class="p">()</span>
         <span class="n">wisdom_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wisdom_path</span><span class="p">,</span> <span class="n">wisdom_name</span><span class="p">)</span>
@@ -427,15 +427,15 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">wisdom_path</span><span class="p">):</span>
             <span class="n">Path</span><span class="p">(</span><span class="n">wisdom_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">wisdom</span> <span class="o">=</span> <span class="n">pyfftw</span><span class="o">.</span><span class="n">export_wisdom</span><span class="p">()</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">wisdom_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wisdom</span><span class="p">))</span></div>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">wisdom_file</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wisdom</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="load_wisdom">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.load_wisdom">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_wisdom</span><span class="p">(</span><span class="n">wisdom_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load FFTW wisdom from a file.</span>
 
 <span class="sd">    Parameters</span>
@@ -447,24 +447,24 @@
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
 <span class="sd">        FFTW wisdom.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">wisdom_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">wisdom_file</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">wisdom</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">wisdom</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">wisdom</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="get_maxrss">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.get_maxrss">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_maxrss</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the maximum resident set size used (in kilobytes).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    int</span>
 <span class="sd">        Maximum resident set size used.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">resource</span><span class="o">.</span><span class="n">getrusage</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">RUSAGE_SELF</span><span class="p">)</span><span class="o">.</span><span class="n">ru_maxrss</span></div>
 
 
@@ -472,7 +472,7 @@
 <div class="viewcode-block" id="zip_directory_shutil">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.zip_directory_shutil">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">zip_directory_shutil</span><span class="p">(</span><span class="n">directory_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Zip a directory using shutil.</span>
 
 <span class="sd">    Parameters</span>
@@ -481,15 +481,15 @@
 <span class="sd">        Path to the directory to zip.</span>
 <span class="sd">    output_path : str</span>
 <span class="sd">        Path to save the zipped directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">)</span></div>
+<span class="sd">    """</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">'zip'</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="find_classes_in_package">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.find_classes_in_package">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_classes_in_package</span><span class="p">(</span><span class="n">package_name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Find all class names in a given package.</span>
 
 <span class="sd">    Parameters</span>
@@ -501,7 +501,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of str</span>
 <span class="sd">        List of class names in the package.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">classes</span> <span class="o">=</span> <span class="p">[]</span>
     
     <span class="c1"># Import the package</span>
@@ -509,7 +509,7 @@
     
     <span class="c1"># Recursively find all modules in the package</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">walk_packages</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">__path__</span><span class="p">,</span> 
-                                                   <span class="n">package</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">):</span>
+                                                   <span class="n">package</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">"."</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
             
@@ -517,10 +517,10 @@
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">):</span>
                 <span class="c1"># Ensure class belongs to the module (not an imported one)</span>
                 <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">module_name</span><span class="p">:</span>
-                    <span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping </span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2"> due to error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping </span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2"> due to error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">classes</span></div>
 
@@ -529,7 +529,7 @@
 <div class="viewcode-block" id="round_to_n">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.round_to_n">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">round_to_n</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Round up to n significant digits.</span>
 
 <span class="sd">    Parameters</span>
@@ -543,7 +543,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    int or float:</span>
 <span class="sd">        Rounded number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span></div>
 
 
@@ -551,9 +551,9 @@
 <div class="viewcode-block" id="size_to_Gb">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.size_to_Gb">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">size_to_Gb</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert the size of float64 array to GBs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">size</span><span class="o">*</span><span class="mi">8</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span></div>
 
 
@@ -561,9 +561,9 @@
 <div class="viewcode-block" id="estimate_max_required_memory">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.estimate_max_required_memory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">estimate_max_required_memory</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Estimate max requred memory based on the grid size.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># this value is estimated by running the simulation with different grid sizes,</span>
     <span class="c1"># looking at the max used memory and fitting a line to the dependency</span>
     <span class="c1"># max memory vs grid size</span>
@@ -577,7 +577,7 @@
 <div class="viewcode-block" id="estimate_memory_usage">
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.estimate_memory_usage">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Estimate potential memory usage for a given ini file.</span>
 
 <span class="sd">    Parameters</span>
@@ -588,16 +588,16 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
-<span class="sd">        Required memory in format &#39;&lt;number&gt;GB&#39;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Required memory in format '&lt;number&gt;GB'.</span>
+<span class="sd">    """</span>
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">setup_grids</span><span class="p">(</span>
-        <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fields&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> 
-        <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fields"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> 
+        <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">required_memory</span> <span class="o">=</span> <span class="n">estimate_max_required_memory</span><span class="p">(</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">required_memory</span><span class="si">}</span><span class="s2">GB&quot;</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">required_memory</span><span class="si">}</span><span class="s2">GB"</span></div>
 
 
 
@@ -605,9 +605,9 @@
 <a class="viewcode-back" href="../../autoapi/quvac/utils/index.html#quvac.utils.free_memory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">free_memory</span><span class="p">():</span>
     <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"linux"</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>
-        <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="s2">&quot;libc.so.6&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">malloc_trim</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+        <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="s2">"libc.so.6"</span><span class="p">)</span><span class="o">.</span><span class="n">malloc_trim</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -641,7 +641,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

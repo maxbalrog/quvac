@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.field.dipole - quvac 1.0.1 documentation</title>
+        <title>quvac.field.dipole - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,19 +278,19 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.field.dipole</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Analytic expression for dipole wave and function to create multibeam</span>
 <span class="sd">configuration by compining several focused fields.</span>
 
 <span class="sd">----</span>
 
-<span class="sd">.. [1] I. Gonoskov et al. &quot;Dipole pulse theory: Maximizing the field</span>
-<span class="sd">    amplitude from 4 π focused laser pulses.&quot; PRA 86.5 (2012): 053836.</span>
+<span class="sd">.. [1] I. Gonoskov et al. "Dipole pulse theory: Maximizing the field</span>
+<span class="sd">    amplitude from 4 π focused laser pulses." PRA 86.5 (2012): 053836.</span>
 
-<span class="sd">.. [2] S. S. Bulanov et al. &quot;Multiple Colliding Electromagnetic Pulses: </span>
-<span class="sd">    A Way to Lower the Threshold of e+ e-Pair Production from Vacuum.&quot; </span>
+<span class="sd">.. [2] S. S. Bulanov et al. "Multiple Colliding Electromagnetic Pulses: </span>
+<span class="sd">    A Way to Lower the Threshold of e+ e-Pair Production from Vacuum." </span>
 <span class="sd">    PRL 104.22 (2010): 220404.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="c1"># ruff: noqa: F841</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
@@ -303,7 +303,7 @@
 <div class="viewcode-block" id="DipoleAnalytic">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DipoleAnalytic</span><span class="p">(</span><span class="n">ExplicitField</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Analytic expression for dipole wave.</span>
 
 <span class="sd">    Parameters</span>
@@ -327,9 +327,9 @@
 <span class="sd">            - W : float, optional</span>
 <span class="sd">                Energy.</span>
 <span class="sd">            - envelope : str</span>
-<span class="sd">                Envelope type, either &quot;plane&quot; or &quot;gauss&quot;.</span>
+<span class="sd">                Envelope type, either "plane" or "gauss".</span>
 <span class="sd">            - dipole_type : str</span>
-<span class="sd">                Type of dipole, either &quot;electric&quot; or &quot;magnetic&quot;.</span>
+<span class="sd">                Type of dipole, either "electric" or "magnetic".</span>
 <span class="sd">    grid : quvac.grid.GridXYZ</span>
 <span class="sd">        Spatial and spectral grid.</span>
 <span class="sd">    </span>
@@ -338,14 +338,14 @@
 <span class="sd">    Dipole wave expression is from [1]_.</span>
 
 <span class="sd">    d0 is along ez by default.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;envelope&quot;</span><span class="p">,</span> <span class="s2">&quot;plane&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;dipole_type&quot;</span><span class="p">,</span> <span class="s2">&quot;electric&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;phase0&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"beta"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"envelope"</span><span class="p">,</span> <span class="s2">"plane"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"dipole_type"</span><span class="p">,</span> <span class="s2">"electric"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"phase0"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># Define additional field variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_x</span>
@@ -358,23 +358,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rotate_coordinates</span><span class="p">()</span>
 
         <span class="c1"># Define variables independent of time</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">R_expr</span> <span class="o">=</span> <span class="s1">&#39;sqrt(x**2 + y**2 + z**2)&#39;</span> <span class="c1"># radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_expr</span> <span class="o">=</span> <span class="s1">'sqrt(x**2 + y**2 + z**2)'</span> <span class="c1"># radius</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span>  <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
-        <span class="n">R_inv_expr</span> <span class="o">=</span> <span class="s2">&quot;where(R==0, 0, 1/R)&quot;</span>
+        <span class="n">R_inv_expr</span> <span class="o">=</span> <span class="s2">"where(R==0, 0, 1/R)"</span>
         <span class="n">R_inv</span> <span class="o">=</span>  <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">R_inv_expr</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">*</span><span class="n">R_inv</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
-                        <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
-                        <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
-                        <span class="s2">&quot;omega&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span>
-                        <span class="s2">&quot;phase0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span><span class="p">,</span>
-                        <span class="s2">&quot;d0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">d0</span><span class="p">,</span>
-                        <span class="s2">&quot;nx&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
-                        <span class="s2">&quot;ny&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
-                        <span class="s2">&quot;nz&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"R"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+                        <span class="s2">"c"</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
+                        <span class="s2">"k"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                        <span class="s2">"omega"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span>
+                        <span class="s2">"phase0"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase0</span><span class="p">,</span>
+                        <span class="s2">"d0"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">d0</span><span class="p">,</span>
+                        <span class="s2">"nx"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
+                        <span class="s2">"ny"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
+                        <span class="s2">"nz"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_envelope_expressions</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_energy</span><span class="p">()</span>
@@ -382,34 +382,34 @@
 <div class="viewcode-block" id="DipoleAnalytic.set_envelope_expressions">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.set_envelope_expressions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_envelope_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Defines envelope expressions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">&quot;plane&quot;</span><span class="p">:</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="s2">&quot;1j*exp(-1j*omega*t - 1j*phase0)&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">"plane"</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="s2">"1j*exp(-1j*omega*t - 1j*phase0)"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">g_expr</span> <span class="o">=</span> <span class="n">env</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-1j*omega*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-omega**2*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="s2">&quot;omega**3&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">&quot;gauss&quot;</span><span class="p">:</span>
-            <span class="n">a2</span> <span class="o">=</span> <span class="s2">&quot;(1/(tau/2)**2)&quot;</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-1j*exp(-t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2"> - 1j*omega*t - 1j*phase0)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-1j*omega*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-omega**2*</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="s2">"omega**3"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">envelope</span> <span class="o">==</span> <span class="s2">"gauss"</span><span class="p">:</span>
+            <span class="n">a2</span> <span class="o">=</span> <span class="s2">"(1/(tau/2)**2)"</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-1j*exp(-t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2"> - 1j*omega*t - 1j*phase0)"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">g_expr</span> <span class="o">=</span> <span class="n">env</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - 1j*omega)&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">**2 - 2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - omega**2 + &#39;</span>
-                                 <span class="sa">f</span><span class="s1">&#39;4j*t*omega*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">*(4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - 3*omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">)&quot;</span>
-                         <span class="sa">f</span><span class="s2">&quot; - 1j*omega*(12*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">))&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdot_expr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - 1j*omega)'</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdotdot_expr</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1"> * (4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">**2 - 2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1"> - omega**2 + '</span>
+                                 <span class="sa">f</span><span class="s1">'4j*t*omega*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E_R0</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2"> * (-2*t*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">*(4*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - 3*omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">)"</span>
+                         <span class="sa">f</span><span class="s2">" - 1j*omega*(12*t**2*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">**2 - omega**2 - 6*</span><span class="si">{</span><span class="n">a2</span><span class="si">}</span><span class="s2">))"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Envelope </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="si">}</span><span class="s2"> not implemented&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Envelope </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">envelope</span><span class="si">}</span><span class="s2"> not implemented"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DipoleAnalytic.check_energy">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.check_energy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks and adjusts the energy of the field.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_energy</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modify_energy</span><span class="p">:</span>
@@ -447,44 +447,44 @@
     
 <div class="viewcode-block" id="DipoleAnalytic.calculate_field">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.DipoleAnalytic.calculate_field">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;real&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">E_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">B_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"real"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the electric and magnetic fields at a given time step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gdotdot_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="n">gdotdot_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdotdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">gdot_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="n">gdot_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdot_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">g_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g_plusminus</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">Bt</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;gdotdot_p/(R*c**2) + gdot_m/(R**2*c)&quot;</span><span class="p">,</span> 
+        <span class="n">Bt</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"gdotdot_p/(R*c**2) + gdot_m/(R**2*c)"</span><span class="p">,</span> 
                          <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
-        <span class="n">Et</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;gdot_p/(c*R**2) + g_m/R**3&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="n">Et</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"gdot_p/(c*R**2) + g_m/R**3"</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">'nx*nz*gdotdot_m/(R*c**2) + 3*nx*nz*Et'</span><span class="p">,</span>
                               <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et&#39;</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">'ny*nz*gdotdot_m/(R*c**2) + 3*ny*nz*Et'</span><span class="p">,</span> 
                               <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;-(nx**2+ny**2)*gdotdot_m/(R*c**2) + (3*nz**2-1)*Et&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">'-(nx**2+ny**2)*gdotdot_m/(R*c**2) + (3*nz**2-1)*Et'</span><span class="p">,</span>
                                <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;-ny*Bt&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;nx*Bt&quot;</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"-ny*Bt"</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"nx*Bt"</span><span class="p">,</span> <span class="n">global_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EB_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="mf">0.</span>
         
         <span class="c1"># fix divergence at R=0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fix_singularity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
         <span class="c1"># h-dipole (magnetic) transformation</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">==</span> <span class="s2">&quot;magnetic&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_type</span> <span class="o">==</span> <span class="s2">"magnetic"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bx</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">Bx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ex</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">By</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">By</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ey</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Bz</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">Bz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ez</span>
 
-        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="s2">&quot;Ex Ey Ez Bx By Bz&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="s2">"Ex Ey Ez Bx By Bz"</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d0</span>
 
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"real"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">convert_fields_to_real</span><span class="p">()</span>
 
         <span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_fields_back</span><span class="p">(</span><span class="n">E_out</span><span class="p">,</span> <span class="n">B_out</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -495,8 +495,8 @@
 
 <div class="viewcode-block" id="create_multibeam">
 <a class="viewcode-back" href="../../../autoapi/quvac/field/dipole/index.html#quvac.field.dipole.create_multibeam">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_multibeam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">n_beams</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;belt&#39;</span><span class="p">,</span> <span class="n">phi0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx0</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_multibeam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">n_beams</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'belt'</span><span class="p">,</span> <span class="n">phi0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx0</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create multibeam configuration from several focused pulses to </span>
 <span class="sd">    approximate the dipole wave and achieve higher intensity </span>
 <span class="sd">    at focus.</span>
@@ -508,7 +508,7 @@
 <span class="sd">    n_beams : int, optional</span>
 <span class="sd">        Number of beams, by default 6.</span>
 <span class="sd">    mode : str, optional</span>
-<span class="sd">        Configuration mode, either &#39;belt&#39; or &#39;sphere&#39;, by default &#39;belt&#39;.</span>
+<span class="sd">        Configuration mode, either 'belt' or 'sphere', by default 'belt'.</span>
 <span class="sd">    phi0 : float, optional</span>
 <span class="sd">        Initial angle for the beams, by default 0.</span>
 <span class="sd">    idx0 : int, optional</span>
@@ -522,29 +522,29 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Configuration follows from [2]_.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># distribute the energy</span>
-    <span class="n">W_per_beam</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;W&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_beams</span>
+    <span class="n">W_per_beam</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'W'</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_beams</span>
     <span class="n">beams</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sphere&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"sphere"</span><span class="p">:</span>
         <span class="n">n_beams</span> <span class="o">=</span> <span class="n">n_beams</span> <span class="o">//</span> <span class="mi">3</span>
         <span class="n">theta_arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">]</span>
     <span class="n">phi_c</span> <span class="o">=</span> <span class="mi">360</span><span class="o">/</span><span class="n">n_beams</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_beams</span><span class="p">):</span>
         <span class="n">params_beam</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;W&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_per_beam</span>
-        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">phi_c</span> <span class="o">+</span> <span class="n">phi0</span>
-        <span class="n">params_beam</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">"W"</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_per_beam</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">"phi"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">phi_c</span> <span class="o">+</span> <span class="n">phi0</span>
+        <span class="n">params_beam</span><span class="p">[</span><span class="s2">"theta"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">90</span>
         <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
-            <span class="k">case</span> <span class="s2">&quot;belt&quot;</span><span class="p">:</span>
-                <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;field_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_beam</span>
-            <span class="k">case</span> <span class="s2">&quot;sphere&quot;</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">"belt"</span><span class="p">:</span>
+                <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">"field_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_beam</span>
+            <span class="k">case</span> <span class="s2">"sphere"</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">theta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">theta_arr</span><span class="p">):</span>
                     <span class="n">idx</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="n">j</span>
                     <span class="n">params_phi</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params_beam</span><span class="p">)</span>
-                    <span class="n">params_phi</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">theta</span>
-                    <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;field_</span><span class="si">{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_phi</span>
+                    <span class="n">params_phi</span><span class="p">[</span><span class="s2">"theta"</span><span class="p">]</span> <span class="o">+=</span> <span class="n">theta</span>
+                    <span class="n">beams</span><span class="p">[</span><span class="sa">f</span><span class="s2">"field_</span><span class="si">{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">idx0</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_phi</span>
     <span class="k">return</span> <span class="n">beams</span></div>
 
 </pre></div>
@@ -579,7 +579,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

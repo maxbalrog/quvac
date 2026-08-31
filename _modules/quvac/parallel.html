@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.parallel - quvac 1.0.1 documentation</title>
+        <title>quvac.parallel - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,9 +278,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.parallel</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Utilities to run simulations in parallel either locally or in Slurm environment.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
@@ -290,13 +290,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">quvac_simulation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">estimate_memory_usage</span>
 
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"simulation"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="slurm_time_to_mins">
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.slurm_time_to_mins">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">slurm_time_to_mins</span><span class="p">(</span><span class="n">slurm_time</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Converts Slurm time in format `DAYS-HOURS:MINUTES:SECONDS` to minutes.</span>
 
 <span class="sd">    Parameters</span>
@@ -308,11 +308,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    int</span>
 <span class="sd">        Time in minutes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">slurm_time</span><span class="p">:</span>
-        <span class="n">days</span><span class="p">,</span> <span class="n">slurm_time</span> <span class="o">=</span> <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-    <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span>  <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"-"</span> <span class="ow">in</span> <span class="n">slurm_time</span><span class="p">:</span>
+        <span class="n">days</span><span class="p">,</span> <span class="n">slurm_time</span> <span class="o">=</span> <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">)</span>
+    <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span>  <span class="n">slurm_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
     <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">days</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">hours</span><span class="o">*</span><span class="mi">60</span> <span class="o">+</span> <span class="n">mins</span></div>
 
@@ -321,7 +321,7 @@
 <div class="viewcode-block" id="slurm_to_submitit_params">
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.slurm_to_submitit_params">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">slurm_to_submitit_params</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Transform Slurm keywords to relevant ones for submitit.</span>
 
 <span class="sd">    Parameters</span>
@@ -333,14 +333,14 @@
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
 <span class="sd">        Parameters for sbatch script in submitit format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">keys_to_copy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;slurm_partition&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cpus_per_task&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="sd">    """</span>
+    <span class="n">keys_to_copy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"slurm_partition"</span><span class="p">:</span> <span class="s2">"cpu"</span><span class="p">,</span> <span class="s2">"cpus_per_task"</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
     <span class="n">submitit_params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">sbatch_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default_val</span><span class="p">)</span> 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">default_val</span> <span class="ow">in</span> <span class="n">keys_to_copy</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
-    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">&quot;slurm_mem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sbatch_params</span><span class="p">[</span><span class="s2">&quot;memory&quot;</span><span class="p">]</span>
-    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">&quot;timeout_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slurm_time_to_mins</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">[</span><span class="s2">&quot;walltime&quot;</span><span class="p">])</span>
+    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">"slurm_mem"</span><span class="p">]</span> <span class="o">=</span> <span class="n">sbatch_params</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span>
+    <span class="n">submitit_params</span><span class="p">[</span><span class="s2">"timeout_min"</span><span class="p">]</span> <span class="o">=</span> <span class="n">slurm_time_to_mins</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">[</span><span class="s2">"walltime"</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">submitit_params</span></div>
 
 
@@ -349,12 +349,12 @@
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.create_job_executor">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_job_executor</span><span class="p">(</span><span class="n">cluster_type</span><span class="p">,</span> <span class="n">executor_folder</span><span class="p">,</span> <span class="n">sbatch_params</span><span class="p">,</span>
                         <span class="n">max_parallel_jobs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create submitit job executor.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cluster_type: &#39;local&#39; or &#39;slurm&#39;</span>
+<span class="sd">    cluster_type: 'local' or 'slurm'</span>
 <span class="sd">        On which machine the calculation would be performed.</span>
 <span class="sd">    executor_folder: str</span>
 <span class="sd">        Path where to create a folder for executor files and logs.</span>
@@ -367,9 +367,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    submitit.AutoExecutor</span>
 <span class="sd">        Executor for running jobs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">executor</span> <span class="o">=</span> <span class="n">submitit</span><span class="o">.</span><span class="n">AutoExecutor</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">executor_folder</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="n">cluster_type</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">cluster_type</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cluster_type</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
         <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">slurm_array_parallelism</span><span class="o">=</span><span class="n">max_parallel_jobs</span><span class="p">)</span>
     <span class="n">executor</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">sbatch_params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">executor</span></div>
@@ -380,7 +380,7 @@
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.setup_job_executor_from_params">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_job_executor_from_params</span><span class="p">(</span><span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> 
                                    <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Setup job executor from unified cluster parameters.</span>
 
 <span class="sd">    Parameters</span>
@@ -396,15 +396,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    submitit.AutoExecutor</span>
 <span class="sd">        Executor for running jobs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">max_parallel_jobs</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_parallel_jobs&quot;</span><span class="p">,</span> 
+<span class="sd">    """</span>
+    <span class="n">max_parallel_jobs</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_parallel_jobs"</span><span class="p">,</span> 
                                            <span class="n">max_parallel_jobs_default</span><span class="p">)</span>
-    <span class="n">cluster_type</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cluster_type&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">)</span>
-    <span class="n">sbatch_params</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sbatch_params&quot;</span><span class="p">,</span> <span class="n">DEFAULT_SLURM_PARAMS</span><span class="p">)</span>
+    <span class="n">cluster_type</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cluster_type"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">)</span>
+    <span class="n">sbatch_params</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sbatch_params"</span><span class="p">,</span> <span class="n">DEFAULT_SLURM_PARAMS</span><span class="p">)</span>
     <span class="n">sbatch_params</span> <span class="o">=</span> <span class="n">slurm_to_submitit_params</span><span class="p">(</span><span class="n">sbatch_params</span><span class="p">)</span>
 
     <span class="c1"># Create submitit executor</span>
-    <span class="n">submitit_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;submitit_files&quot;</span><span class="p">)</span>
+    <span class="n">submitit_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">"submitit_files"</span><span class="p">)</span>
     <span class="n">executor</span> <span class="o">=</span> <span class="n">create_job_executor</span><span class="p">(</span><span class="n">cluster_type</span><span class="p">,</span> <span class="n">submitit_folder</span><span class="p">,</span> <span class="n">sbatch_params</span><span class="p">,</span>
                                    <span class="n">max_parallel_jobs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">executor</span></div>
@@ -414,7 +414,7 @@
 <div class="viewcode-block" id="submit_jobs_with_memory_estimation">
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.submit_jobs_with_memory_estimation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Submit jobs for a list of initialization files estimating memory usage</span>
 <span class="sd">    for each of them.</span>
 
@@ -429,7 +429,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of submitit jobs</span>
 <span class="sd">        Submitted jobs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">ini_file</span> <span class="ow">in</span> <span class="n">ini_files</span><span class="p">:</span>
         <span class="n">memory</span> <span class="o">=</span> <span class="n">estimate_memory_usage</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
@@ -444,7 +444,7 @@
 <a class="viewcode-back" href="../../autoapi/quvac/parallel/index.html#quvac.parallel.run_simulations_with_job_executor">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_simulations_with_job_executor</span><span class="p">(</span><span class="n">ini_files</span><span class="p">,</span> <span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span>
                                       <span class="n">max_parallel_jobs_default</span><span class="o">=</span><span class="mi">2</span><span class="p">,):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Run simulations for a list of ini files with job executor.</span>
 
 <span class="sd">    Parameters</span>
@@ -457,24 +457,24 @@
 <span class="sd">        Path where to create a folder for submitit files and logs.</span>
 <span class="sd">    max_parallel_jobs_default: int, optional</span>
 <span class="sd">        Maximal number of jobs to run concurrently.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">executor</span> <span class="o">=</span> <span class="n">setup_job_executor_from_params</span><span class="p">(</span><span class="n">cluster_params</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> 
                                               <span class="n">max_parallel_jobs_default</span><span class="p">)</span>
 
     <span class="c1"># Submit jobs</span>
-    <span class="n">estimate_memory_usage</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimate_memory_usage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Submitting jobs...&quot;</span><span class="p">)</span>
+    <span class="n">estimate_memory_usage</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"estimate_memory_usage"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Submitting jobs..."</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">estimate_memory_usage</span><span class="p">:</span>
-        <span class="n">memory_buffer</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_buffer&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">memory_buffer</span> <span class="o">=</span> <span class="n">cluster_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"memory_buffer"</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="n">jobs</span> <span class="o">=</span> <span class="n">submit_jobs_with_memory_estimation</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">,</span> <span class="n">memory_buffer</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">jobs</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map_array</span><span class="p">(</span><span class="n">quvac_simulation</span><span class="p">,</span> <span class="n">ini_files</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs submitted, waiting for results...&quot;</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Jobs submitted, waiting for results..."</span><span class="p">)</span>
 
     <span class="c1"># Wait till all jobs end</span>
     <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">submitit</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">jobs</span><span class="p">):</span>
         <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Jobs are finished&quot;</span><span class="p">)</span></div>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Jobs are finished"</span><span class="p">)</span></div>
 
 
 </pre></div>
@@ -509,7 +509,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

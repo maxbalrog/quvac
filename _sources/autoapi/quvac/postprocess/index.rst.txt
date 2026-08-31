@@ -36,9 +36,12 @@ Functions
 
    quvac.postprocess.get_polarization_vector
    quvac.postprocess.sph2cart
+   quvac.postprocess.cyl2cart
    quvac.postprocess.xyz2idx
    quvac.postprocess.cartesian_to_spherical_array
+   quvac.postprocess.cartesian_to_cylindrical_array
    quvac.postprocess.integrate_spherical
+   quvac.postprocess.get_discernible_signal_in_frequency_band
    quvac.postprocess.signal_in_detector
    quvac.postprocess.get_simulation_fields
    quvac.postprocess.transform_S12_to_a12
@@ -79,6 +82,23 @@ Module Contents
    :rtype: numpy.ndarray
 
 
+.. py:function:: cyl2cart(r, phi, zcyl)
+
+   Convert cylindrical coordinates to Cartesian coordinates.
+
+   Parameters
+       ----------
+   r : numpy.ndarray
+       Radial distance.
+   phi : numpy.ndarray
+       Azimuthal angle.
+   z : numpy.ndarray
+       Radial distance.
+
+   :returns: **x, y, z** -- Cartesian coordinates.
+   :rtype: numpy.ndarray
+
+
 .. py:function:: xyz2idx(xyz, xyz_grid)
 
    Convert Cartesian coordinates to array indices.
@@ -113,6 +133,27 @@ Module Contents
              * **arr_sph** (*numpy.ndarray*) -- Array with data on spherical grid.
 
 
+.. py:function:: cartesian_to_cylindrical_array(arr, xyz_grid, cylindrical_grid=None, angular_resolution=None, angular_resolution_factor=None)
+
+   Transform an array with data on Cartesian grid to the array with data
+   on cylindrical grid.
+
+   :param arr: Array with data on Cartesian grid.
+   :type arr: numpy.ndarray
+   :param xyz_grid: Cartesian grid object.
+   :type xyz_grid: quvac.grid.GridXYZ
+   :param cylindrical_grid: Cylindrical grid or path to the file containing the cylindrical grid,
+                            by default None.
+   :type cylindrical_grid: tuple or str, optional
+   :param angular_resolution: Angular resolution, by default None.
+   :type angular_resolution: float, optional
+   :param angular_resolution_factor: Factor that multiplies default angular resolution given by dk / kmax.
+   :type angular_resolution_factor: float, optional
+
+   :returns: * **cylindrical_grid** (*tuple*) -- Cylindrical grid.
+             * **arr_cyl** (*numpy.ndarray*) -- Array with data on cylindrical grid.
+
+
 .. py:function:: integrate_spherical(arr, axs, axs_names=('k', 'theta', 'phi'), axs_integrate=('k', 'theta', 'phi'))
 
    Integrate an array over spherical coordinates.
@@ -137,6 +178,22 @@ Module Contents
    the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).
 
    The function uses trapezoidal rule for integration.
+
+
+.. py:function:: get_discernible_signal_in_frequency_band(data, lam0=8e-07, freq_band=(1.5, 2.5))
+
+   Given a frequency band (for spectrum in spherical coordinates),
+   calculate the discernible signal there.
+
+   :param data: Simulation results.
+   :type data: result of np.load(...)
+   :param lam0: Fundamental wavelength, by default 800e-9.
+   :type lam0: float
+   :param freq_band: Frequency band in normalized values (by k0), by default (1.5, 2.5).
+   :type freq_band: tuple
+
+   :returns: **Ndisc** -- Discernible signal.
+   :rtype: float
 
 
 .. py:function:: signal_in_detector(dN, theta, phi, detector, align_to_max=False)

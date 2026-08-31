@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.pyfftw_executor - quvac 1.0.1 documentation</title>
+        <title>quvac.pyfftw_executor - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,12 +278,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.pyfftw_executor</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span></span><span class="sd">'''</span>
 <span class="sd">Pyfftw executor that is used in all 3D FFTs.</span>
 
 <span class="sd">At the moment, batched FFT transforms of three 3D arrays are performed (corresponding</span>
 <span class="sd">to a vector field on 3D grid).</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">'''</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyfftw</span>
@@ -294,7 +294,7 @@
 <div class="viewcode-block" id="FFTExecutor">
 <a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FFTExecutor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to unite the FFT calculation.</span>
 
 <span class="sd">    Parameters</span>
@@ -322,7 +322,7 @@
 <span class="sd">        Forward FFT executor.</span>
 <span class="sd">    backward_fftw : pyfftw.FFTW</span>
 <span class="sd">        Backward FFT executor.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fft_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tmp_shape</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span> <span class="o">=</span> <span class="n">nthreads</span> <span class="k">if</span> <span class="n">nthreads</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
@@ -331,10 +331,10 @@
 <div class="viewcode-block" id="FFTExecutor.allocate_fft">
 <a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.FFTExecutor.allocate_fft">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">allocate_fft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Allocate buffer array and set up FFT executors if they were not already.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;tmp&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"tmp"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_fft</span><span class="p">()</span></div>
 
 
@@ -345,7 +345,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
             <span class="n">axes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_axes</span><span class="p">,</span>
-            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;FFTW_FORWARD&quot;</span><span class="p">,</span>
+            <span class="n">direction</span><span class="o">=</span><span class="s2">"FFTW_FORWARD"</span><span class="p">,</span>
             <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span><span class="p">,),</span>
             <span class="n">threads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span>
         <span class="p">)</span>
@@ -354,7 +354,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span><span class="p">,</span>
             <span class="n">axes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fft_axes</span><span class="p">,</span>
-            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;FFTW_BACKWARD&quot;</span><span class="p">,</span>
+            <span class="n">direction</span><span class="o">=</span><span class="s2">"FFTW_BACKWARD"</span><span class="p">,</span>
             <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span><span class="p">,),</span>
             <span class="n">threads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nthreads</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -364,11 +364,11 @@
 <div class="viewcode-block" id="setup_fftw_executor">
 <a class="viewcode-back" href="../../autoapi/quvac/pyfftw_executor/index.html#quvac.pyfftw_executor.setup_fftw_executor">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_fftw_executor</span><span class="p">(</span><span class="n">fft_executor</span><span class="p">,</span> <span class="n">grid_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Unified function to:</span>
 <span class="sd">        - (Optional) Set up FFTExecutor if it was not already.</span>
 <span class="sd">        - Allocate buffer arrays and FFT executors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">fft_executor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fft_executor</span> <span class="o">=</span> <span class="n">FFTExecutor</span><span class="p">(</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
     <span class="n">fft_executor</span><span class="o">.</span><span class="n">allocate_fft</span><span class="p">()</span>
@@ -406,7 +406,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

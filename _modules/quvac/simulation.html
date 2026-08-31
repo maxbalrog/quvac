@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.simulation - quvac 1.0.1 documentation</title>
+        <title>quvac.simulation - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -279,7 +279,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.simulation</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">Script to launch Vacuum Emission simulation, do postprocessing</span>
 <span class="sd">and measure performance.</span>
 
@@ -288,7 +288,7 @@
 <span class="sd">.. code-block:: bash</span>
 
 <span class="sd">    python simulation.py -i &lt;input&gt;.yml -o &lt;output_dir&gt; --wisdom &lt;wisdom_file&gt;</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
@@ -323,29 +323,29 @@
     <span class="n">write_yaml</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;simulation&quot;</span><span class="p">)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"simulation"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="parse_args">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.parse_args">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calculate quantum vacuum signal for external fields.&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Calculate quantum vacuum signal for external fields."</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Parse command-line arguments.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    argparse.Namespace</span>
 <span class="sd">        Parsed command-line arguments.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
     <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--input&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input yaml file with field and grid params&quot;</span>
+        <span class="s2">"--input"</span><span class="p">,</span> <span class="s2">"-i"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Input yaml file with field and grid params"</span>
     <span class="p">)</span>
     <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to save simulation data to&quot;</span>
+        <span class="s2">"--output"</span><span class="p">,</span> <span class="s2">"-o"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Path to save simulation data to"</span>
     <span class="p">)</span>
     <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--wisdom&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;wisdom/fftw-wisdom&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File to save pyfftw-wisdom&quot;</span>
+        <span class="s2">"--wisdom"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"wisdom/fftw-wisdom"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"File to save pyfftw-wisdom"</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
@@ -354,7 +354,7 @@
 <div class="viewcode-block" id="check_dirs">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.check_dirs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_dirs</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Check if directories exist and create them if necessary.</span>
 
 <span class="sd">    Parameters</span>
@@ -368,8 +368,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    save_path : str</span>
 <span class="sd">        Validated save path.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_file</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2"> is not a file or does not exist&quot;</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_file</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2"> is not a file or does not exist"</span>
     <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_path</span><span class="p">):</span>
@@ -381,7 +381,7 @@
 <div class="viewcode-block" id="get_filenames">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.get_filenames">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_filenames</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get filenames for saving simulation data.</span>
 
 <span class="sd">    Parameters</span>
@@ -397,19 +397,19 @@
 <span class="sd">    -------</span>
 <span class="sd">    files : dict</span>
 <span class="sd">        Dictionary containing filenames for saving simulation data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;simulation_postprocess&#39;</span><span class="p">)</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'mode'</span><span class="p">,</span> <span class="s1">'simulation_postprocess'</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;save_path&quot;</span><span class="p">:</span> <span class="n">save_path</span><span class="p">,</span>
-        <span class="s2">&quot;ini&quot;</span><span class="p">:</span> <span class="n">ini_file</span><span class="p">,</span>
-        <span class="s2">&quot;wisdom&quot;</span><span class="p">:</span> <span class="n">wisdom_file</span><span class="p">,</span>
-        <span class="s2">&quot;amplitudes&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;amplitudes.npz&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;spectra&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;spectra.npz&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_performance.yml&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;integration_weights&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;integration_weights.npy&quot;</span><span class="p">),</span>
+        <span class="s2">"save_path"</span><span class="p">:</span> <span class="n">save_path</span><span class="p">,</span>
+        <span class="s2">"ini"</span><span class="p">:</span> <span class="n">ini_file</span><span class="p">,</span>
+        <span class="s2">"wisdom"</span><span class="p">:</span> <span class="n">wisdom_file</span><span class="p">,</span>
+        <span class="s2">"amplitudes"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">"amplitudes.npz"</span><span class="p">),</span>
+        <span class="s2">"spectra"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">"spectra.npz"</span><span class="p">),</span>
+        <span class="s2">"performance"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_performance.yml"</span><span class="p">),</span>
+        <span class="s2">"logger"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.log"</span><span class="p">),</span>
+        <span class="s2">"integration_weights"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">"integration_weights.npy"</span><span class="p">),</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">files</span></div>
 
@@ -418,7 +418,7 @@
 <div class="viewcode-block" id="get_dirs">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.get_dirs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_dirs</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get directories for saving simulation data.</span>
 
 <span class="sd">    Parameters</span>
@@ -434,7 +434,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    files : dict</span>
 <span class="sd">        Dictionary containing directories for saving simulation data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">save_path</span> <span class="o">=</span> <span class="n">check_dirs</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">get_filenames</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">files</span></div>
@@ -444,27 +444,27 @@
 <div class="viewcode-block" id="set_precision">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.set_precision">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Set global precision for calculations.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    precision : str</span>
-<span class="sd">        Precision type, either &quot;float32&quot; or &quot;float64&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">precision</span> <span class="o">==</span> <span class="s2">&quot;float32&quot;</span><span class="p">:</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span> <span class="o">=</span> <span class="s2">&quot;float32&quot;</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span> <span class="o">=</span> <span class="s2">&quot;complex64&quot;</span>
+<span class="sd">        Precision type, either "float32" or "float64".</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">precision</span> <span class="o">==</span> <span class="s2">"float32"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span> <span class="o">=</span> <span class="s2">"float32"</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span> <span class="o">=</span> <span class="s2">"complex64"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span> <span class="o">=</span> <span class="s2">&quot;float64&quot;</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span> <span class="o">=</span> <span class="s2">&quot;complex128&quot;</span></div>
+        <span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span> <span class="o">=</span> <span class="s2">"float64"</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">CDTYPE</span> <span class="o">=</span> <span class="s2">"complex128"</span></div>
 
 
 
 <div class="viewcode-block" id="set_pyfftw_flag">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.set_pyfftw_flag">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_pyfftw_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Set global planning flag for pyfftw.</span>
 
 <span class="sd">    Parameters</span>
@@ -472,7 +472,7 @@
 <span class="sd">    flag : str</span>
 <span class="sd">        How much to plan the transform. One of `FFTW_ESTIMATE`, `FFTW_MEASURE`, </span>
 <span class="sd">        `FFTW_PATIENT` and `FFTW_EXHAUSTIVE`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">config</span><span class="o">.</span><span class="n">FFTW_FLAG</span> <span class="o">=</span> <span class="n">flag</span></div>
 
 
@@ -480,15 +480,15 @@
 <div class="viewcode-block" id="create_basic_logger">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.create_basic_logger">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_basic_logger</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Set up basic logger configuration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
-        <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
-        <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="n">filemode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
         <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">%(message)s</span><span class="s2">"</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -496,7 +496,7 @@
 <div class="viewcode-block" id="run_simulation">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.run_simulation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">timings</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Run the vacuum emission simulation.</span>
 
 <span class="sd">    Parameters</span>
@@ -518,45 +518,45 @@
 <span class="sd">        Updated dictionary with timing information.</span>
 <span class="sd">    memory : dict</span>
 <span class="sd">        Updated dictionary with memory usage information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">grid_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;grid&quot;</span><span class="p">]</span>
-    <span class="n">perf_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="sd">    """</span>
+    <span class="n">grid_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">"grid"</span><span class="p">]</span>
+    <span class="n">perf_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"performance"</span><span class="p">,</span> <span class="p">{})</span>
 
     <span class="c1"># Determine integrator type</span>
-    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integrator&quot;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">integrator_type</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum_emission&quot;</span><span class="p">)</span>
-    <span class="n">channels</span> <span class="o">=</span> <span class="n">integrator_type</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">)</span>
+    <span class="n">integrator_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"integrator"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">integrator_type</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"vacuum_emission"</span><span class="p">)</span>
+    <span class="n">channels</span> <span class="o">=</span> <span class="n">integrator_type</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"channels"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
-        <span class="n">probe_pump_idx</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;probe_pump_idx&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">probe_pump_idx</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"probe_pump_idx"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="c1"># Determine time quadrature rule</span>
-    <span class="n">integration_method</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integration_method&quot;</span><span class="p">,</span> <span class="s2">&quot;trapezoid&quot;</span><span class="p">)</span>
-    <span class="n">load_integration_weights</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;load_integration_weights&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">integration_method</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"integration_method"</span><span class="p">,</span> <span class="s2">"trapezoid"</span><span class="p">)</span>
+    <span class="n">load_integration_weights</span> <span class="o">=</span> <span class="n">integrator_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"load_integration_weights"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">load_integration_weights</span><span class="p">:</span>
-        <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;integration_weights&quot;</span><span class="p">])</span>
+        <span class="n">integration_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">"integration_weights"</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">integration_weights</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Set up number of threads</span>
-    <span class="n">nthreads</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nthreads&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
+    <span class="n">nthreads</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"nthreads"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
     <span class="n">ne</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="n">nthreads</span><span class="p">)</span>
-    <span class="n">pyfftw_threads</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pyfftw_threads&quot;</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
-    <span class="n">use_wisdom</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_wisdom&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">pyfftw_threads</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pyfftw_threads"</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
+    <span class="n">use_wisdom</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"use_wisdom"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
-    <span class="c1"># Check if it&#39;s a test run to plan resources</span>
-    <span class="n">test_run</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;test_run&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">test_timesteps</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;test_timesteps&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="c1"># Check if it's a test run to plan resources</span>
+    <span class="n">test_run</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"test_run"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">test_timesteps</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"test_timesteps"</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 
     <span class="c1"># Load fftw-wisdom if possible</span>
-    <span class="k">if</span> <span class="n">use_wisdom</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;wisdom&#39;</span><span class="p">]):</span>
-        <span class="n">pyfftw</span><span class="o">.</span><span class="n">import_wisdom</span><span class="p">(</span><span class="n">load_wisdom</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;wisdom&#39;</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">use_wisdom</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">'wisdom'</span><span class="p">]):</span>
+        <span class="n">pyfftw</span><span class="o">.</span><span class="n">import_wisdom</span><span class="p">(</span><span class="n">load_wisdom</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">'wisdom'</span><span class="p">]))</span>
 
     <span class="c1"># Get grids</span>
     <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span> <span class="o">=</span> <span class="n">setup_grids</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">)</span>
     <span class="n">grid_xyz</span><span class="o">.</span><span class="n">get_k_grid</span><span class="p">()</span>
     <span class="n">grid_print</span> <span class="o">=</span> <span class="n">get_grid_params</span><span class="p">(</span><span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">grid_print</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Grids are created</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Grids are created</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Set up FFT executor</span>
     <span class="n">fft_executor</span> <span class="o">=</span> <span class="n">FFTExecutor</span><span class="p">(</span><span class="n">grid_xyz</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">,</span> <span class="n">pyfftw_threads</span><span class="p">)</span>
@@ -565,11 +565,11 @@
     <span class="k">if</span> <span class="n">test_run</span><span class="p">:</span>
         <span class="n">expected_timesteps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
         <span class="n">grid_t</span> <span class="o">=</span> <span class="n">grid_t</span><span class="p">[:</span><span class="n">test_timesteps</span><span class="p">]</span>
-        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing test run for </span><span class="si">{</span><span class="n">test_timesteps</span><span class="si">}</span><span class="s2"> timesteps</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Performing test run for </span><span class="si">{</span><span class="n">test_timesteps</span><span class="si">}</span><span class="s2"> timesteps</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Field setup</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Field constructor:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="s2">&quot;====================================================&quot;</span>
+        <span class="s2">"Field constructor:</span><span class="se">\n</span><span class="s2">"</span> <span class="s2">"===================================================="</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">channels</span><span class="p">:</span>
         <span class="n">field</span> <span class="o">=</span> <span class="n">ExternalField</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> 
@@ -582,39 +582,39 @@
             <span class="n">fft_executor</span><span class="o">=</span><span class="n">fft_executor</span><span class="p">,</span>
             <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;====================================================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Fields are set up&quot;</span><span class="p">)</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'field_setup'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"====================================================</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Fields are set up"</span><span class="p">)</span>
 
     <span class="c1"># Calculate amplitudes</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">channels</span><span class="p">:</span>
-        <span class="n">log_message</span> <span class="o">=</span> <span class="s2">&quot;Calculating vacuum emission amplitude with external field...&quot;</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="s2">"Calculating vacuum emission amplitude with external field..."</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">probe_pump</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">probe_pump_idx</span>
         <span class="n">log_message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Calculating vacuum emission amplitude for probe channel...</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;    Probe idx: </span><span class="si">{</span><span class="n">probe_pump</span><span class="p">[</span><span class="s1">&#39;probe&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;    Pump  idx: </span><span class="si">{</span><span class="n">probe_pump</span><span class="p">[</span><span class="s1">&#39;pump&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="s2">"Calculating vacuum emission amplitude for probe channel...</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"    Probe idx: </span><span class="si">{</span><span class="n">probe_pump</span><span class="p">[</span><span class="s1">'probe'</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"    Pump  idx: </span><span class="si">{</span><span class="n">probe_pump</span><span class="p">[</span><span class="s1">'pump'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_message</span><span class="p">)</span>
     <span class="n">vacem</span> <span class="o">=</span> <span class="n">VacuumEmission</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">grid_xyz</span><span class="p">,</span> <span class="n">fft_executor</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">pyfftw_threads</span><span class="p">,</span> 
                            <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;vacem_setup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'vacem_setup'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">integration_method</span><span class="si">}</span><span class="s2"> quadrature for time integration.&quot;</span><span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using </span><span class="si">{</span><span class="n">integration_method</span><span class="si">}</span><span class="s2"> quadrature for time integration."</span><span class="p">)</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'integral'</span><span class="p">]</span> <span class="o">=</span> <span class="n">vacem</span><span class="o">.</span><span class="n">calculate_amplitudes</span><span class="p">(</span>
         <span class="n">grid_t</span><span class="p">,</span>
         <span class="n">integration_method</span><span class="o">=</span><span class="n">integration_method</span><span class="p">,</span>
         <span class="n">integration_weights</span><span class="o">=</span><span class="n">integration_weights</span><span class="p">,</span>
-        <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span>
+        <span class="n">save_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">]</span>
     <span class="p">)</span>
     
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">memory</span><span class="p">[</span><span class="s1">&#39;maxrss_amplitudes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Amplitudes are calculated&quot;</span><span class="p">)</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">memory</span><span class="p">[</span><span class="s1">'maxrss_amplitudes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Amplitudes are calculated"</span><span class="p">)</span>
 
     <span class="n">Nt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;per_iteration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">Nt</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'per_iteration'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">timings</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'field_setup'</span><span class="p">])</span> <span class="o">/</span> <span class="n">Nt</span>
 
     <span class="k">if</span> <span class="n">test_run</span><span class="p">:</span>
         <span class="n">test_run_str_print</span> <span class="o">=</span> <span class="n">get_test_timings</span><span class="p">(</span><span class="n">timings</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">),</span> <span class="n">expected_timesteps</span><span class="p">)</span>
@@ -627,7 +627,7 @@
 <div class="viewcode-block" id="postprocess_simulation">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.postprocess_simulation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">postprocess_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Perform postprocessing on the simulation data.</span>
 
 <span class="sd">    Parameters</span>
@@ -638,48 +638,48 @@
 <span class="sd">        Dictionary containing filenames for saving simulation data.</span>
 <span class="sd">    fields_params : list of dict</span>
 <span class="sd">        List of dictionaries containing the field parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Get postprocess params from ini config</span>
-    <span class="n">postprocess_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;postprocess&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">postprocess_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"postprocess"</span><span class="p">,</span> <span class="p">{})</span>
 
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;perp_type&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_polarization_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-        <span class="s2">&quot;perp_field_idx&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_field_idx&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="s2">&quot;stokes&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stokes&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_xyz_background&quot;</span><span class="p">,</span>
+        <span class="s2">"perp_type"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"perp_polarization_type"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"perp_field_idx"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"perp_field_idx"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"stokes"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stokes"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">"calculate_xyz_background"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"calculate_xyz_background"</span><span class="p">,</span>
                                                            <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;bgr_idx&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bgr_idx&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;calculate_spherical&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_spherical&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;spherical_params&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spherical_params&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="s2">&quot;calculate_discernible&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_discernible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;discernibility&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;discernibility&quot;</span><span class="p">,</span> <span class="s2">&quot;angular&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;add_signal_bg&quot;</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;add_signal_bg&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">"bgr_idx"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bgr_idx"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">"calculate_spherical"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"calculate_spherical"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">"spherical_params"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"spherical_params"</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="s2">"calculate_discernible"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"calculate_discernible"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s2">"discernibility"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"discernibility"</span><span class="p">,</span> <span class="s2">"angular"</span><span class="p">),</span>
+        <span class="s2">"add_signal_bg"</span><span class="p">:</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"add_signal_bg"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
     <span class="p">}</span>
 
     <span class="c1"># Do postprocessing</span>
     <span class="n">postprocess_print</span> <span class="o">=</span> <span class="n">get_postprocess_info</span><span class="p">(</span><span class="n">postprocess_params</span><span class="p">)</span>
     <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">postprocess_print</span><span class="p">)</span>
 
-    <span class="n">modes</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modes&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="s2">&quot;polarization&quot;</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;perp_type&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-         <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+    <span class="n">modes</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"modes"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"total"</span><span class="p">,</span> <span class="s2">"polarization"</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"perp_type"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+         <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"total"</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">modes</span><span class="p">:</span>
-        <span class="n">save_path</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;spectra&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.npz&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.npz&quot;</span><span class="p">)</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="s1">'spectra'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">".npz"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">.npz"</span><span class="p">)</span>
         <span class="n">analyzer</span> <span class="o">=</span> <span class="n">VacuumEmissionAnalyzer</span><span class="p">(</span>
-            <span class="n">fields_params</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">],</span> <span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span>
+            <span class="n">fields_params</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">],</span> <span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span>
         <span class="p">)</span>
         <span class="n">analyzer</span><span class="o">.</span><span class="n">get_spectra</span><span class="p">(</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MILESTONE: Spectra are calculated from amplitudes&quot;</span><span class="p">)</span></div>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"MILESTONE: Spectra are calculated from amplitudes"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="quvac_simulation">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.quvac_simulation">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">quvac_simulation</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="o">=</span><span class="s2">&quot;wisdom/fftw-wisdom&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">quvac_simulation</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="o">=</span><span class="s2">"wisdom/fftw-wisdom"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Launch a single quvac simulation for given &lt;ini&gt;.yml file.</span>
 
 <span class="sd">    Parameters</span>
@@ -689,39 +689,39 @@
 <span class="sd">    save_path : str, optional</span>
 <span class="sd">        Path to save simulation results to, by default None.</span>
 <span class="sd">    wisdom_file : str, optional</span>
-<span class="sd">        Path to save pyfftw-wisdom, by default &quot;wisdom/fftw-wisdom&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Path to save pyfftw-wisdom, by default "wisdom/fftw-wisdom".</span>
+<span class="sd">    """</span>
     <span class="c1"># Check that ini file and save_path exist</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">get_dirs</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">)</span>
     
     <span class="c1"># Load and parse ini yaml file</span>
     <span class="n">ini_config</span> <span class="o">=</span> <span class="n">read_yaml</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="c1"># One can choose either to perform just simulation, just postprocess or both</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;simulation_postprocess&#39;</span><span class="p">)</span>
-    <span class="n">do_simulation</span> <span class="o">=</span> <span class="s1">&#39;simulation&#39;</span> <span class="ow">in</span> <span class="n">mode</span>
-    <span class="n">do_postprocess</span> <span class="o">=</span> <span class="s1">&#39;postprocess&#39;</span> <span class="ow">in</span> <span class="n">mode</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'mode'</span><span class="p">,</span> <span class="s1">'simulation_postprocess'</span><span class="p">)</span>
+    <span class="n">do_simulation</span> <span class="o">=</span> <span class="s1">'simulation'</span> <span class="ow">in</span> <span class="n">mode</span>
+    <span class="n">do_postprocess</span> <span class="o">=</span> <span class="s1">'postprocess'</span> <span class="ow">in</span> <span class="n">mode</span>
 
     <span class="c1"># Setup logger</span>
-    <span class="n">create_basic_logger</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;logger&quot;</span><span class="p">])</span>
+    <span class="n">create_basic_logger</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">"logger"</span><span class="p">])</span>
 
     <span class="c1"># Start time</span>
-    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"start"</span><span class="p">)</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;maxrss_amplitudes&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'maxrss_amplitudes'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 
-    <span class="n">perf_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">perf_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"performance"</span><span class="p">,</span> <span class="p">{})</span>
     <span class="c1"># Set up global precision for calculations</span>
     <span class="c1"># Note: since we use numexpr, internally it casts to </span>
     <span class="c1"># float64 and complex128 anyway!</span>
-    <span class="n">precision</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;float64&quot;</span><span class="p">)</span>
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"precision"</span><span class="p">,</span> <span class="s2">"float64"</span><span class="p">)</span>
     <span class="n">set_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">precision</span><span class="si">}</span><span class="s2"> precision&quot;</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using </span><span class="si">{</span><span class="n">precision</span><span class="si">}</span><span class="s2"> precision"</span><span class="p">)</span>
     <span class="c1"># Set pyfftw planning flag</span>
-    <span class="n">pyfftw_flag</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pyfftw_flag&quot;</span><span class="p">,</span> <span class="s2">&quot;FFTW_MEASURE&quot;</span><span class="p">)</span>
+    <span class="n">pyfftw_flag</span> <span class="o">=</span> <span class="n">perf_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pyfftw_flag"</span><span class="p">,</span> <span class="s2">"FFTW_MEASURE"</span><span class="p">)</span>
     <span class="n">set_pyfftw_flag</span><span class="p">(</span><span class="n">pyfftw_flag</span><span class="p">)</span>
 
-    <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+    <span class="n">fields_params</span> <span class="o">=</span> <span class="n">ini_config</span><span class="p">[</span><span class="s2">"fields"</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">fields_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
@@ -732,16 +732,16 @@
     <span class="c1"># Calculate spectra</span>
     <span class="k">if</span> <span class="n">do_postprocess</span><span class="p">:</span>
         <span class="n">postprocess_simulation</span><span class="p">(</span><span class="n">ini_config</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">fields_params</span><span class="p">)</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;postprocess&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;postprocess&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'postprocess'</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">timings</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'postprocess'</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span>
 
     <span class="c1"># Save gained wisdom (for fftw)</span>
     <span class="n">save_wisdom</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">wisdom_file</span><span class="p">)</span>
 
-    <span class="n">memory</span><span class="p">[</span><span class="s1">&#39;maxrss_total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
-    <span class="n">perf_stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;timings&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">,</span> <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="n">memory</span><span class="p">}</span>
+    <span class="n">memory</span><span class="p">[</span><span class="s1">'maxrss_total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_maxrss</span><span class="p">()</span>
+    <span class="n">perf_stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"timings"</span><span class="p">:</span> <span class="n">timings</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="n">memory</span><span class="p">}</span>
 
-    <span class="n">write_yaml</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;performance&#39;</span><span class="p">],</span> <span class="n">perf_stats</span><span class="p">)</span>
+    <span class="n">write_yaml</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s1">'performance'</span><span class="p">],</span> <span class="n">perf_stats</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">do_simulation</span><span class="p">:</span>
         <span class="n">perf_print</span> <span class="o">=</span> <span class="n">get_performance_stats</span><span class="p">(</span><span class="n">perf_stats</span><span class="p">)</span>
@@ -752,25 +752,25 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">perf_print</span><span class="p">)</span>
         <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">perf_print</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation finished!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Simulation finished!"</span><span class="p">)</span>
 
     <span class="c1"># End time</span>
-    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span></div>
+    <span class="n">log_time</span><span class="p">(</span><span class="n">_logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"end"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="main_simulation">
 <a class="viewcode-back" href="../../autoapi/quvac/simulation/index.html#quvac.simulation.main_simulation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main_simulation</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Main function to run the simulation script.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
     <span class="n">quvac_simulation</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wisdom</span><span class="p">)</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">main_simulation</span><span class="p">()</span>
 </pre></div>
         </article>
@@ -804,7 +804,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

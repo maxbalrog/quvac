@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.grid - quvac 1.0.1 documentation</title>
+        <title>quvac.grid - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,7 +278,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.grid</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Functions for creating spatial and temporal grids.</span>
 
 <span class="sd">1. ``GridXYZ`` class that calculates the spatial grid and its </span>
@@ -296,7 +296,7 @@
 <span class="sd">    Parts of dynamical grid creation for gaussian beams were initially</span>
 <span class="sd">    implemented by Alexander Blinne (``get_kmax_from_bw``, ``get_xyz_size``,</span>
 <span class="sd">    ``get_t_size``).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
@@ -312,7 +312,7 @@
 <div class="viewcode-block" id="GridXYZ">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.GridXYZ">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GridXYZ</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculates spatial grid and its Fourier counterpart.</span>
 
 <span class="sd">    Parameters</span>
@@ -349,14 +349,14 @@
 <span class="sd">        The x, y, and z components of the first polarization vector.</span>
 <span class="sd">    e2x, e2y, e2z : np.array</span>
 <span class="sd">        The x, y, and z components of the second polarization vector.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
         <span class="c1"># Define spatial grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">size</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
-            <span class="o">*</span><span class="n">grid</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="o">*</span><span class="n">grid</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">"ij"</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dxyz</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dxyz</span><span class="p">)</span>
@@ -366,13 +366,13 @@
 <div class="viewcode-block" id="GridXYZ.get_k_grid">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.GridXYZ.get_k_grid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_k_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the k-space grid and polarization vectors.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kgrid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_k_grid</span><span class="p">()</span></div>
 
@@ -380,10 +380,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_k_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">"xyz"</span><span class="p">):</span>
             <span class="n">Nx</span><span class="p">,</span> <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_shape</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dxyz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">Nx</span><span class="p">,</span> <span class="n">dx</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"k</span><span class="si">{</span><span class="n">ax</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">kgrid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kgrid_shifted</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
@@ -393,25 +393,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dVk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dkxkykz</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">kmeshgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ky</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kz</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">"ij"</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">kz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmeshgrid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span> <span class="o">=</span> <span class="n">kabs</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2 + kz**2)&quot;</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
-        <span class="n">kperp</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(kx**2 + ky**2)&quot;</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kabs</span> <span class="o">=</span> <span class="n">kabs</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"sqrt(kx**2 + ky**2 + kz**2)"</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
+        <span class="n">kperp</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"sqrt(kx**2 + ky**2)"</span><span class="p">)</span> <span class="c1"># noqa: F841</span>
 
         <span class="c1"># Polarization vectors</span>
         <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-            <span class="s2">&quot;where((kx==0) &amp; (ky==0), 2*(kz&gt;0)-1, kx * kz / (kperp*kabs))&quot;</span><span class="p">,</span>
+            <span class="s2">"where((kx==0) &amp; (ky==0), 2*(kz&gt;0)-1, kx * kz / (kperp*kabs))"</span><span class="p">,</span>
             <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 0, ky * kz / (kperp*kabs))&quot;</span><span class="p">,</span> 
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"where((kx==0) &amp; (ky==0), 0, ky * kz / (kperp*kabs))"</span><span class="p">,</span> 
                     <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 0, -kperp / kabs)&quot;</span><span class="p">,</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"where((kx==0) &amp; (ky==0), 0, -kperp / kabs)"</span><span class="p">,</span>
                     <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e1</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e1x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e1</span>
 
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 0, -ky / kperp)&quot;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;where((kx==0) &amp; (ky==0), 1, kx / kperp)&quot;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"where((kx==0) &amp; (ky==0), 0, -ky / kperp)"</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">"where((kx==0) &amp; (ky==0), 1, kx / kperp)"</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">e2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e2x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2</span></div>
 
 
@@ -419,7 +419,7 @@
 <div class="viewcode-block" id="get_ek">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_ek">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_ek</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate k-vector for given spherical angles theta and phi.</span>
 
 <span class="sd">    Parameters</span>
@@ -433,7 +433,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        A 3-element array representing the k-vector.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ek</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)]</span>
     <span class="p">)</span>
@@ -444,7 +444,7 @@
 <div class="viewcode-block" id="get_pol_basis">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_pol_basis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_pol_basis</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate polarization basis for given spherical angles theta and phi.</span>
 
 <span class="sd">    Parameters</span>
@@ -459,7 +459,7 @@
 <span class="sd">    tuple of numpy.ndarray</span>
 <span class="sd">        A tuple containing two 3-element arrays representing the polarization</span>
 <span class="sd">        basis vectors e1 and e2.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span>
@@ -472,7 +472,7 @@
 <div class="viewcode-block" id="get_polarization_vector">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_polarization_vector">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_polarization_vector</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate polarization vector for given spherical angles theta and phi</span>
 <span class="sd">    and polarization angle beta.</span>
 
@@ -489,7 +489,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        3-element array representing the polarization vector.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="o">=</span> <span class="n">get_pol_basis</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
     <span class="n">ebeta</span> <span class="o">=</span> <span class="n">e1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">e2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ebeta</span></div>
@@ -499,7 +499,7 @@
 <div class="viewcode-block" id="gaussian_bandwidth">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.gaussian_bandwidth">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gaussian_bandwidth</span><span class="p">(</span><span class="n">field_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the gaussian bandwidth.</span>
 
 <span class="sd">    Parameters</span>
@@ -509,7 +509,7 @@
 <span class="sd">            - tau : float</span>
 <span class="sd">                Pulse duration.</span>
 <span class="sd">            - w0 : float, optional</span>
-<span class="sd">                Beam waist. If &#39;w0&#39; is not provided, &#39;w0x&#39; and &#39;w0y&#39; are used.</span>
+<span class="sd">                Beam waist. If 'w0' is not provided, 'w0x' and 'w0y' are used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -525,14 +525,14 @@
 <span class="sd">    - exp(-r**2/w0**2) -&gt; exp(-w0**2*kperp**2/4) -&gt; kperp_bw ~ 2*2/w0</span>
 <span class="sd">    </span>
 <span class="sd">    - exp(-t**2/(tau/2)**2) -&gt; exp(-tau**2*k**2/16) -&gt; k_long ~ 2*4/(c*tau)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tau</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;tau&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"tau"</span><span class="p">]</span>
 
     <span class="c1"># gaussian might have circular or elliptic cross section</span>
-    <span class="k">if</span> <span class="s2">&quot;w0&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
-        <span class="n">w0</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;w0&quot;</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="s2">&quot;w0x&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
-        <span class="n">w0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;w0x&quot;</span><span class="p">],</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;w0y&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s2">"w0"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+        <span class="n">w0</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"w0"</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s2">"w0x"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">:</span>
+        <span class="n">w0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">field_params</span><span class="p">[</span><span class="s2">"w0x"</span><span class="p">],</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"w0y"</span><span class="p">])</span>
 
     <span class="n">kbw_perp</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">w0</span>
     <span class="n">kbw_long</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">/</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
@@ -544,7 +544,7 @@
 <div class="viewcode-block" id="dipole_bandwidth">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.dipole_bandwidth">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dipole_bandwidth</span><span class="p">(</span><span class="n">field_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the dipole bandwidth.</span>
 
 <span class="sd">    Parameters</span>
@@ -565,14 +565,14 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The length scales are taken from:</span>
-<span class="sd">    I. Gonoskov et al. &quot;Dipole pulse theory: Maximizing the field amplitude </span>
-<span class="sd">    from 4π focused laser pulses.&quot; PRA 86.5 (2012): 053836.</span>
+<span class="sd">    I. Gonoskov et al. "Dipole pulse theory: Maximizing the field amplitude </span>
+<span class="sd">    from 4π focused laser pulses." PRA 86.5 (2012): 053836.</span>
 
 <span class="sd">    l_para = 0.58 * lam</span>
 <span class="sd">    </span>
 <span class="sd">    l_perp = 0.4 * lam</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lam</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">&quot;lam tau&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+<span class="sd">    """</span>
+    <span class="n">lam</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="s2">"lam tau"</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
     
     <span class="n">l_long</span> <span class="o">=</span> <span class="mf">0.58</span><span class="o">*</span><span class="n">lam</span>
     <span class="n">l_perp</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">*</span><span class="n">lam</span>
@@ -589,7 +589,7 @@
 <div class="viewcode-block" id="get_bw">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_bw">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_bw</span><span class="p">(</span><span class="n">field_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the bandwidths for a given field type.</span>
 
 <span class="sd">    Parameters</span>
@@ -607,28 +607,28 @@
 <span class="sd">    ------</span>
 <span class="sd">    NotImplementedError</span>
 <span class="sd">        If the field type is not supported.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ftype</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;gaussian&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="s2">&quot;w0&quot;</span> <span class="ow">in</span> <span class="n">field_params</span> <span class="ow">or</span> <span class="s2">&quot;w0x&quot;</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;Gaussian field parameters must have either &#39;w0&#39; or &#39;w0x&#39; key&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">ftype</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"field_type"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"gaussian"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s2">"w0"</span> <span class="ow">in</span> <span class="n">field_params</span> <span class="ow">or</span> <span class="s2">"w0x"</span> <span class="ow">in</span> <span class="n">field_params</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">"Gaussian field parameters must have either 'w0' or 'w0x' key"</span>
         <span class="p">)</span>
         <span class="n">bws</span> <span class="o">=</span> <span class="n">gaussian_bandwidth</span><span class="p">(</span><span class="n">field_params</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;dipole&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="s2">"dipole"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
         <span class="n">bws</span> <span class="o">=</span> <span class="n">dipole_bandwidth</span><span class="p">(</span><span class="n">field_params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">bws</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_check_keys</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">required_keys</span><span class="p">):</span>
-    <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Field parameters must have </span><span class="si">{</span><span class="n">required_keys</span><span class="si">}</span><span class="s2"> keys&quot;</span>
+    <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Field parameters must have </span><span class="si">{</span><span class="n">required_keys</span><span class="si">}</span><span class="s2"> keys"</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">field_params</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">),</span> <span class="n">err_msg</span>
 
 
 <div class="viewcode-block" id="get_kmax_from_bw">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_kmax_from_bw">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_kmax_from_bw</span><span class="p">(</span><span class="n">field_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the maximum k-vector from bandwidth along each dimension </span>
 <span class="sd">    for a given field.</span>
 
@@ -654,8 +654,8 @@
 <span class="sd">    -----</span>
 <span class="sd">    The maximum k-vector is calculated based on the bandwidths derived from the </span>
 <span class="sd">    field parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">required_keys</span> <span class="o">=</span> <span class="s2">&quot;lam tau theta phi&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">required_keys</span> <span class="o">=</span> <span class="s2">"lam tau theta phi"</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="n">_check_keys</span><span class="p">(</span><span class="n">field_params</span><span class="p">,</span> <span class="n">required_keys</span><span class="p">)</span>
 
     <span class="n">lam</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">]</span>
@@ -683,7 +683,7 @@
 <div class="viewcode-block" id="get_kmax_grid">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_kmax_grid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_kmax_grid</span><span class="p">(</span><span class="n">field_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the maximum k-vector along each dimension for a given field type.</span>
 
 <span class="sd">    Parameters</span>
@@ -700,12 +700,12 @@
 <span class="sd">    ------</span>
 <span class="sd">    NotImplementedError</span>
 <span class="sd">        If the field type is not supported.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ftype</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;gaussian&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;dipole&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">):</span>
+<span class="sd">    """</span>
+    <span class="n">ftype</span> <span class="o">=</span> <span class="n">field_params</span><span class="p">[</span><span class="s2">"field_type"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s2">"gaussian"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">"dipole"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">):</span>
         <span class="n">kmax</span> <span class="o">=</span> <span class="n">get_kmax_from_bw</span><span class="p">(</span><span class="n">field_params</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ftype</span><span class="si">}</span><span class="s2"> field type is not supported&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ftype</span><span class="si">}</span><span class="s2"> field type is not supported"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">kmax</span></div>
 
 
@@ -713,7 +713,7 @@
 <div class="viewcode-block" id="get_xyz_size">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_xyz_size">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_xyz_size</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">equal_resolution</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate necessary spatial resolution.</span>
 
 <span class="sd">    Parameters</span>
@@ -732,7 +732,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list of int</span>
 <span class="sd">        List containing the number of grid points along each dimension.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="n">box_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">box_size</span><span class="p">)</span>
@@ -754,7 +754,7 @@
 <div class="viewcode-block" id="get_t_size">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_t_size">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_t_size</span><span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate necessary temporal resolution.</span>
 
 <span class="sd">    Parameters</span>
@@ -772,7 +772,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Number of time steps.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fmax</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="n">lam</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">t_end</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">fmax</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">grid_res</span><span class="p">))</span></div>
 
@@ -783,10 +783,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_max_duration</span><span class="p">(</span><span class="n">fields_params</span><span class="p">):</span>
     <span class="n">tau_max</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">:</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tau"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="c1"># spectral chirp increases effective pulse duration</span>
-        <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;paraxial_gaussian_spectral_maxwell&quot;</span><span class="p">:</span>
-            <span class="n">alpha</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alpha_chirp&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s2">"field_type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"paraxial_gaussian_spectral_maxwell"</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"alpha_chirp"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">tau</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">tau_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">tau</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">tau_max</span></div>
@@ -796,7 +796,7 @@
 <div class="viewcode-block" id="get_box_size">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.get_box_size">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_box_size</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the necessary box size for the spatial grid.</span>
 
 <span class="sd">    Parameters</span>
@@ -825,25 +825,25 @@
 <span class="sd">    -----</span>
 <span class="sd">    The box size is calculated based on the maximum beam waist and pulse duration</span>
 <span class="sd">    among the fields, scaled by the transverse and longitudinal factors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">perp_max</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">:</span>
-        <span class="n">ftype</span> <span class="o">=</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;field_type&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;gauss&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
-            <span class="n">w0</span><span class="p">,</span> <span class="n">w0x</span><span class="p">,</span> <span class="n">w0y</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;w0&quot;</span><span class="p">,</span> <span class="s2">&quot;w0x&quot;</span><span class="p">,</span> <span class="s2">&quot;w0y&quot;</span><span class="p">)]</span>
+        <span class="n">ftype</span> <span class="o">=</span> <span class="n">field</span><span class="p">[</span><span class="s2">"field_type"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"gauss"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
+            <span class="n">w0</span><span class="p">,</span> <span class="n">w0x</span><span class="p">,</span> <span class="n">w0y</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"w0"</span><span class="p">,</span> <span class="s2">"w0x"</span><span class="p">,</span> <span class="s2">"w0y"</span><span class="p">)]</span>
             <span class="n">length</span> <span class="o">=</span> <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">w0</span><span class="p">,</span> <span class="n">w0x</span><span class="p">,</span> <span class="n">w0y</span><span class="p">])</span>
-            <span class="c1"># length = field.get(&quot;w0&quot;, 0)</span>
-        <span class="k">elif</span> <span class="s2">&quot;dipole&quot;</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+            <span class="c1"># length = field.get("w0", 0)</span>
+        <span class="k">elif</span> <span class="s2">"dipole"</span> <span class="ow">in</span> <span class="n">ftype</span><span class="p">:</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tau"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">perp_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">perp_max</span><span class="p">)</span>
     
-    <span class="c1"># tau_max = max([field.get(&quot;tau&quot;, 0) for field in fields_params])</span>
+    <span class="c1"># tau_max = max([field.get("tau", 0) for field in fields_params])</span>
     <span class="n">tau_max</span> <span class="o">=</span> <span class="n">get_max_duration</span><span class="p">(</span><span class="n">fields_params</span><span class="p">)</span>
 
-    <span class="n">transverse_size</span> <span class="o">=</span> <span class="n">perp_max</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;transverse_factor&quot;</span><span class="p">]</span>
-    <span class="n">longitudinal_size</span> <span class="o">=</span> <span class="n">tau_max</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;longitudinal_factor&quot;</span><span class="p">]</span>
+    <span class="n">transverse_size</span> <span class="o">=</span> <span class="n">perp_max</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"transverse_factor"</span><span class="p">]</span>
+    <span class="n">longitudinal_size</span> <span class="o">=</span> <span class="n">tau_max</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"longitudinal_factor"</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">transverse_size</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">longitudinal_size</span><span class="p">)</span></div>
 
@@ -852,7 +852,7 @@
 <div class="viewcode-block" id="create_dynamic_grid">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.create_dynamic_grid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_dynamic_grid</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Dynamically create grids from given laser parameters.</span>
 <span class="sd">    One should be careful with this option.</span>
 
@@ -868,40 +868,40 @@
 <span class="sd">    dict</span>
 <span class="sd">        Updated grid parameters including calculated box size, number of spatial points,</span>
 <span class="sd">        and number of temporal points.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">grid_params_upd</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">grid_params</span><span class="p">)</span>
     <span class="c1"># Create spatial box</span>
-    <span class="n">collision_geometry</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collision_geometry&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+    <span class="n">collision_geometry</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"collision_geometry"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">)</span>
 
-    <span class="n">tau_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">])</span>
-    <span class="n">lam_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lam&quot;</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">])</span>
+    <span class="n">tau_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tau"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">])</span>
+    <span class="n">lam_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"lam"</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_params</span><span class="p">])</span>
 
     <span class="n">transverse_size</span><span class="p">,</span> <span class="n">longitudinal_size</span> <span class="o">=</span> <span class="n">get_box_size</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">)</span>
 
     <span class="n">box_xyz</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">"xyz"</span><span class="p">):</span>
         <span class="n">box_xyz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">longitudinal_size</span> <span class="k">if</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">collision_geometry</span> <span class="k">else</span> <span class="n">transverse_size</span>
-    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">&quot;box_xyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_xyz</span>
+    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">"box_xyz"</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_xyz</span>
 
     <span class="c1"># Number of spatial pts</span>
     <span class="n">box_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">box_xyz</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">Nxyz_</span> <span class="o">=</span> <span class="n">get_xyz_size</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">box_size</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spatial_resolution&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"spatial_resolution"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Spatial resolution must be a list of 3 values or a &quot;</span>
-        <span class="s2">&quot;single value&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Spatial resolution must be a list of 3 values or a "</span>
+        <span class="s2">"single value"</span>
         <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Nxyz_</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
     <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">Nxyz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">Nx</span> <span class="o">*</span> <span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">Nx</span> <span class="ow">in</span> <span class="n">Nxyz_</span><span class="p">]</span>
-    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">&quot;Nxyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Nxyz</span>
+    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">"Nxyz"</span><span class="p">]</span> <span class="o">=</span> <span class="n">Nxyz</span>
 
     <span class="c1"># Create temporal box</span>
-    <span class="n">t0</span> <span class="o">=</span> <span class="n">tau_max</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;time_factor&quot;</span><span class="p">]</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">tau_max</span> <span class="o">*</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"time_factor"</span><span class="p">]</span>
     <span class="n">Nt</span> <span class="o">=</span> <span class="n">get_t_size</span><span class="p">(</span><span class="o">-</span><span class="n">t0</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">t0</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lam_min</span><span class="p">)</span>
 
     <span class="c1"># Number of temporal pts</span>
-    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">&quot;box_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t0</span>
-    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">&quot;Nt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Nt</span> <span class="o">*</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;time_resolution&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">"box_t"</span><span class="p">]</span> <span class="o">=</span> <span class="n">t0</span>
+    <span class="n">grid_params_upd</span><span class="p">[</span><span class="s2">"Nt"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Nt</span> <span class="o">*</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"time_resolution"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">grid_params_upd</span></div>
 
 
@@ -909,7 +909,7 @@
 <div class="viewcode-block" id="setup_grids">
 <a class="viewcode-back" href="../../autoapi/quvac/grid/index.html#quvac.grid.setup_grids">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_grids</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create spatial and temporal grids from given sizes or</span>
 <span class="sd">    dynamically from field parameters (e.g., duration and waist size).</span>
 
@@ -929,8 +929,8 @@
 <span class="sd">    grid_params : dict</span>
 <span class="sd">        Grid parameters. Required keys are:</span>
 <span class="sd">            -  mode : str</span>
-<span class="sd">                Mode of grid creation (&#39;dynamic&#39; or &#39;static&#39;).</span>
-<span class="sd">        Keys for &#39;static&#39; mode:</span>
+<span class="sd">                Mode of grid creation ('dynamic' or 'static').</span>
+<span class="sd">        Keys for 'static' mode:</span>
 <span class="sd">            - box_xyz : tuple of float</span>
 <span class="sd">                Box size for the spatial grid.</span>
 <span class="sd">            - Nxyz : tuple of int</span>
@@ -939,9 +939,9 @@
 <span class="sd">                Number of temporal points.</span>
 <span class="sd">            - box_t : float or tuple of float</span>
 <span class="sd">                Time duration or start and end times for the temporal grid.</span>
-<span class="sd">        Keys for &#39;dynamic&#39; mode:</span>
+<span class="sd">        Keys for 'dynamic' mode:</span>
 <span class="sd">            - collision_geometry : str</span>
-<span class="sd">                Specifies the collision geometry (&#39;x&#39;, &#39;y&#39;, &#39;z&#39;).</span>
+<span class="sd">                Specifies the collision geometry ('x', 'y', 'z').</span>
 <span class="sd">            - transverse_factor : float</span>
 <span class="sd">                Factor to scale the transverse size.</span>
 <span class="sd">            - longitudinal_factor : float</span>
@@ -967,28 +967,28 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The spatial and temporal grids are created based on the mode specified in the grid </span>
-<span class="sd">    parameters. If &#39;dynamic&#39; mode is selected, the grids are created dynamically based </span>
+<span class="sd">    parameters. If 'dynamic' mode is selected, the grids are created dynamically based </span>
 <span class="sd">    on the field parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dynamic&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"mode"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"dynamic"</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">fields_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="c1"># filter out fields that should not contribute to dynamic grid creation</span>
-        <span class="n">ignore_idx</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ignore_idx&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">ignore_idx</span> <span class="o">=</span> <span class="n">grid_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ignore_idx"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ignore_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fields_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fields_params</span><span class="p">)</span> 
                             <span class="k">if</span> <span class="n">idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_idx</span><span class="p">]</span>
         <span class="n">grid_params</span> <span class="o">=</span> <span class="n">create_dynamic_grid</span><span class="p">(</span><span class="n">fields_params</span><span class="p">,</span> <span class="n">grid_params</span><span class="p">)</span>
 
-    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">z0</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;box_xyz&quot;</span><span class="p">]</span>
-    <span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">Nz</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;Nxyz&quot;</span><span class="p">]</span>
+    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">z0</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"box_xyz"</span><span class="p">]</span>
+    <span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">Nz</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"Nxyz"</span><span class="p">]</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">x0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x0</span><span class="p">,</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">Nx</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">y0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">y0</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">Ny</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">z0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">z0</span><span class="p">,</span> <span class="n">Nz</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">Nz</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">FDTYPE</span><span class="p">)</span>
     <span class="n">grid_xyz</span> <span class="o">=</span> <span class="n">GridXYZ</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
 
-    <span class="n">Nt</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;Nt&quot;</span><span class="p">]</span>
-    <span class="n">box_t</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">&quot;box_t&quot;</span><span class="p">]</span>
+    <span class="n">Nt</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"Nt"</span><span class="p">]</span>
+    <span class="n">box_t</span> <span class="o">=</span> <span class="n">grid_params</span><span class="p">[</span><span class="s2">"box_t"</span><span class="p">]</span>
     <span class="c1"># Allow non-symmetric time-grids</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box_t</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">Nt</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Nt</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
@@ -1033,7 +1033,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

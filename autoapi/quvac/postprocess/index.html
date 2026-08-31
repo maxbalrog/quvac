@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="quvac.pyfftw_executor" href="../pyfftw_executor/index.html" /><link rel="prev" title="quvac.plotting" href="../plotting/index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.postprocess - quvac 1.0.1 documentation</title>
+        <title>quvac.postprocess - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -326,28 +326,37 @@ linear polarization basis.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.sph2cart" title="quvac.postprocess.sph2cart"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sph2cart</span></code></a>(r, theta, phi)</p></td>
 <td><p>Convert spherical coordinates to Cartesian coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.xyz2idx" title="quvac.postprocess.xyz2idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2idx</span></code></a>(xyz, xyz_grid)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.cyl2cart" title="quvac.postprocess.cyl2cart"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyl2cart</span></code></a>(r, phi, zcyl)</p></td>
+<td><p>Convert cylindrical coordinates to Cartesian coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.xyz2idx" title="quvac.postprocess.xyz2idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2idx</span></code></a>(xyz, xyz_grid)</p></td>
 <td><p>Convert Cartesian coordinates to array indices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.cartesian_to_spherical_array" title="quvac.postprocess.cartesian_to_spherical_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartesian_to_spherical_array</span></code></a>(arr, xyz_grid[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.cartesian_to_spherical_array" title="quvac.postprocess.cartesian_to_spherical_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartesian_to_spherical_array</span></code></a>(arr, xyz_grid[, ...])</p></td>
+<td><p>Transform an array with data on Cartesian grid to the array with data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.cartesian_to_cylindrical_array" title="quvac.postprocess.cartesian_to_cylindrical_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cartesian_to_cylindrical_array</span></code></a>(arr, xyz_grid[, ...])</p></td>
 <td><p>Transform an array with data on Cartesian grid to the array with data</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.integrate_spherical" title="quvac.postprocess.integrate_spherical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate_spherical</span></code></a>(arr, axs[, axs_names, axs_integrate])</p></td>
 <td><p>Integrate an array over spherical coordinates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.signal_in_detector" title="quvac.postprocess.signal_in_detector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">signal_in_detector</span></code></a>(dN, theta, phi, detector[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.get_discernible_signal_in_frequency_band" title="quvac.postprocess.get_discernible_signal_in_frequency_band"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_discernible_signal_in_frequency_band</span></code></a>(data[, lam0, ...])</p></td>
+<td><p>Given a frequency band (for spectrum in spherical coordinates),</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.signal_in_detector" title="quvac.postprocess.signal_in_detector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">signal_in_detector</span></code></a>(dN, theta, phi, detector[, ...])</p></td>
 <td><p>Calculate the signal detected within a specified detector region.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.get_simulation_fields" title="quvac.postprocess.get_simulation_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_simulation_fields</span></code></a>(ini_file)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.get_simulation_fields" title="quvac.postprocess.get_simulation_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_simulation_fields</span></code></a>(ini_file)</p></td>
 <td><p>Get simulation fields from an initialization file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.transform_S12_to_a12" title="quvac.postprocess.transform_S12_to_a12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_S12_to_a12</span></code></a>(S1, S2, k[, transform])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.transform_S12_to_a12" title="quvac.postprocess.transform_S12_to_a12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_S12_to_a12</span></code></a>(S1, S2, k[, transform])</p></td>
 <td><p>Calculate spectral coefficients a1 and a2 from complex signal</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.get_spectra_from_Stokes" title="quvac.postprocess.get_spectra_from_Stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_spectra_from_Stokes</span></code></a>(P0, P1, P2, P3[, basis])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.get_spectra_from_Stokes" title="quvac.postprocess.get_spectra_from_Stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_spectra_from_Stokes</span></code></a>(P0, P1, P2, P3[, basis])</p></td>
 <td><p>Calculate spectra from Stokes parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#quvac.postprocess.get_photon_spectrum_from_a12" title="quvac.postprocess.get_photon_spectrum_from_a12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_photon_spectrum_from_a12</span></code></a>(a1, a2, k)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quvac.postprocess.get_photon_spectrum_from_a12" title="quvac.postprocess.get_photon_spectrum_from_a12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_photon_spectrum_from_a12</span></code></a>(a1, a2, k)</p></td>
 <td><p>Calculates the photon spectrum from spectral coefficients a1 and a2.</p></td>
 </tr>
 </tbody>
@@ -399,6 +408,29 @@ linear polarization basis.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="quvac.postprocess.cyl2cart">
+<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">cyl2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zcyl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#cyl2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.cyl2cart" title="Link to this definition">¶</a></dt>
+<dd><p>Convert cylindrical coordinates to Cartesian coordinates.</p>
+<dl class="simple">
+<dt>Parameters</dt><dd></dd>
+<dt>r<span class="classifier">numpy.ndarray</span></dt><dd><p>Radial distance.</p>
+</dd>
+<dt>phi<span class="classifier">numpy.ndarray</span></dt><dd><p>Azimuthal angle.</p>
+</dd>
+<dt>z<span class="classifier">numpy.ndarray</span></dt><dd><p>Radial distance.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x, y, z</strong> – Cartesian coordinates.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="quvac.postprocess.xyz2idx">
 <span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">xyz2idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#xyz2idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.xyz2idx" title="Link to this definition">¶</a></dt>
 <dd><p>Convert Cartesian coordinates to array indices.</p>
@@ -445,6 +477,32 @@ by default None.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="quvac.postprocess.cartesian_to_cylindrical_array">
+<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">cartesian_to_cylindrical_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cylindrical_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_resolution_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#cartesian_to_cylindrical_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.cartesian_to_cylindrical_array" title="Link to this definition">¶</a></dt>
+<dd><p>Transform an array with data on Cartesian grid to the array with data
+on cylindrical grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy.ndarray</em>) – Array with data on Cartesian grid.</p></li>
+<li><p><strong>xyz_grid</strong> (<a class="reference internal" href="../grid/index.html#quvac.grid.GridXYZ" title="quvac.grid.GridXYZ"><em>quvac.grid.GridXYZ</em></a>) – Cartesian grid object.</p></li>
+<li><p><strong>cylindrical_grid</strong> (<em>tuple</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Cylindrical grid or path to the file containing the cylindrical grid,
+by default None.</p></li>
+<li><p><strong>angular_resolution</strong> (<em>float</em><em>, </em><em>optional</em>) – Angular resolution, by default None.</p></li>
+<li><p><strong>angular_resolution_factor</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor that multiplies default angular resolution given by dk / kmax.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cylindrical_grid</strong> (<em>tuple</em>) – Cylindrical grid.</p></li>
+<li><p><strong>arr_cyl</strong> (<em>numpy.ndarray</em>) – Array with data on cylindrical grid.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="quvac.postprocess.integrate_spherical">
 <span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">integrate_spherical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('k',</span> <span class="pre">'theta',</span> <span class="pre">'phi')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axs_integrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('k',</span> <span class="pre">'theta',</span> <span class="pre">'phi')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#integrate_spherical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.integrate_spherical" title="Link to this definition">¶</a></dt>
 <dd><p>Integrate an array over spherical coordinates.</p>
@@ -471,6 +529,28 @@ by default None.</p></li>
 <p>We assume that the array is given on a spherical grid without
 the jacobian factor, therefore the array is mutiplied by k**2 sin(theta).</p>
 <p>The function uses trapezoidal rule for integration.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quvac.postprocess.get_discernible_signal_in_frequency_band">
+<span class="sig-prename descclassname"><span class="pre">quvac.postprocess.</span></span><span class="sig-name descname"><span class="pre">get_discernible_signal_in_frequency_band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.5,</span> <span class="pre">2.5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/quvac/postprocess.html#get_discernible_signal_in_frequency_band"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quvac.postprocess.get_discernible_signal_in_frequency_band" title="Link to this definition">¶</a></dt>
+<dd><p>Given a frequency band (for spectrum in spherical coordinates),
+calculate the discernible signal there.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>result</em><em> of </em><em>np.load</em><em>(</em><em>...</em><em>)</em>) – Simulation results.</p></li>
+<li><p><strong>lam0</strong> (<em>float</em>) – Fundamental wavelength, by default 800e-9.</p></li>
+<li><p><strong>freq_band</strong> (<em>tuple</em>) – Frequency band in normalized values (by k0), by default (1.5, 2.5).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Ndisc</strong> – Discernible signal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -966,9 +1046,12 @@ by default False.</p></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#quvac.postprocess.get_polarization_vector"><code class="docutils literal notranslate"><span class="pre">get_polarization_vector()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.sph2cart"><code class="docutils literal notranslate"><span class="pre">sph2cart()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.postprocess.cyl2cart"><code class="docutils literal notranslate"><span class="pre">cyl2cart()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.xyz2idx"><code class="docutils literal notranslate"><span class="pre">xyz2idx()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.cartesian_to_spherical_array"><code class="docutils literal notranslate"><span class="pre">cartesian_to_spherical_array()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.postprocess.cartesian_to_cylindrical_array"><code class="docutils literal notranslate"><span class="pre">cartesian_to_cylindrical_array()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.integrate_spherical"><code class="docutils literal notranslate"><span class="pre">integrate_spherical()</span></code></a></li>
+<li><a class="reference internal" href="#quvac.postprocess.get_discernible_signal_in_frequency_band"><code class="docutils literal notranslate"><span class="pre">get_discernible_signal_in_frequency_band()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.signal_in_detector"><code class="docutils literal notranslate"><span class="pre">signal_in_detector()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.get_simulation_fields"><code class="docutils literal notranslate"><span class="pre">get_simulation_fields()</span></code></a></li>
 <li><a class="reference internal" href="#quvac.postprocess.transform_S12_to_a12"><code class="docutils literal notranslate"><span class="pre">transform_S12_to_a12()</span></code></a></li>
@@ -1009,7 +1092,7 @@ by default False.</p></li>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

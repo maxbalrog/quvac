@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>quvac.log - quvac 1.0.1 documentation</title>
+        <title>quvac.log - quvac 1.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">quvac 1.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">quvac 1.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/logo.jpg" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">quvac 1.0.1 documentation</span>
+  <span class="sidebar-brand-text">quvac 1.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,23 +278,23 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for quvac.log</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Usefult functions and default strings for logs.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">quvac.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_memory</span><span class="p">,</span> <span class="n">format_time</span>
 
 <span class="c1"># Warning when total signal on spherical grid differs from</span>
 <span class="c1"># cartesian grid one</span>
-<span class="n">sph_interp_warn</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;WARNING:</span>
+<span class="n">sph_interp_warn</span> <span class="o">=</span> <span class="s2">"""WARNING:</span>
 <span class="si">{:s}</span><span class="s2"> signal on cartesian and spherical grid differ by more than 1%:</span>
 <span class="s2">    N total (xyz): </span><span class="si">{:.3f}</span>
 <span class="s2">    N total (sph): </span><span class="si">{:.3f}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="c1"># timings structure</span>
-<span class="n">performance_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">performance_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Timings:</span>
 <span class="s2">====================================================</span>
 <span class="s2">Field setup:               </span><span class="si">{:&gt;15s}</span>
@@ -311,20 +311,20 @@
 <span class="s2">Amplitudes calculation:    </span><span class="si">{:&gt;15s}</span>
 <span class="s2">Total:                     </span><span class="si">{:&gt;15s}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="c1"># perf string for postprocess</span>
-<span class="n">performance_post_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">performance_post_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Postprocess:</span>
 <span class="s2">====================================================</span>
 <span class="s2">Time:                      </span><span class="si">{:&gt;15s}</span>
 <span class="s2">----------------------------------------------------</span>
 <span class="s2">Memory (max usage):        </span><span class="si">{:&gt;15s}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="c1"># timings for parallel</span>
-<span class="n">performance_parallel_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">performance_parallel_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Timings:</span>
 <span class="s2">====================================================</span>
 <span class="s2">Run jobs:                  </span><span class="si">{:&gt;15s}</span>
@@ -338,10 +338,10 @@
 <span class="s2">Running jobs:              </span><span class="si">{:&gt;15s}</span>
 <span class="s2">Total:                     </span><span class="si">{:&gt;15s}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="c1"># grid params</span>
-<span class="n">grid_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">grid_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Grid:</span>
 <span class="s2">====================================================</span>
 <span class="s2">Space</span>
@@ -356,10 +356,10 @@
 <span class="s2">Number of points:          </span><span class="si">{:&gt;25}</span>
 <span class="s2">Box:                       </span><span class="si">{:&gt;25}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
-<span class="n">postprocess_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">postprocess_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Postprocess parameters</span>
 <span class="s2">====================================================</span>
 <span class="s2">Perp polarization type:           </span><span class="si">{:&gt;15}</span>
@@ -367,35 +367,35 @@
 <span class="s2">Signal on spherical grid:         </span><span class="si">{:&gt;15}</span>
 <span class="s2">Discernible signal:               </span><span class="si">{:&gt;15}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
-<span class="n">test_run_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">test_run_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">====================================================</span>
 <span class="s2">Time per iteration:               </span><span class="si">{:&gt;15s}</span>
 <span class="s2">Overhead time:                    </span><span class="si">{:&gt;15s}</span><span class="s2">  </span>
 <span class="s2">Estimated time (full run):        </span><span class="si">{:&gt;15s}</span>
 <span class="s2">====================================================</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
-<span class="n">simulation_start_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">simulation_start_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">####################################################</span>
 <span class="s2">Start of simulation:    </span><span class="si">{:&gt;20}</span>
 <span class="s2">####################################################</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
-<span class="n">simulation_end_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">simulation_end_str</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">####################################################</span>
 <span class="s2">End of simulation:      </span><span class="si">{:&gt;20}</span>
 <span class="s2">####################################################</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="get_grid_params">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_grid_params">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_grid_params</span><span class="p">(</span><span class="n">grid_xyz</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted grid parameters for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -409,20 +409,20 @@
 <span class="sd">    -------</span>
 <span class="sd">    grid_print : str</span>
 <span class="sd">        Formatted string with grid parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid_shape</span>
-    <span class="n">grid_xyz_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">nx</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ny</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">nz</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="n">grid_xyz_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">nx</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ny</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">nz</span><span class="si">}</span><span class="s2">)"</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">grid_xyz</span><span class="o">.</span><span class="n">grid</span>
     <span class="n">x_start</span><span class="p">,</span> <span class="n">x_end</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span>
-    <span class="n">x_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">x_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">x_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron&quot;</span>
+    <span class="n">x_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">x_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">x_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron"</span>
     <span class="n">y_start</span><span class="p">,</span> <span class="n">y_end</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span>
-    <span class="n">y_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">y_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron&quot;</span>
+    <span class="n">y_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">y_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron"</span>
     <span class="n">z_start</span><span class="p">,</span> <span class="n">z_end</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e6</span>
-    <span class="n">z_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">z_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">z_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron&quot;</span>
+    <span class="n">z_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">z_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">z_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) micron"</span>
 
     <span class="n">grid_t_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid_t</span><span class="p">)</span>
     <span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span> <span class="o">=</span> <span class="n">grid_t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e15</span><span class="p">,</span> <span class="n">grid_t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e15</span>
-    <span class="n">t_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">t_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">t_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) fs&quot;</span>
+    <span class="n">t_box</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">t_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">t_end</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) fs"</span>
 
     <span class="n">grid_print</span> <span class="o">=</span> <span class="n">grid_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grid_xyz_size</span><span class="p">,</span> <span class="n">x_box</span><span class="p">,</span> <span class="n">y_box</span><span class="p">,</span> <span class="n">z_box</span><span class="p">,</span> <span class="n">grid_t_size</span><span class="p">,</span> <span class="n">t_box</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">grid_print</span></div>
@@ -432,7 +432,7 @@
 <div class="viewcode-block" id="get_postprocess_info">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_postprocess_info">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_postprocess_info</span><span class="p">(</span><span class="n">postprocess_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted postprocess parameters for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -444,12 +444,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    postprocess_print : str</span>
 <span class="sd">        Formatted string with postprocess parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">calculate_spherical</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_spherical&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="c1"># spherical_params = postprocess_params.get(&quot;spherical_params&quot;, {})</span>
-    <span class="n">calculate_discernible</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calculate_discernible&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">perp_type</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_polarization_type&quot;</span><span class="p">,</span> <span class="s2">&quot;optical axis&quot;</span><span class="p">)</span>
-    <span class="n">perp_field_idx</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perp_field_idx&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">calculate_spherical</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"calculate_spherical"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># spherical_params = postprocess_params.get("spherical_params", {})</span>
+    <span class="n">calculate_discernible</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"calculate_discernible"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">perp_type</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"perp_polarization_type"</span><span class="p">,</span> <span class="s2">"optical axis"</span><span class="p">)</span>
+    <span class="n">perp_field_idx</span> <span class="o">=</span> <span class="n">postprocess_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"perp_field_idx"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="n">postprocess_print</span> <span class="o">=</span> <span class="n">postprocess_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">perp_type</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">perp_field_idx</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">calculate_spherical</span><span class="p">),</span>
@@ -462,7 +462,7 @@
 <div class="viewcode-block" id="get_performance_stats">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_performance_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_performance_stats</span><span class="p">(</span><span class="n">perf_stats</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted performance statistics for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -474,27 +474,27 @@
 <span class="sd">    -------</span>
 <span class="sd">    perf_print : str</span>
 <span class="sd">        Formatted string with performance statistics.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">&quot;timings&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">"timings"</span><span class="p">]</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;field_setup&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;field_setup&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;vacem_setup&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;vacem_setup&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;field_setup&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;amplitudes&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;amplitudes&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;vacem_setup&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;postprocess&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;amplitudes&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;per_iteration&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;per_iteration&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span>
+        <span class="s2">"field_setup"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"field_setup"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"start"</span><span class="p">],</span>
+        <span class="s2">"vacem_setup"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"vacem_setup"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"field_setup"</span><span class="p">],</span>
+        <span class="s2">"amplitudes"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"amplitudes"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"vacem_setup"</span><span class="p">],</span>
+        <span class="s2">"postprocess"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"amplitudes"</span><span class="p">],</span>
+        <span class="s2">"per_iteration"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"per_iteration"</span><span class="p">],</span>
+        <span class="s2">"total"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"start"</span><span class="p">],</span>
     <span class="p">}</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_time</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">timings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">&quot;memory&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="n">perf_print</span> <span class="o">=</span> <span class="n">performance_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;field_setup&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;vacem_setup&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;amplitudes&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;per_iteration&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">],</span>
-        <span class="n">memory</span><span class="p">[</span><span class="s2">&quot;maxrss_amplitudes&quot;</span><span class="p">],</span>
-        <span class="n">memory</span><span class="p">[</span><span class="s2">&quot;maxrss_total&quot;</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"field_setup"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"vacem_setup"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"amplitudes"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"per_iteration"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"total"</span><span class="p">],</span>
+        <span class="n">memory</span><span class="p">[</span><span class="s2">"maxrss_amplitudes"</span><span class="p">],</span>
+        <span class="n">memory</span><span class="p">[</span><span class="s2">"maxrss_total"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">perf_print</span></div>
 
@@ -503,7 +503,7 @@
 <div class="viewcode-block" id="get_postprocess_stats">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_postprocess_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_postprocess_stats</span><span class="p">(</span><span class="n">perf_stats</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted postprocess performance statistics for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -515,16 +515,16 @@
 <span class="sd">    -------</span>
 <span class="sd">    perf_print : str</span>
 <span class="sd">        Formatted string with postprocess performance statistics.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s1">&#39;timings&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s1">'timings'</span><span class="p">]</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;postprocess&#39;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+        <span class="s1">'postprocess'</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"start"</span><span class="p">]</span>
     <span class="p">}</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_time</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">timings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">&quot;memory&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="n">perf_print</span> <span class="o">=</span> <span class="n">performance_post_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;postprocess&#39;</span><span class="p">],</span>
-        <span class="n">memory</span><span class="p">[</span><span class="s2">&quot;maxrss_total&quot;</span><span class="p">]</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s1">'postprocess'</span><span class="p">],</span>
+        <span class="n">memory</span><span class="p">[</span><span class="s2">"maxrss_total"</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">perf_print</span></div>
 
@@ -533,7 +533,7 @@
 <div class="viewcode-block" id="get_parallel_performance_stats">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_parallel_performance_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_parallel_performance_stats</span><span class="p">(</span><span class="n">perf_stats</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted parallel performance statistics for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -545,21 +545,21 @@
 <span class="sd">    -------</span>
 <span class="sd">    perf_print : str</span>
 <span class="sd">        Formatted string with parallel performance statistics.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">&quot;timings&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">timings</span> <span class="o">=</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">"timings"</span><span class="p">]</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;postprocess&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span>
+        <span class="s2">"jobs"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"start"</span><span class="p">],</span>
+        <span class="s2">"postprocess"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">],</span>
+        <span class="s2">"total"</span><span class="p">:</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s2">"start"</span><span class="p">],</span>
     <span class="p">}</span>
     <span class="n">timings</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_time</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">timings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">&quot;memory&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">format_memory</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">perf_stats</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="n">perf_print</span> <span class="o">=</span> <span class="n">performance_parallel_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;postprocess&quot;</span><span class="p">],</span>
-        <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">],</span>
-        <span class="n">memory</span><span class="p">[</span><span class="s2">&quot;maxrss_jobs&quot;</span><span class="p">],</span>
-        <span class="n">memory</span><span class="p">[</span><span class="s2">&quot;maxrss_total&quot;</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"postprocess"</span><span class="p">],</span>
+        <span class="n">timings</span><span class="p">[</span><span class="s2">"total"</span><span class="p">],</span>
+        <span class="n">memory</span><span class="p">[</span><span class="s2">"maxrss_jobs"</span><span class="p">],</span>
+        <span class="n">memory</span><span class="p">[</span><span class="s2">"maxrss_total"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">perf_print</span></div>
 
@@ -568,7 +568,7 @@
 <div class="viewcode-block" id="get_test_timings">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.get_test_timings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_test_timings</span><span class="p">(</span><span class="n">timings</span><span class="p">,</span> <span class="n">Nt</span><span class="p">,</span> <span class="n">expected_timesteps</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get formatted test run timings for logging.</span>
 
 <span class="sd">    Parameters</span>
@@ -584,9 +584,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    test_run_str_print : str</span>
 <span class="sd">        Formatted string with test run timings.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">time_overhead</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;amplitudes&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;field_setup&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span>
-    <span class="n">time_per_iteration</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">&#39;integral&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">Nt</span>
+<span class="sd">    """</span>
+    <span class="n">time_overhead</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'amplitudes'</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'field_setup'</span><span class="p">]</span> <span class="o">-</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'integral'</span><span class="p">]</span>
+    <span class="n">time_per_iteration</span> <span class="o">=</span> <span class="n">timings</span><span class="p">[</span><span class="s1">'integral'</span><span class="p">]</span> <span class="o">/</span> <span class="n">Nt</span>
     <span class="n">expected_time</span> <span class="o">=</span> <span class="n">time_per_iteration</span> <span class="o">*</span> <span class="n">expected_timesteps</span>
     <span class="n">time_total</span> <span class="o">=</span> <span class="n">time_overhead</span> <span class="o">+</span> <span class="n">expected_time</span>
     <span class="n">test_run_str_print</span> <span class="o">=</span> <span class="n">test_run_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -600,11 +600,11 @@
 
 <div class="viewcode-block" id="log_time">
 <a class="viewcode-back" href="../../autoapi/quvac/log/index.html#quvac.log.log_time">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">log_time</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_time</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"start"</span><span class="p">):</span>
     <span class="n">time_log</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">asctime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"start"</span><span class="p">:</span>
         <span class="n">str_template</span> <span class="o">=</span> <span class="n">simulation_start_str</span>
-    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"end"</span><span class="p">:</span>
         <span class="n">str_template</span> <span class="o">=</span> <span class="n">simulation_end_str</span>
     <span class="n">str_to_print</span> <span class="o">=</span> <span class="n">str_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_log</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">str_to_print</span><span class="p">)</span></div>
@@ -641,7 +641,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=292eb321"></script>
+</div><script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
