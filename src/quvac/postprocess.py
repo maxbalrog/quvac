@@ -83,6 +83,30 @@ def sph2cart(r, theta, phi):
     return x, y, z
 
 
+def cyl2cart(r, phi, zcyl):
+    """
+    Convert cylindrical coordinates to Cartesian coordinates.
+
+    Parameters
+        ----------
+    r : numpy.ndarray
+        Radial distance.
+    phi : numpy.ndarray
+        Azimuthal angle.
+    z : numpy.ndarray
+        Radial distance.
+
+    Returns
+    -------
+    x, y, z : numpy.ndarray
+        Cartesian coordinates.
+    """
+    x = r * np.cos(phi) * np.ones_like(zcyl)
+    y = r * np.sin(phi) * np.ones_like(zcyl)
+    z = zcyl * np.ones_like(r) * np.ones_like(phi)
+    return x, y, z
+
+
 def xyz2idx(xyz, xyz_grid):
     """
     Convert Cartesian coordinates to array indices.
@@ -168,6 +192,67 @@ def cartesian_to_spherical_array(
     return spherical_grid, arr_sph
 
 
+def cartesian_to_cylindrical_array(
+    arr, xyz_grid, cylindrical_grid=None, angular_resolution=None,
+    angular_resolution_factor=None,
+):
+    """
+    Transform an array with data on Cartesian grid to the array with data 
+    on cylindrical grid.
+
+    Parameters
+    ----------
+    arr : numpy.ndarray
+        Array with data on Cartesian grid.
+    xyz_grid : quvac.grid.GridXYZ
+        Cartesian grid object.
+    cylindrical_grid : tuple or str, optional
+        Cylindrical grid or path to the file containing the cylindrical grid, 
+        by default None.
+    angular_resolution : float, optional
+        Angular resolution, by default None.
+    angular_resolution_factor : float, optional
+        Factor that multiplies default angular resolution given by dk / kmax.
+
+    Returns
+    -------
+    cylindrical_grid : tuple
+        Cylindrical grid.
+    arr_cyl : numpy.ndarray
+        Array with data on cylindrical grid.
+    """
+    # Calculate cylindrical grid if not given
+    if not cylindrical_grid:
+        dk = np.min(xyz_grid.dkxkykz[:2])
+        kmax = np.max(xyz_grid.kabs)
+        # without the prefactor it results in too high default resolution
+        if angular_resolution_factor is None:
+            angular_resolution_factor = 3
+        default_resolution = angular_resolution_factor * dk / kmax
+        dangle = angular_resolution if angular_resolution else default_resolution
+
+        k = np.arange(0.0, kmax, dk, dtype=config.FDTYPE)
+        phi = np.arange(0.0, 2 * pi, dangle, dtype=config.FDTYPE)
+        kz = xyz_grid.kgrid_shifted[-1]
+        cylindrical_grid = (k, phi, kz)
+    elif isinstance(cylindrical_grid, str) and os.path.isfile(cylindrical_grid):
+        data = np.load(cylindrical_grid)
+        cylindrical_grid = (data["k"], data["phi"], data["kz"])
+    cylindrical_mesh = np.meshgrid(*cylindrical_grid, indexing="ij", sparse=True)
+
+    # Find corresponding cartesian coordinates of cylindrical mesh:
+    # (r,phi,z) -> (x, y, z)
+    xyz_for_cyl = cyl2cart(*cylindrical_mesh)
+
+    # Convert cartesian coordinates to array idx
+    idxs = xyz2idx(xyz_for_cyl, xyz_grid.kgrid_shifted)
+
+    # Interpolate data on a desired grid
+    # interpolation_kwargs should be implemented here
+    arr_cyl = map_coordinates(arr, idxs, order=1)
+    return cylindrical_grid, arr_cyl
+
+
 def integrate_spherical(arr, axs, axs_names=("k", "theta", "phi"),
                         axs_integrate=("k", "theta", "phi")):
     """
@@ -223,6 +308,39 @@ def integrate_spherical(arr, axs, axs_names=("k", "theta", "phi"),
         integrand = trapezoid(integrand, axs[idx], axis=idx_)
         axs_names_.pop(idx_)
     return integrand
+
+
+def get_discernible_signal_in_frequency_band(
+    data, lam0=800e-9, freq_band=(1.5,2.5)
+):
+    """
+    Given a frequency band (for spectrum in spherical coordinates),
+    calculate the discernible signal there.
+
+    Parameters
+    ----------
+    data : result of np.load(...)
+        Simulation results.
+    lam0 : float
+        Fundamental wavelength, by default 800e-9.
+    freq_band : tuple
+        Frequency band in normalized values (by k0), by default (1.5, 2.5).
+
+    Returns
+    -------
+    Ndisc : float
+        Discernible signal.
+    """
+    k, theta, phi, discernible_mask, signal = [
+        data[key] for key in "k theta phi discernible N_sph".split()
+    ]
+    signal_discernible = signal * discernible_mask
+
+    k0 = 2*np.pi/lam0
+    idx_k = (k/k0 >= freq_band[0]) * (k/k0 <= freq_band[1])
+    k_filter, signal_filter = k[idx_k], signal_discernible[idx_k]
+    Ndisc = integrate_spherical(signal_filter, (k_filter,theta,phi))
+    return Ndisc
 
 
 def _get_detector_idx(phi, theta, phi0, theta0, dphi, dtheta):

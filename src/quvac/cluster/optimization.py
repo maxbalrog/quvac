@@ -40,7 +40,11 @@ from submitit import DebugJob, LocalJob
 
 from quvac.log import log_time
 from quvac.parallel import setup_job_executor_from_params
-from quvac.postprocess import integrate_spherical, signal_in_detector
+from quvac.postprocess import (
+    get_discernible_signal_in_frequency_band,
+    integrate_spherical,
+    signal_in_detector,
+)
 from quvac.simulation import create_basic_logger, get_dirs, parse_args, quvac_simulation
 from quvac.utils import read_yaml, round_to_n, write_yaml
 
@@ -200,6 +204,14 @@ def collect_metrics(data, obj_params, metric_names=("N_total"),
         )
         metrics["N_detector"] = float(N_detector)
         metrics["N_detector_disc"] = float(N_detector_disc)
+
+    if "spectral_band" in obj_params:
+        freq_band = obj_params.get("spectral_band", (1.5,2.5))
+        lam0 = obj_params.get("lam0", 800e-9)
+        Nband = get_discernible_signal_in_frequency_band(
+            data, lam0=lam0, freq_band=freq_band
+        )
+        metrics["N_disc_band"] = Nband
 
     # filter metrics
     if noiseless_observations:
